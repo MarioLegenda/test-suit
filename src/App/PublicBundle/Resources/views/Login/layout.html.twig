@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Test Suite | Installation</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css'>
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset("css/style.css") }}">
+    {% endblock %}
+
+</head>
+
+<body class="InstallBody">
+<div class="Global  GlobalInstall" ng-app="InstallSuiteApp" >
+    <header class="Global__Header  InstallHeader">
+        <h1 class="Install__Title">Test Suite</h1>
+    </header>
+
+    <div class="Content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+.FormRow {
+  position:relative;
+  width:100%;
+  float:left;
+
+  margin:0 0 15px 0;
+
+  .FormRow--label {
+    width:40%;
+    float:left;
+  }
+
+  .FormRow--field {
+    width:50%;
+    float:left;
+  }
+
+  .FormRow--SubmitButton {
+    display:block;
+    width:150px;
+    border:none;
+    padding:5px;
+  }
+
+  .FormError {
+    position:absolute;
+    top:-2px; right:0; left:0;
+    width:150px;
+
+    padding:5px 5px 5px 5px;
+
+    text-align: center;
+  }
+}
+
+.FormSeparator {
+  width:90%;
+  float:left;
+
+  padding:5px 5px 5px 0;
+  margin:15px 0 30px 0;
+}

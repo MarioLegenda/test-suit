@@ -1,0 +1,116 @@
+{% extends "AppPublicBundle::Installation/layout.html.twig" %}
+
+{% block content %}
+
+    <div class="Container">
+    <div class="InstallInformation" ng-controller="InformationController">
+        <p class="InstallInformation--paragraph">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent non sollicitudin dui.
+            Vivamus tempus ex nisl, nec gravida massa mattis facilisis. Nullam dapibus lorem in blandit
+            finibus. Morbi arcu augue, tincidunt vitae tristique a, lacinia vitae arcu. Integer vel
+            molestie ipsum, ac pellentesque nibh.
+        </p>
+
+        <p class="InstallInformation--paragraph">
+            In hac habitasse platea dictumst. Quisque semper est
+            ut odio mollis tempus. Sed ut mattis ante. Mauris quis sollicitudin sapien. Nullam augue
+            quam, suscipit at felis ac, sodales pulvinar justo. Sed ante ex, pulvinar quis porta sit
+            amet, mollis sed nunc. In lacinia eu sem laoreet fringilla. In eget lacus eu turpis dapibus
+            scelerisque.
+        </p>
+
+        <button class="InstallInformation--continueButton" ng-click="showForm()">Continue</button>
+    </div>
+
+    <div class="InstallForm" ng-controller="InstallFormController">
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+        <div class="FormRow">
+            {{ form_label(form.name, null, {'label_attr' : { class : 'FormRow--label  InstallLabel'}}) }}
+            {{ form_widget(form.name, {'full_name': 'name', 'attr' : {
+                class : 'FormRow--field  InstallField',
+                'ng-model': 'install.name'
+            }}) }}
+            <div class="FormError  InstallError" ng-show="name_invalid">
+                <p>Name has to be provided</p>
+            </div>
+        </div>
+
+        <div class="FormRow">
+            {{ form_label(form.lastname, null, {'label_attr' : { class : 'FormRow--label  InstallLabel'}} ) }}
+            {{ form_widget(form.lastname, {'full_name': 'lastname', 'attr' : {
+                class : 'FormRow--field  InstallField',
+                'ng-model': 'install.lastname'
+            }}) }}
+
+            <div class="FormError  InstallError" ng-show="lastname_invalid">
+                <p>Lastname has to be provided</p>
+            </div>
+        </div>
+
+        <div class="FormRow">
+            {{ form_label(form.username, null, {'label_attr' : { class : 'FormRow--label  InstallLabel'}}) }}
+            {{ form_widget(form.username, {'full_name' : 'username', 'attr' : {
+                class : 'FormRow--field  InstallField',
+                'ng-model': 'install.username',
+                'placeholder': '...it has to be an email'
+            }}) }}
+
+            <div class="FormError  InstallError" ng-show="username_invalid">
+                <p>Username (email) has to be provided</p>
+            </div>
+
+            <div class="FormError  InstallError" ng-show="email_invalid">
+                <p>Incorrect email</p>
+            </div>
+        </div>
+
+        <div class="FormRow">
+            {{ form_label(form.password, null, {'label_attr' : { class : 'FormRow--label  InstallLabel'}}) }}
+            {{ form_widget(form.password, {'full_name': 'password', 'attr' : {
+                class : 'FormRow--field  InstallField',
+                'ng-model': 'install.userPassword',
+                'ng-minlength': '8'
+            }}) }}
+
+            <div class="FormError  InstallError" ng-show="no_password">
+                <p>Password has to be provided</p>
+            </div>
+
+            <div class="FormError  InstallError" ng-show="illegal_password">
+                <p>Password has to have at least 8 characters</p>
+            </div>
+        </div>
+
+        <div class="FormRow">
+            {{ form_label(form.repeat_password, null, {'label_attr' : { class : 'FormRow--label  InstallLabel'}}) }}
+            {{ form_widget(form.repeat_password, {'full_name': 'pass_repeat', 'attr' : {
+                class : 'FormRow--field  InstallField',
+                'ng-model': 'install.userPassRepeat',
+                'ng-minlength': '8'
+            }}) }}
+
+            <div class="FormError  InstallError" ng-show="no_password_repeat">
+                <p>Confirmed password has to be provided</p>
+            </div>
+
+            <div class="FormError  InstallError" ng-show="illegal_pass_repeat">
+                <p>Confirmed password has to have at least 8 characters</p>
+            </div>
+
+            <div class="FormError  InstallError" ng-show="pass_unequal && !illegal_pass_repeat">
+                <p>Given passwords do not match</p>
+            </div>
+        </div>
+
+        <div class="FormRow">
+            {{ form_widget(form.sign_up, {'attr' : {
+                class : 'FormRow--SubmitButton  InstallSubmit',
+                'ng-click': 'submit($event)'
+            }}) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+    </div>
+{% endblock %}

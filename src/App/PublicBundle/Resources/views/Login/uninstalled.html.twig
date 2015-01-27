@@ -1,0 +1,13 @@
+{% extends 'AppPublicBundle::Login/layout.html.twig' %}
+
+{% block content %}
+    <div class="Container">
+        <h1 class="Install__Title  UninstalledMessage">
+            Test Suite is not installed.<br>
+            Please install the necessary tables and register as the first user.<br>
+            When you install the tables, this message will not show again.
+        </h1>
+
+        <a href="{{ path('app_signUp') }}" class="Install__Title  UninstalledMessage  InstallLink">Go to install</a>
+    </div>
+{% endblock %}

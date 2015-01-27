@@ -1,0 +1,17 @@
+{
+  "name": "test-suite",
+  "version": "0.0.0",
+  "authors": [
+    "Mario Škrlec <whitepostmail@gmail.com>"
+  ],
+  "description": "Test a programmer",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

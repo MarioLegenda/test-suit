@@ -1,0 +1,38 @@
+security:
+    encoders:
+        App\PublicBundle\Entity\Administrator:
+            algorithm: bcrypt
+        App\PublicBundle\Entity\Users:
+            algorithm: bcrypt
+
+    role_hierarchy:
+        ROLE_USER:       ROLE_USER
+        ROLE_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+        administrators:
+            entity: { class: AppPublicBundle:Administrator, property: username }
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        secured_area:
+            pattern:    ^/
+            anonymous: ~
+            form_login:
+                always_use_default_target_path: true
+                default_target_path: app_public
+                login_path: login
+                check_path: login_check
+            logout:
+                path:   /logout
+                target: /login
+
+    access_control:
+        - { path: ^/suit-up$ , roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/install$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/install/sign-up$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/installment$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, role: [ROLE_USER, ROLE_ADMIN] }

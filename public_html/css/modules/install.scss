@@ -1,0 +1,209 @@
+.InstallBody {
+  background:url(../../images/install-background.jpg) no-repeat;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-attachment: fixed;
+  background-color: $mainColor;
+}
+
+.GlobalInstall {
+}
+
+.InstallHeader {
+  float:none;
+  overflow:hidden;
+}
+
+.Content {
+  position:relative;
+  height:650px;
+  overflow:hidden;
+
+  margin-top:50px;
+}
+
+.InstallInformation {
+  //display:none;
+  width:600px;
+  position:absolute;
+  top: 40%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+
+  .InstallInformation--paragraph {
+    width:100%;
+    margin:0 0 15px 0;
+    line-height: 1.5em;
+    letter-spacing: 0.05em;
+    font-size:1.2em;
+    color:white;
+  }
+
+  .InstallInformation--continueButton {
+    width:150px;
+    float:right;
+    display:block;
+
+    border:1px solid white;
+    background-color: transparent;
+    font-family: 'Open Sans Condensed', cursive;
+    color:white;
+    font-size:1.5em;
+
+    margin:15px 0 0 0;
+    padding:10px;
+
+    transition: background-color 0.4s, border 0.4s;
+    -webkit-transition: background-color 0.4s, border 0.4s;
+    -moz-transition: background-color 0.4s, border 0.4s;
+    -o-transition: background-color 0.4s, border 0.4s;
+
+    &:active {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+
+    &:hover {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+  }
+}
+
+.Install__Title {
+  font-family: 'Dancing Script', cursive;
+  font-size:7em;
+  text-align: center;
+  color:white;
+
+  margin:50px 0 50px 0;
+}
+
+.UninstalledMessage {
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size:1.2em;
+
+  letter-spacing: 0.05em;
+  line-height: 1.8em;
+}
+
+.InstallLink {
+  width:200px;
+  display:block;
+  padding:10px;
+  overflow:hidden;
+  margin:0 auto;
+
+  border:1px solid white;
+
+  transition: background-color 0.4s, border 0.4s;
+  -webkit-transition: background-color 0.4s, border 0.4s;
+  -moz-transition: background-color 0.4s, border 0.4s;
+  -o-transition: background-color 0.4s, border 0.4s;
+
+  &:active {
+    background-color: $mainHoverColor;
+    border: 1px solid $mainHoverColor;
+  }
+
+  &:hover {
+    background-color: $mainHoverColor;
+    border:1px solid $mainHoverColor;
+  }
+}
+
+.InstallForm {
+  width:600px;
+  position:absolute;
+  top: 50%;
+  left: 130%;
+
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+
+  .DbInformation {
+    color:white;
+
+    margin-left:5px;
+    font-size:1.4em;
+
+    border-bottom:1px solid white;
+  }
+
+  .InstallLabel {
+    color:white;
+    padding:5px;
+    letter-spacing: 0.03em;
+
+    font-size:1.2em;
+  }
+
+  .InstallField {
+    font-size:1.3em;
+
+    padding:5px;
+
+    background-color: rgba(0, 0, 0, 0.2);
+    font-family: 'Open Sans Condensed', sans-serif;
+    letter-spacing: 0.05em;
+    word-spacing: 0.1em;
+    color:white;
+
+    border:1px solid white;
+    border-radius:3px;
+
+    &:focus {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .InstallSubmit {
+    float:right;
+
+    font-family: 'Open Sans Condensed', cursive;
+    font-size:1.5em;
+    color:white;
+    text-align:center;
+    background-color: transparent;
+
+    margin:15px 60px 0 0;
+    padding:10px;
+
+    border:1px solid white;
+
+    transition: background-color 0.4s, border 0.4s;
+    -webkit-transition: background-color 0.4s, border 0.4s;
+    -moz-transition: background-color 0.4s, border 0.4s;
+    -o-transition: background-color 0.4s, border 0.4s;
+
+    &:active {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+
+    &:hover {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+  }
+
+  .InstallError {
+    width:300px;
+    color:white;
+    left:550px;
+    top:6px;
+
+    font-size:1.2em;
+
+    border:1px solid $errorColor;
+
+  }
+}

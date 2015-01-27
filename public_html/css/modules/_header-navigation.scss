@@ -1,0 +1,43 @@
+.MainNavigation__List {
+  width:100%;
+  float:left;
+}
+
+.MainNavigation__List--item {
+  position:relative;
+  display:inline;
+  float:left;
+
+  .MainNavigation__List--link {
+    display:block;
+    width:100%;
+
+    padding:10px;
+    color:white;
+    background-color: $mainColor;
+
+    font-size:1.1em;
+
+    &:hover {
+      background-color: $mainHoverColor;
+    }
+  }
+}
+
+.MainNavigation__List--item:hover .InnerList {
+  opacity:1;
+  top:100%;
+}
+
+.InnerList {
+  opacity:0;
+  z-index:-1;
+
+  width:200px;
+  position:absolute;
+  top:-100%; left:0;
+
+  transition: opacity 0.5, top 0.5s;
+  -webkit-transition: opacity 0.5s, width 0.5s, top 0.5s;
+}
+

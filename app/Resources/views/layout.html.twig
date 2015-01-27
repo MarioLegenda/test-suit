@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}{% endblock %}</title>
+
+        <link href='http://fonts.googleapis.com/css?family=Alegreya+Sans+SC:400,500&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset("css/style.css") }}">
+        {% endblock %}
+
+    </head>
+    <body>
+        <div class="Global">
+            <header class="Global__Header">
+                {% block header_navigation %}{% endblock %}
+            </header>
+
+            {% block content %}{% endblock %}
+        </div>
+
+        {% block javascript %}{% endblock %}
+    </body>
+</html>
