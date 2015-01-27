@@ -6,10 +6,9 @@
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 /build/
-/vendor/
-/bin/
 /composer.phar
 /public_html/bower_components/*
 !/publc_html/bower_components/jquery/dist/jquery.min.js
 !/publc_html/bower_components/angular/angular.min.js
 /public_html/images/originali/*
+/.idea
