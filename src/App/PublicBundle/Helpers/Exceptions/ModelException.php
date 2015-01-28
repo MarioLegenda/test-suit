@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PublicBundle\Models\Exceptions;
+namespace App\PublicBundle\Helpers\Exceptions;
 
 class ModelException extends \Exception
 {

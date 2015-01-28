@@ -11,12 +11,10 @@ namespace App\PublicBundle\Controller;
 
 use App\PublicBundle\Entity\Administrator;
 use App\PublicBundle\Forms\AdministratorType;
-use App\PublicBundle\Models\Helpers\DependencyManager;
-use App\PublicBundle\Models\Helpers\InstallHelper;
-use App\PublicBundle\Models\Helpers\ResponseParameters;
-use App\PublicBundle\Models\Helpers\SimpleFormHelper;
+use App\PublicBundle\Helpers\InstallHelper;
+use App\PublicBundle\Helpers\ResponseParameters;
+use App\PublicBundle\Helpers\SimpleFormHelper;
 use App\PublicBundle\Models\InstallModel;
-use App\PublicBundle\Models\GenericModel;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 

@@ -18,6 +18,12 @@
         <script src="{{ asset("js/install.js") }}"></script>
     {% endblock %}
 
+    <script type="text/ng-template" id="inputErrorTemplate.html">
+        <div class="FormError  InstallError">
+            <p>{{ errorModel.errorMessage }}</p>
+        </div>
+    </script>
+
 </head>
 
 <body class="{{ cssClasses.getClass('InstallBody') }}">

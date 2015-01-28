@@ -3,7 +3,7 @@
 
 ( function() {
 
-    var suitApp = angular.module("InstallSuiteApp", []).config(['$provide', function($provide) {
+    var suitApp = angular.module("InstallSuiteApp", []).config(['$provide', '$compileProvider', function($provide, $compileProvider) {
         $provide.factory('$', function() {
             return jQuery;
         });
@@ -21,7 +21,14 @@
                     return $http(this.config);
                 }
             };
+        });
 
+        $compileProvider.directive('formError', function() {
+            return {
+                restrict : 'E',
+                templateUrl: 'inputErrorTemplate.html',
+                replace: true
+            }
         });
     }]);
 
@@ -56,10 +63,9 @@
                     data: $scope.install
                 }).install();
 
-                promise.success(function(data, status, headers, config) {
-                });
-
-                promise.error(function(data, status, headers, config) {
+                promise.then(function(data, status, headers, config) {
+                    console.log("OK: ", data, status);
+                }, function(data, status, headers, config) {
 
                 });
             }

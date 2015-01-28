@@ -2,6 +2,7 @@
 
 namespace App\PublicBundle\Entity;
 
+use App\PublicBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="administrators")
  */
 
-class Administrator extends GenericEntity implements UserInterface, \Serializable
+class Administrator extends GenericEntity implements UserInterface, \Serializable, ModelObjectWrapperInterface
 {
     /**
      * @ORM\Column(type="integer")

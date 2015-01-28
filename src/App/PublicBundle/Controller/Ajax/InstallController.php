@@ -9,17 +9,16 @@
 namespace App\PublicBundle\Controller\Ajax;
 
 
-use App\PublicBundle\Entity\Administrator;
+
 use App\PublicBundle\Entity\InstallEntity;
-use App\PublicBundle\Entity\Role;
-use App\PublicBundle\Models\Helpers\GenericAjaxResponseWrapper;
-use App\PublicBundle\Models\Helpers\InstallHelper;
-use App\PublicBundle\Models\Helpers\ResponseParameters;
-use App\PublicBundle\Models\Helpers\SimpleFormHelper;
+use App\PublicBundle\Helpers\GenericAjaxResponseWrapper;
+use App\PublicBundle\Helpers\InstallHelper;
+use App\PublicBundle\Helpers\ResponseParameters;
+use App\PublicBundle\Helpers\SimpleFormHelper;
+use App\PublicBundle\Helpers\UserSecurityManager;
 use App\PublicBundle\Models\InstallModel;
 use Symfony\Component\DependencyInjection\ContainerAware;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
+use App\PublicBundle\Helpers\Exceptions\ModelException;
 
 class InstallController extends ContainerAware
 {
@@ -50,40 +49,34 @@ class InstallController extends ContainerAware
         }
 
 
-        $installModel->runModel();
+        $installModel->injectDependencies($installEntity);
+        $encoder = $this->container->get('security.password_encoder');
 
         try {
-            $administrator = new Administrator();
-            $administrator->setName($installEntity->getName());
-            $administrator->setLastname($installEntity->getLastname());
-            $administrator->setUsername($installEntity->getUsername());
-            $encoder = $this->container->get('security.password_encoder');
-            $encoded = $encoder->encodePassword($administrator, $installEntity->getPassword());
-            $administrator->setPassword($encoded);
+            $modelObjectWrapper = $installModel->runModel();
+            $administrator = $modelObjectWrapper->getObject('administrator');
+            $administrator->setPassword(UserSecurityManager::initEncoder($encoder)->encodePassword($administrator));
+
+            $em->persist($modelObjectWrapper->getObject('administrator'));
+            $em->persist($modelObjectWrapper->getObject('role_user'));
+            $em->persist($modelObjectWrapper->getObject('role_admin'));
+            $em->flush();
+        } catch(ModelException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('model-exception', array(
+                'unexpected' => true,
+                'unintentional' => true,
+                'not_catchable' => true,
+                'message' => 'Something unexpected happend. Please, try again are contact whitepostmail@gmail.com'
+            ));
+
+            $ajaxResponse = new GenericAjaxResponseWrapper(400, 'BAD', $responseParameters);
+
+            return $ajaxResponse->getResponse();
         } catch(\Exception $e) {
+            // make response to client with friendly error message
             echo $e->getMessage();
             die();
-        }
-
-        $role_admin = new Role();
-        $role_admin->setRole('ROLE_ADMIN');
-        $role_admin->setAdministrator($administrator);
-
-        $role_user = new Role();
-        $role_user->setRole('ROLE_USER');
-        $role_user->setAdministrator($administrator);
-
-        $administrator->setRoles($role_admin);
-        $administrator->setRoles($role_user);
-
-        try {
-            $em->persist($administrator);
-            $em->persist($role_user);
-            $em->persist($role_admin);
-            $em->flush();
-        }
-        catch(\Exception $e) {
-            echo $e->getMessage();
         }
 
         $responseParameters = new ResponseParameters();

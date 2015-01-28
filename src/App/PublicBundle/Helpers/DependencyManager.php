@@ -6,10 +6,10 @@
  * Time: 12:31
  */
 
-namespace App\PublicBundle\Models\Helpers;
+namespace App\PublicBundle\Helpers;
 
 
-use App\PublicBundle\Models\Contracts\ClientDependencyInterface;
+use App\PublicBundle\Helpers\Contracts\ClientDependencyInterface;
 
 class DependencyManager
 {

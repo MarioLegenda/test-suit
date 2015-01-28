@@ -6,19 +6,13 @@
  * Time: 12:33
  */
 
-namespace App\PublicBundle\Models\Helpers;
+namespace App\PublicBundle\Helpers;
 
 use App\PublicBundle\Entity\Administrator;
-
 use App\PublicBundle\Entity\GenericEntity;
-use App\PublicBundle\Models\Contracts\ClientDependencyInterface;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\IdenticalTo;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 class SimpleFormHelper
 {

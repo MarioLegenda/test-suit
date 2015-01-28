@@ -2,6 +2,7 @@
 
 namespace App\PublicBundle\Entity;
 
+use App\PublicBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Role\RoleInterface;
 
@@ -10,7 +11,7 @@ use Symfony\Component\Security\Core\Role\RoleInterface;
  * @ORM\Table(name="roles")
  */
 
-class Role implements RoleInterface
+class Role implements RoleInterface, ModelObjectWrapperInterface
 {
     /**
      * @ORM\Column(type="integer")

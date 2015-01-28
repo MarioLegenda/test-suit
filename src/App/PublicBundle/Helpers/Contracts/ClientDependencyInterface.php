@@ -6,7 +6,7 @@
  * Time: 12:40
  */
 
-namespace App\PublicBundle\Models\Contracts;
+namespace App\PublicBundle\Helpers\Contracts;
 
 
 interface ClientDependencyInterface {

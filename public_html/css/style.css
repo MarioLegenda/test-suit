@@ -197,6 +197,7 @@ img {
   overflow: hidden;
   margin: 0 auto;
   border: 1px solid white;
+  font-size: 1.2em;
   transition: background-color 0.4s, border 0.4s;
   -webkit-transition: background-color 0.4s, border 0.4s;
   -moz-transition: background-color 0.4s, border 0.4s;
@@ -217,18 +218,13 @@ img {
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%); }
-  .InstallForm .DbInformation {
-    color: white;
-    margin-left: 5px;
-    font-size: 1.4em;
-    border-bottom: 1px solid white; }
   .InstallForm .InstallLabel {
     color: white;
     padding: 5px;
     letter-spacing: 0.03em;
     font-size: 1.2em; }
   .InstallForm .InstallField {
-    font-size: 1.3em;
+    font-size: 1.2em;
     padding: 5px;
     background-color: rgba(0, 0, 0, 0.2);
     font-family: 'Open Sans Condensed', sans-serif;
@@ -242,7 +238,7 @@ img {
   .InstallForm .InstallSubmit {
     float: right;
     font-family: 'Open Sans Condensed', cursive;
-    font-size: 1.5em;
+    font-size: 1.2em;
     color: white;
     text-align: center;
     background-color: transparent;

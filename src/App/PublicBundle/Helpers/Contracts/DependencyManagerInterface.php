@@ -6,7 +6,7 @@
  * Time: 12:31
  */
 
-namespace App\PublicBundle\Models\Contracts;
+namespace App\PublicBundle\Helpers\Contracts;
 
 
 interface DependencyManagerInterface

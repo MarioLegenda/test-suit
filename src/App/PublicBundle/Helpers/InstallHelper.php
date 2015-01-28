@@ -1,8 +1,7 @@
 <?php
 
-namespace App\PublicBundle\Models\Helpers;
+namespace App\PublicBundle\Helpers;
 
-use App\PublicBundle\Models\Contracts\ClientDependencyInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\ResultSetMapping;
 

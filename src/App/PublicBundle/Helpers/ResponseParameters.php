@@ -6,7 +6,7 @@
  * Time: 15:30
  */
 
-namespace App\PublicBundle\Models\Helpers;
+namespace App\PublicBundle\Helpers;
 
 
 class ResponseParameters implements \JsonSerializable
