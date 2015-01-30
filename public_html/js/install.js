@@ -3,40 +3,36 @@
 
 ( function() {
 
-    var suitApp = angular.module("InstallSuiteApp", []).config(['$provide', '$compileProvider', function($provide, $compileProvider) {
-        $provide.factory('$', function() {
-            return jQuery;
-        });
+    var suitApp = angular.module("InstallSuiteApp", []).config(
+        ['$provide', '$compileProvider', '$interpolateProvider', function($provide, $compileProvider, $interpolateProvider) {
+            $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 
-        $provide.factory('installFactory', function($http) {
-            return {
-                config : {},
+            $provide.factory('$', function () {
+                return jQuery;
+            });
 
-                setConfig: function(config) {
-                    this.config = config;
-                    return this;
-                },
+            $provide.factory('installFactory', function ($http) {
+                return {
+                    config: {},
 
-                install: function() {
-                    return $http(this.config);
-                }
-            };
-        });
+                    setConfig: function (config) {
+                        this.config = config;
+                        return this;
+                    },
 
-        $compileProvider.directive('formError', function() {
-            return {
-                restrict : 'E',
-                templateUrl: 'inputErrorTemplate.html',
-                replace: true
-            }
-        });
+                    install: function () {
+                        return $http(this.config);
+                    }
+                };
+            });
+
+            $provide.factory('$', function () {
+                return jQuery;
+            });
+
     }]);
 
-    /*suitApp.factory('$', function() {
-        return jQuery;
-    });*/
-
-    suitApp.controller('InformationController', function($scope, $) {
+    suitApp.controller('InformationController', ['$scope', '$', function($scope, $) {
         $scope.showForm = function() {
             $('.InstallInformation').animate({
                 top: '150%'
@@ -46,9 +42,14 @@
                 left: '50%'
             }, 500);
         }
-    });
+    }]);
 
-    suitApp.controller('InstallFormController', function($scope, installFactory) {
+    suitApp.controller('InstallFormController', ['$scope', 'installFactory', function($scope, installFactory) {
+        $scope.globalErrors = {
+            errors: [],
+            show: false
+        };
+
         $scope.install = {
             name: '',
             lastname: '',
@@ -62,11 +63,17 @@
                     url: '/installment',
                     data: $scope.install
                 }).install();
-
                 promise.then(function(data, status, headers, config) {
-                    console.log("OK: ", data, status);
-                }, function(data, status, headers, config) {
 
+
+                }, function(data, status, headers, config) {
+                    var parsedData = JSON.parse(data.data);
+
+                    $scope.globalErrors.errors = parsedData;
+
+                    $scope.globalErrors.show = true;
+
+                    console.log(parsedData[0].exception);
                 });
             }
         };
@@ -76,7 +83,7 @@
 
             $scope.name_invalid = $scope.insForm['name'].$invalid;
             $scope.lastname_invalid = $scope.insForm['lastname'].$invalid;
-            $scope.username_invalid = $scope.insForm['username'].$invalid;
+            $scope.username_invalid = $scope.insForm['username'].$error.required;
             $scope.email_invalid = $scope.insForm['username'].$error.email;
             $scope.no_password = $scope.insForm['password'].$error.required;
             $scope.illegal_password = $scope.insForm['password'].$error.minlength;
@@ -93,14 +100,12 @@
                 $scope.no_pass_repeat ||
                 $scope.illegal_pass_repeat ||
                 $scope.pass_unequal) {
-                $event.preventDefault();
                 return false;
             }
 
-
-            $scope.install.installApp();
+            return true;
         }
-    });
+    }]);
 
 } () );
 

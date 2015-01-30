@@ -43,7 +43,7 @@ class InstallController extends ContainerAware
         if($simpleForm->evaluateForm($installEntity, $this->container->get('validator')) !== true) {
             $responseParameters = new ResponseParameters();
             $responseParameters->addParameter('form_errors', $simpleForm->getErrors());
-            $ajaxResponse = new GenericAjaxResponseWrapper(200, 'OK', $responseParameters);
+            $ajaxResponse = new GenericAjaxResponseWrapper(400, 'OK', $responseParameters);
 
             return $ajaxResponse->getResponse();
         }
@@ -63,11 +63,9 @@ class InstallController extends ContainerAware
             $em->flush();
         } catch(ModelException $e) {
             $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('model-exception', array(
-                'unexpected' => true,
-                'unintentional' => true,
-                'not_catchable' => true,
-                'message' => 'Something unexpected happend. Please, try again are contact whitepostmail@gmail.com'
+            $responseParameters->addParameter(0, array(
+                'message' => 'Something unexpected happend. Please, try again are contact whitepostmail@gmail.com or check the browser console for more information',
+                'exception' => $e->getMessage()
             ));
 
             $ajaxResponse = new GenericAjaxResponseWrapper(400, 'BAD', $responseParameters);

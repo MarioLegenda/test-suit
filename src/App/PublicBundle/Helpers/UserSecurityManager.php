@@ -31,7 +31,6 @@ class UserSecurityManager
     }
 
     public static function encodePassword(UserInterface $user) {
-        throw new ModelException('Fucked up shit');
         $password = $user->getPassword();
         if(empty($password) OR $password === null OR ! is_string($password)) {
             throw new ModelException("UserSecurityManager: password on the user object is null or not set to a string value");

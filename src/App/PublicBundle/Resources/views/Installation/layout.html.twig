@@ -18,16 +18,10 @@
         <script src="{{ asset("js/install.js") }}"></script>
     {% endblock %}
 
-    <script type="text/ng-template" id="inputErrorTemplate.html">
-        <div class="FormError  InstallError">
-            <p>{{ errorModel.errorMessage }}</p>
-        </div>
-    </script>
-
 </head>
 
 <body class="{{ cssClasses.getClass('InstallBody') }}">
-<div class="Global  {{ cssClasses.getClass('GlobalInstall') }}" ng-app="InstallSuiteApp" >
+<div class="Global  {{ cssClasses.getClass('GlobalInstall') }}" ng-app="InstallSuiteApp" ng-strict-id>
     <header class="Global__Header  {{ cssClasses.getClass('InstallHeader') }}">
         <h1 class="Install__Title">Test Suite</h1>
     </header>

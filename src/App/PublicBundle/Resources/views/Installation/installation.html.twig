@@ -25,22 +25,32 @@
     <div class="InstallForm" ng-controller="InstallFormController">
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
+        <div class="GlobalErrors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
+            <label class="GlobalError">{[{ error.message }]}</label>
+        </div>
         <div class="FormRow">
             {{ form_label(form.name, null, {'label_attr' : { class : 'FormRow--label  InstallLabel'}}) }}
             {{ form_widget(form.name, {'full_name': 'name', 'attr' : {
                 class : 'FormRow--field  InstallField',
-                'ng-model': 'install.name'
+                'ng-model': 'install.name',
+                'name-regex-validate': '[a-zA-Z0-9]+',
+                'name-message': 'Name has to be provided'
             }}) }}
+
             <div class="FormError  InstallError" ng-show="name_invalid">
                 <p>Name has to be provided</p>
             </div>
+
         </div>
 
         <div class="FormRow">
             {{ form_label(form.lastname, null, {'label_attr' : { class : 'FormRow--label  InstallLabel'}} ) }}
             {{ form_widget(form.lastname, {'full_name': 'lastname', 'attr' : {
                 class : 'FormRow--field  InstallField',
-                'ng-model': 'install.lastname'
+                'ng-model': 'install.lastname',
+                'form-error': 'form-error',
+                'lastname-regex-validate': '[a-zA-Z0-9]+',
+                'lastname-message': 'Lastname has to be provided'
             }}) }}
 
             <div class="FormError  InstallError" ng-show="lastname_invalid">
@@ -60,7 +70,7 @@
                 <p>Username (email) has to be provided</p>
             </div>
 
-            <div class="FormError  InstallError" ng-show="email_invalid">
+            <div class="FormError  InstallError" ng-show="email_invalid && !username_invalid">
                 <p>Incorrect email</p>
             </div>
         </div>
@@ -103,7 +113,7 @@
             </div>
         </div>
 
-        <div class="FormRow">
+        <div class="FormRow" install-action>
             {{ form_widget(form.sign_up, {'attr' : {
                 class : 'FormRow--SubmitButton  InstallSubmit',
                 'ng-click': 'submit($event)'

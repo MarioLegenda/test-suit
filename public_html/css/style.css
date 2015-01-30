@@ -140,6 +140,7 @@ img {
   margin-top: 50px; }
 
 .InstallInformation {
+  display: none;
   width: 600px;
   position: absolute;
   top: 40%;
@@ -213,11 +214,23 @@ img {
   width: 600px;
   position: absolute;
   top: 50%;
-  left: 130%;
+  left: 50%;
   transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   -moz-transform: translate(-50%, -50%);
   -o-transform: translate(-50%, -50%); }
+  .InstallForm .GlobalErrors {
+    width: 90%;
+    float: left; }
+    .InstallForm .GlobalErrors .GlobalError {
+      display: block;
+      width: 100%;
+      color: white;
+      font-size: 1.2em;
+      line-height: 1.2em;
+      margin: 0 0 10px 0;
+      padding: 5px 5px 5px 5px;
+      border: 1px solid #ff3c2b; }
   .InstallForm .InstallLabel {
     color: white;
     padding: 5px;
