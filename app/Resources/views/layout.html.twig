@@ -4,18 +4,54 @@
         <meta charset="UTF-8" />
         <title>{% block title %}{% endblock %}</title>
 
-        <link href='http://fonts.googleapis.com/css?family=Alegreya+Sans+SC:400,500&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css'>
 
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset("css/style.css") }}">
         {% endblock %}
 
+
+
     </head>
     <body>
         <div class="Global">
             <header class="Global__Header">
-                {% block header_navigation %}{% endblock %}
+                <nav class="Container  MainNavigation">
+                    <ul class="MainNavigation__List">
+                        <li><a href="{{ path('app_authorized_home') }}" class="List--navigationLink"></a></li>
+                    </ul>
+
+                    <div class="UserInfo">
+                        <span class="UserInfo--userIcon"></span>
+                        <button class="UserInfo--mail">whitepostmail@gmail.com</button>
+
+                        <div class="TestListPopup">
+                            <section class="PopupSection  Popup--suites">
+                                <h1 class="Popup--mainTitle">Test suites</h1>
+
+                                {% for i in 0..10 %}
+                                <div class="Popup--suiteHolder">
+                                    <h2 class="Popup--suiteTitle">Suite title no more than 30 ch</h2>
+
+                                    <p class="Popup--suiteDescription">
+                                        It can be no more that 256 characters
+                                        dfgadklfgjdlčkfjhčkldjfgkčlasdfjkghasog
+                                    </p>
+                                </div>
+                                {% endfor %}
+                            </section>
+
+                            <section class="PopupSection  Popup--test">
+                                <h1 class="Popup--mainTitle">Standalone tests</h1>
+
+                                {% for i in 0..10 %}
+                                    <a href="">Test suite with 50 charactersldkeisiqpeorieoslclsk</a>
+                                {% endfor %}
+                            </section>
+                        </div>
+                    </div>
+                </nav>
             </header>
 
             {% block content %}{% endblock %}

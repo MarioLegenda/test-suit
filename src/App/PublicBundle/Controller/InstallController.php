@@ -9,12 +9,13 @@
 namespace App\PublicBundle\Controller;
 
 
-use App\PublicBundle\Entity\Administrator;
+use App\ToolsBundle\Entity\Administrator;
 use App\PublicBundle\Forms\AdministratorType;
 use App\PublicBundle\Helpers\InstallHelper;
 use App\PublicBundle\Helpers\ResponseParameters;
 use App\PublicBundle\Helpers\SimpleFormHelper;
 use App\PublicBundle\Models\InstallModel;
+
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -39,7 +40,7 @@ class InstallController extends ContainerAware
         if($installHelper->isAppInstalled() AND $installHelper->doesAppHasAdmin()) {
             $router = $this->container->get('router');
 
-            return new RedirectResponse($router->generate('login'), 302);
+            return new RedirectResponse($router->generate('suit-up'), 302);
         }
 
         $simpleForm = new SimpleFormHelper();

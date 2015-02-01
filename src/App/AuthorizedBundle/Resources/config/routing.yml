@@ -1,0 +1,3 @@
+app_authorized_home:
+    path:     /
+    defaults: { _controller: AppAuthorizedBundle:Home:home }

@@ -26,7 +26,7 @@ class AdministratorType extends AbstractType
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'App\PublicBundle\Entity\Administrator',
+            'data_class' => 'App\ToolsBundle\Entity\Administrator',
         ));
     }
 

@@ -8,16 +8,16 @@
 
 namespace App\PublicBundle\Controller\Ajax;
 
+use Symfony\Component\DependencyInjection\ContainerAware;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
-
-use App\PublicBundle\Entity\InstallEntity;
+use App\ToolsBundle\Entity\InstallEntity;
 use App\PublicBundle\Helpers\GenericAjaxResponseWrapper;
 use App\PublicBundle\Helpers\InstallHelper;
 use App\PublicBundle\Helpers\ResponseParameters;
 use App\PublicBundle\Helpers\SimpleFormHelper;
 use App\PublicBundle\Helpers\UserSecurityManager;
 use App\PublicBundle\Models\InstallModel;
-use Symfony\Component\DependencyInjection\ContainerAware;
 use App\PublicBundle\Helpers\Exceptions\ModelException;
 
 class InstallController extends ContainerAware
@@ -30,11 +30,11 @@ class InstallController extends ContainerAware
         $em = $doctrine->getManager();
         $installHelpers = new InstallHelper($em);
 
-        /*if( $installHelpers->isAppInstalled() AND $installHelpers->doesAppHasAdmin() ) {
+        if( $installHelpers->isAppInstalled() AND $installHelpers->doesAppHasAdmin() ) {
             $router = $this->container->get('router');
 
-            return new RedirectResponse($router->generate('app_public'), 302);
-        }*/
+            return new RedirectResponse($router->generate('app_authorized_home'), 302);
+        }
 
         $installModel = new InstallModel($em);
         $simpleForm = new SimpleFormHelper();

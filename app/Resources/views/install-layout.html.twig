@@ -11,18 +11,11 @@
         <link rel="stylesheet" href="{{ asset("css/style.css") }}">
     {% endblock %}
 
-
-    {% block javascript %}
-        <script src="{{ asset("bower_components/jquery/dist/jquery.min.js") }}"></script>
-        <script src="{{ asset("bower_components/angular/angular.min.js") }}"></script>
-        <script src="{{ asset("js/install.js") }}"></script>
-    {% endblock %}
-
 </head>
 
-<body class="{{ cssClasses.getClass('InstallBody') }}">
-<div class="Global  {{ cssClasses.getClass('GlobalInstall') }}" ng-app="InstallSuiteApp" ng-strict-id>
-    <header class="Global__Header  {{ cssClasses.getClass('InstallHeader') }}">
+<body class="InstallBody">
+<div class="Global  GlobalInstall" ng-app="InstallSuiteApp" ng-strict-id>
+    <header class="Global__Header  InstallHeader">
         <h1 class="Install__Title">Test Suite</h1>
     </header>
 
@@ -30,5 +23,10 @@
         {% block content %}{% endblock %}
     </div>
 </div>
+{% block javascript %}
+    <script src="{{ asset("bower_components/jquery/dist/jquery.min.js") }}"></script>
+    <script src="{{ asset("bower_components/angular/angular.min.js") }}"></script>
+    <script src="{{ asset("js/install.js") }}"></script>
+{% endblock %}
 </body>
 </html>

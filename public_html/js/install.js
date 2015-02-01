@@ -30,6 +30,76 @@
                 return jQuery;
             });
 
+            $provide.factory('formHandler', function() {
+                var initForm = {};
+
+                initForm.init = function($scope, formName) {
+                    return {
+                        equalChecks: 0,
+
+                        notExists: function(prop) {
+                            return $scope[formName][prop].$error.required && $scope[formName][prop].$dirty;
+                        },
+
+                        notMinLength: function(prop) {
+                            return $scope[formName][prop].$error.minlength;
+                        },
+
+                        notEmail: function(prop) {
+                            return $scope[formName][prop].$error.email;
+                        },
+
+                        notEquals: function(prop1, prop2) {
+                            if($scope[formName][prop1].$viewValue !== $scope[formName][prop2].$viewValue) {
+                                this.equalChecks++;
+                                return true;
+                            }
+
+                            this.equalChecks = 0;
+                            return false;
+                        },
+
+                        isValidForm: function() {
+                            if($scope[formName].$valid && this.equalChecks == 0) {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    };
+                };
+
+                return initForm;
+            });
+
+            $compileProvider.directive('processUiInstalling', function() {
+                return {
+                    restrict: 'EA',
+                    replace: true,
+                    template: "<p class='Process  Process--installing' ng-model='process.installing' ng-show='!process.installed && process.installing'>Please wait...</p>",
+                    link: function(scope, elem, attrs) {
+                    }
+                }
+            });
+
+            $compileProvider.directive('processUiInstalled', function($timeout, $window) {
+                return {
+                    restrict: 'EA',
+                    replace: true,
+                    template: "<p class='Process  Process--installed' ng-show='process.installed'>" +
+                    "Registration complete. You will be redirected to login page</p>",
+                    link: function(scope, elem, attrs) {
+                        scope.$watch(function() { return scope.process.installed }, function(oldValue, newValue, scope) {
+                            if(scope.process.installed === true) {
+                                $timeout(function() {
+                                    $window.location.replace('/app_dev.php/suit-up');
+                                }, 2000);
+                            }
+                        });
+                    }
+                }
+            });
+
     }]);
 
     suitApp.controller('InformationController', ['$scope', '$', function($scope, $) {
@@ -44,29 +114,43 @@
         }
     }]);
 
-    suitApp.controller('InstallFormController', ['$scope', 'installFactory', function($scope, installFactory) {
+    suitApp.controller('InstallFormController', ['$scope', 'installFactory', 'formHandler', function($scope, installFactory, formHandler) {
         $scope.globalErrors = {
             errors: [],
             show: false
         };
 
-        $scope.install = {
+        $scope.process = {
+            installing: false,
+            installed: false
+        };
+
+        $scope.form = formHandler.init($scope, 'insForm');
+
+        $scope.administrator = {
             name: '',
             lastname: '',
             username: '',
             userPassword: '',
             userPassRepeat: '',
+        };
 
+        $scope.install = {
             installApp: function() {
+                $scope.process.installing = true;
+
                 var promise = installFactory.setConfig({
                     method: 'POST',
                     url: '/installment',
-                    data: $scope.install
+                    data: $scope.administrator
                 }).install();
+
                 promise.then(function(data, status, headers, config) {
-
-
+                    $scope.process.installed = true;
+                    $scope.process.installing = false;
                 }, function(data, status, headers, config) {
+                    $scope.process.installing = false;
+                    $scope.process.installed = false;
                     var parsedData = JSON.parse(data.data);
 
                     $scope.globalErrors.errors = parsedData;
@@ -78,32 +162,12 @@
             }
         };
 
-        $scope.submit = function($event) {
+        $scope.install.submit = function($event) {
             $event.preventDefault();
 
-            $scope.name_invalid = $scope.insForm['name'].$invalid;
-            $scope.lastname_invalid = $scope.insForm['lastname'].$invalid;
-            $scope.username_invalid = $scope.insForm['username'].$error.required;
-            $scope.email_invalid = $scope.insForm['username'].$error.email;
-            $scope.no_password = $scope.insForm['password'].$error.required;
-            $scope.illegal_password = $scope.insForm['password'].$error.minlength;
-            $scope.no_pass_repeat = $scope.insForm['pass_repeat'].$error.required;
-            $scope.illegal_pass_repeat = $scope.insForm['pass_repeat'].$error.minlength;
-            $scope.pass_unequal = $scope.insForm['pass_repeat'].$viewValue !== $scope.insForm['password'].$viewValue;
-
-            if($scope.name_invalid ||
-                $scope.lastname_invalid ||
-                $scope.username_invalid ||
-                $scope.email_invalid ||
-                $scope.no_password ||
-                $scope.illegal_password ||
-                $scope.no_pass_repeat ||
-                $scope.illegal_pass_repeat ||
-                $scope.pass_unequal) {
-                return false;
+            if($scope.form.isValidForm()) {
+                $scope.install.installApp();
             }
-
-            return true;
         }
     }]);
 

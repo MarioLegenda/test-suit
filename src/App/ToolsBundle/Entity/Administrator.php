@@ -1,13 +1,14 @@
 <?php
 
-namespace App\PublicBundle\Entity;
+namespace App\ToolsBundle\Entity;
 
-use App\PublicBundle\Helpers\Contracts\ModelObjectWrapperInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+
+use App\PublicBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 
 /**
  * @ORM\Entity
@@ -51,7 +52,7 @@ class Administrator extends GenericEntity implements UserInterface, \Serializabl
     private $logged;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\PublicBundle\Entity\Role", mappedBy="administrator", cascade="persist")
+     * @ORM\OneToMany(targetEntity="App\ToolsBundle\Entity\Role", mappedBy="administrator", cascade="persist")
      **/
     private $roles;
 
@@ -115,7 +116,7 @@ class Administrator extends GenericEntity implements UserInterface, \Serializabl
     }
 
     public function getRoles() {
-        return $this->roles;
+        return $this->roles->toArray();
     }
 
     public function getSalt() {
@@ -131,7 +132,7 @@ class Administrator extends GenericEntity implements UserInterface, \Serializabl
         return serialize(array(
             $this->admin_id,
             $this->username,
-            $this->plainPassword,
+            $this->password,
             $this->name,
             $this->lastname,
             $this->logged
@@ -141,9 +142,9 @@ class Administrator extends GenericEntity implements UserInterface, \Serializabl
     public function unserialize($serialized)
     {
         list (
-            $this->id,
+            $this->admin_id,
             $this->username,
-            $this->plainPassword,
+            $this->password,
             $this->name,
             $this->lastname,
             $this->logged

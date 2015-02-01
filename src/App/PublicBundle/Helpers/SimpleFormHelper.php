@@ -8,8 +8,7 @@
 
 namespace App\PublicBundle\Helpers;
 
-use App\PublicBundle\Entity\Administrator;
-use App\PublicBundle\Entity\GenericEntity;
+use App\ToolsBundle\Entity\GenericEntity;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\HttpFoundation\Request;

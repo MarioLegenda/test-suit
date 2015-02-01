@@ -1,3 +1,11 @@
+app_tools:
+    resource: "@AppToolsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+app_authorized:
+    resource: "@AppAuthorizedBundle/Resources/config/routing.yml"
+    prefix:   /
+
 app_public:
     resource: "@AppPublicBundle/Resources/config/routing.yml"
     prefix:   /

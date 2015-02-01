@@ -31,9 +31,8 @@ class InstallHelper
     public function doesAppHasAdmin() {
         $conn = $this->em->getConnection();
 
-        $admin = $conn->fetchAll("SELECT admin_id FROM administrators WHERE admin_id = 1");
+        $admins = $conn->fetchAll("SELECT MAX(admin_id) AS admins FROM administrators");
 
-
-        return !empty($admin);
+        return $admins[0]['admins'] !== null;
     }
 } 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PublicBundle\Entity;
+namespace App\ToolsBundle\Entity;
 
 use App\PublicBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,7 +31,7 @@ class Role implements RoleInterface, ModelObjectWrapperInterface
     private $role;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\PublicBundle\Entity\Administrator", inversedBy="roles")
+     * @ORM\ManyToOne(targetEntity="App\ToolsBundle\Entity\Administrator", inversedBy="roles")
      * @ORM\JoinColumn(name="admin_id", referencedColumnName="admin_id")
      **/
     private $administrator;

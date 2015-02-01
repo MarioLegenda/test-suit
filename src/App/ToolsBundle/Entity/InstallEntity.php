@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PublicBundle\Entity;
+namespace App\ToolsBundle\Entity;
 
 use Symfony\Component\Validator\Constraints\IdenticalTo;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;

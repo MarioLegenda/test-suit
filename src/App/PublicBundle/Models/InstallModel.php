@@ -2,13 +2,12 @@
 
 namespace App\PublicBundle\Models;
 
-use App\PublicBundle\Entity\InstallEntity;
+use App\ToolsBundle\Entity\InstallEntity;
 use App\PublicBundle\Helpers\Contracts\InstallInterface;
 use App\PublicBundle\Helpers\CssClasses;
-use App\PublicBundle\Entity\Administrator;
-use App\PublicBundle\Entity\Role;
+use App\ToolsBundle\Entity\Administrator;
+use App\ToolsBundle\Entity\Role;
 use App\PublicBundle\Helpers\ModelObjectWrapper;
-use App\PublicBundle\Helpers\UserSecurityManager;
 
 use Doctrine\ORM\EntityManager;
 

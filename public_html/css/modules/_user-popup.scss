@@ -1,0 +1,11 @@
+.TestListPopup {
+  @include opacity(0);
+  position:absolute;
+  top:100%; right:-950px;
+  z-index:-1;
+
+  width:600px;
+  height:600px;
+
+  @include transition(right 0.5s ease, opacity 0.5s ease);
+}

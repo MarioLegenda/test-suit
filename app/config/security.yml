@@ -1,8 +1,8 @@
 security:
     encoders:
-        App\PublicBundle\Entity\Administrator:
+        App\ToolsBundle\Entity\Administrator:
             algorithm: bcrypt
-        App\PublicBundle\Entity\Users:
+        App\ToolsBundle\Entity\Users:
             algorithm: bcrypt
 
     role_hierarchy:
@@ -11,7 +11,7 @@ security:
 
     providers:
         administrators:
-            entity: { class: AppPublicBundle:Administrator, property: username }
+            entity: { class: AppToolsBundle:Administrator, property: username }
 
     firewalls:
         dev:
@@ -23,12 +23,12 @@ security:
             anonymous: ~
             form_login:
                 always_use_default_target_path: true
-                default_target_path: app_public
+                default_target_path: app_authorized_home
                 login_path: login
                 check_path: login_check
             logout:
                 path:   /logout
-                target: /login
+                target: /suit-up
 
     access_control:
         - { path: ^/suit-up$ , roles: IS_AUTHENTICATED_ANONYMOUSLY }

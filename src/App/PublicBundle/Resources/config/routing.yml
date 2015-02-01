@@ -1,7 +1,3 @@
-app_public:
-    path:     /
-    defaults: { _controller: AppPublicBundle:Welcome:welcome }
-
 app_install:
     path: /install
     defaults: { _controller: AppPublicBundle:Install:install }

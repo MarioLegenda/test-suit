@@ -72,10 +72,15 @@ img {
   max-width: 100%;
   width: 100%; }
 
+body {
+  overflow: hidden;
+  background-color: #424242; }
+
 .Global {
   max-width: 1920px;
   min-width: 1280px;
   width: 100%;
+  margin: 0 auto;
   font-family: 'Open Sans Condensed', sans-serif;
   font-size: 16px; }
 
@@ -88,37 +93,168 @@ img {
   float: left;
   background-color: #303133; }
 
-.MainNavigation__List {
-  width: 100%;
-  float: left; }
+.MainNavigation {
+  z-index: 100; }
+  .MainNavigation .MainNavigation__List {
+    width: 600px;
+    float: left;
+    padding: 5px; }
+    .MainNavigation .MainNavigation__List .List--navigationLink {
+      display: block;
+      float: left;
+      width: 30px;
+      height: 30px;
+      background: url(../images/icons/home-icon.png) no-repeat;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -ms-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover; }
+  .MainNavigation .UserInfo {
+    width: 250px;
+    float: right;
+    position: relative;
+    z-index: 100;
+    padding: 5px; }
+    .MainNavigation .UserInfo .UserInfo--mail {
+      display: block;
+      width: 190px;
+      float: right;
+      color: white;
+      font-size: 1.2em;
+      background-color: transparent;
+      font-family: "Open Sans Condensed", sans-serif;
+      border: none;
+      text-align: right; }
+    .MainNavigation .UserInfo .UserInfo--userIcon {
+      display: block;
+      float: right;
+      width: 30px;
+      height: 30px;
+      background-image: url(../../images/icons/user-icon.png);
+      background-repeat: no-repeat;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -ms-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover; }
+    .MainNavigation .UserInfo:hover {
+      background-color: #EC7063; }
+    .MainNavigation .UserInfo:hover .TestListPopup {
+      opacity: 1;
+      right: -332px; }
 
-.MainNavigation__List--item {
-  position: relative;
-  display: inline;
-  float: left; }
-  .MainNavigation__List--item .MainNavigation__List--link {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    color: white;
-    background-color: #303133;
-    font-size: 1.1em; }
-    .MainNavigation__List--item .MainNavigation__List--link:hover {
-      background-color: #ec7063; }
-
-.MainNavigation__List--item:hover .InnerList {
-  opacity: 1;
-  top: 100%; }
-
-.InnerList {
+.TestListPopup {
   opacity: 0;
-  z-index: -1;
-  width: 200px;
+  filter: alpha(opacity=0);
   position: absolute;
-  top: -100%;
+  top: 100%;
+  right: -950px;
+  z-index: -1;
+  width: 600px;
+  height: 600px;
+  -webkit-transition: right 0.5s ease, opacity 0.5s ease;
+  -moz-transition: right 0.5s ease, opacity 0.5s ease;
+  -ms-transition: right 0.5s ease, opacity 0.5s ease;
+  -o-transition: right 0.5s ease, opacity 0.5s ease;
+  transition: right 0.5s ease, opacity 0.5s ease; }
+
+.Home {
+  width: 100%;
+  float: left;
+  margin: 50px 0 0 0;
+  padding: 20px 0 25px 0; }
+  .Home .Home__New {
+    position: relative;
+    display: block;
+    width: 350px;
+    height: 350px;
+    float: left;
+    margin-left: 35px;
+    -webkit-transition: background-color 0.5s ease, border 0.5s ease;
+    -moz-transition: background-color 0.5s ease, border 0.5s ease;
+    -ms-transition: background-color 0.5s ease, border 0.5s ease;
+    -o-transition: background-color 0.5s ease, border 0.5s ease;
+    transition: background-color 0.5s ease, border 0.5s ease;
+    border: 1px solid #6b6b6b; }
+    .Home .Home__New .NewTestLink--content {
+      width: 100%;
+      position: absolute;
+      top: 180px;
+      left: 0;
+      text-align: center;
+      opacity: 0;
+      color: white;
+      font-size: 1.6em;
+      -webkit-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      -moz-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      -ms-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      -o-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out; }
+    .Home .Home__New:hover .NewTestLink--content {
+      top: 240px;
+      opacity: 1; }
+    .Home .Home__New:hover {
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
+  .Home .Home__NewTestLink {
+    background: url(../../images/icons/code.png) no-repeat;
+    background-position: 50% 10%;
+    -webkit-background-size: 50% 50%;
+    -moz-background-size: 50% 50%;
+    -ms-background-size: 50% 50%;
+    -o-background-size: 50% 50%;
+    background-size: 50% 50%; }
+  .Home .Home__NewTestSuiteLink {
+    background: url(../../images/icons/test-suite.png) no-repeat;
+    background-position: 50% 10%;
+    -webkit-background-size: 50% 50%;
+    -moz-background-size: 50% 50%;
+    -ms-background-size: 50% 50%;
+    -o-background-size: 50% 50%;
+    background-size: 50% 50%; }
+
+.hvr-sweep-to-bottom {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  -webkit-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+
+.hvr-sweep-to-bottom:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
   left: 0;
-  transition: opacity 0.5, top 0.5s;
-  -webkit-transition: opacity 0.5s, width 0.5s, top 0.5s; }
+  right: 0;
+  bottom: 0;
+  background: #EC7063;
+  -webkit-transform: scaleY(0);
+  transform: scaleY(0);
+  -webkit-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out; }
+
+.hvr-sweep-to-bottom:hover, .hvr-sweep-to-bottom:focus, .hvr-sweep-to-bottom:active {
+  color: white; }
+
+.hvr-sweep-to-bottom:hover:before, .hvr-sweep-to-bottom:focus:before, .hvr-sweep-to-bottom:active:before {
+  -webkit-transform: scaleY(1);
+  transform: scaleY(1); }
 
 .InstallBody {
   background: url(../../images/install-background.jpg) no-repeat;
@@ -167,16 +303,17 @@ img {
     font-size: 1.5em;
     margin: 15px 0 0 0;
     padding: 10px;
-    transition: background-color 0.4s, border 0.4s;
     -webkit-transition: background-color 0.4s, border 0.4s;
     -moz-transition: background-color 0.4s, border 0.4s;
-    -o-transition: background-color 0.4s, border 0.4s; }
+    -ms-transition: background-color 0.4s, border 0.4s;
+    -o-transition: background-color 0.4s, border 0.4s;
+    transition: background-color 0.4s, border 0.4s; }
     .InstallInformation .InstallInformation--continueButton:active {
-      background-color: #ec7063;
-      border: 1px solid #ec7063; }
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
     .InstallInformation .InstallInformation--continueButton:hover {
-      background-color: #ec7063;
-      border: 1px solid #ec7063; }
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
 
 .Install__Title {
   font-family: 'Dancing Script', cursive;
@@ -199,16 +336,17 @@ img {
   margin: 0 auto;
   border: 1px solid white;
   font-size: 1.2em;
-  transition: background-color 0.4s, border 0.4s;
   -webkit-transition: background-color 0.4s, border 0.4s;
   -moz-transition: background-color 0.4s, border 0.4s;
-  -o-transition: background-color 0.4s, border 0.4s; }
+  -ms-transition: background-color 0.4s, border 0.4s;
+  -o-transition: background-color 0.4s, border 0.4s;
+  transition: background-color 0.4s, border 0.4s; }
   .InstallLink:active {
-    background-color: #ec7063;
-    border: 1px solid #ec7063; }
+    background-color: #EC7063;
+    border: 1px solid #EC7063; }
   .InstallLink:hover {
-    background-color: #ec7063;
-    border: 1px solid #ec7063; }
+    background-color: #EC7063;
+    border: 1px solid #EC7063; }
 
 .InstallForm {
   width: 600px;
@@ -231,12 +369,12 @@ img {
       margin: 0 0 10px 0;
       padding: 5px 5px 5px 5px;
       border: 1px solid #ff3c2b; }
-  .InstallForm .InstallLabel {
+  .InstallForm .InstallLabel, .InstallForm .LoginLabel {
     color: white;
     padding: 5px;
     letter-spacing: 0.03em;
     font-size: 1.2em; }
-  .InstallForm .InstallField {
+  .InstallForm .InstallField, .InstallForm .LoginField {
     font-size: 1.2em;
     padding: 5px;
     background-color: rgba(0, 0, 0, 0.2);
@@ -246,7 +384,7 @@ img {
     color: white;
     border: 1px solid white;
     border-radius: 3px; }
-    .InstallForm .InstallField:focus {
+    .InstallForm .InstallField:focus, .InstallForm .LoginField:focus {
       background-color: rgba(255, 255, 255, 0.3); }
   .InstallForm .InstallSubmit {
     float: right;
@@ -258,20 +396,36 @@ img {
     margin: 15px 60px 0 0;
     padding: 10px;
     border: 1px solid white;
-    transition: background-color 0.4s, border 0.4s;
     -webkit-transition: background-color 0.4s, border 0.4s;
     -moz-transition: background-color 0.4s, border 0.4s;
-    -o-transition: background-color 0.4s, border 0.4s; }
+    -ms-transition: background-color 0.4s, border 0.4s;
+    -o-transition: background-color 0.4s, border 0.4s;
+    transition: background-color 0.4s, border 0.4s; }
     .InstallForm .InstallSubmit:active {
-      background-color: #ec7063;
-      border: 1px solid #ec7063; }
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
     .InstallForm .InstallSubmit:hover {
-      background-color: #ec7063;
-      border: 1px solid #ec7063; }
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
+  .InstallForm .Process {
+    text-align: right;
+    color: white;
+    font-size: 1.2em;
+    padding: 10px;
+    margin: 15px 60px 0 0; }
+  .InstallForm .Process--installing {
+    width: 120px;
+    float: right; }
+  .InstallForm .Process--installed {
+    width: 100%;
+    float: right;
+    text-align: right; }
   .InstallForm .InstallError {
     width: 300px;
     color: white;
     left: 550px;
-    top: 6px;
+    top: 4px;
     font-size: 1.2em;
     border: 1px solid #ff3c2b; }
+
+/*# sourceMappingURL=style.css.map */

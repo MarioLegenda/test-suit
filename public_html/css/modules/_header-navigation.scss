@@ -1,43 +1,63 @@
-.MainNavigation__List {
-  width:100%;
-  float:left;
-}
+.MainNavigation {
+  z-index:100;
 
-.MainNavigation__List--item {
-  position:relative;
-  display:inline;
-  float:left;
+  .MainNavigation__List {
+    width:600px;
+    float:left;
 
-  .MainNavigation__List--link {
-    display:block;
-    width:100%;
+    padding:5px;
 
-    padding:10px;
-    color:white;
-    background-color: $mainColor;
+    .List--navigationLink {
+      display:block;
+      float:left;
 
-    font-size:1.1em;
+      width:$iconWidth;
+      height:$iconHeight;
+
+      background: url(../images/icons/home-icon.png) no-repeat;
+      @include prefix(background-size, cover);
+    }
+  }
+
+  .UserInfo {
+    width:250px;
+    float:right;
+    position:relative;
+    z-index:100;
+
+    padding:5px;
+
+    .UserInfo--mail {
+      display:block;
+      width:190px;
+      float:right;
+
+      color:white;
+      font-size:1.2em;
+      background-color: transparent;
+      font-family: "Open Sans Condensed", sans-serif;
+      border:none;
+      text-align: right;
+    }
+
+    .UserInfo--userIcon {
+      display:block;
+      float:right;
+      width:$iconWidth;
+      height:$iconHeight;
+
+      @include background-image(url(../../images/icons/user-icon.png), no-repeat);
+      @include prefix(background-size, cover);
+    }
 
     &:hover {
       background-color: $mainHoverColor;
     }
+
+    &:hover .TestListPopup {
+      opacity:1;
+      right:-332px;
+    }
   }
-}
-
-.MainNavigation__List--item:hover .InnerList {
-  opacity:1;
-  top:100%;
-}
-
-.InnerList {
-  opacity:0;
-  z-index:-1;
-
-  width:200px;
-  position:absolute;
-  top:-100%; left:0;
-
-  transition: opacity 0.5, top 0.5s;
-  -webkit-transition: opacity 0.5s, width 0.5s, top 0.5s;
 }
 
