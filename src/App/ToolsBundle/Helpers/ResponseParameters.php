@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mario
- * Date: 24.1.2015.
- * Time: 15:30
- */
 
-namespace App\PublicBundle\Helpers;
+namespace App\ToolsBundle\Helpers;
 
 
 class ResponseParameters implements \JsonSerializable

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\PublicBundle\Helpers;
+namespace App\ToolsBundle\Helpers;
 
 use Symfony\Component\HttpFoundation\Response;
 

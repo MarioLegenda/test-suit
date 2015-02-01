@@ -1,9 +1,9 @@
 <?php
 
-namespace App\PublicBundle\Helpers;
+namespace App\ToolsBundle\Helpers;
 
 
-use App\PublicBundle\Helpers\Contracts\ClientDependencyInterface;
+use App\ToolsBundle\Helpers\Contracts\ClientDependencyInterface;
 
 class DependencyManager
 {

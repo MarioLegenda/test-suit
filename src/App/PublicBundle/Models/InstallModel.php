@@ -3,11 +3,11 @@
 namespace App\PublicBundle\Models;
 
 use App\ToolsBundle\Entity\InstallEntity;
-use App\PublicBundle\Helpers\Contracts\InstallInterface;
-use App\PublicBundle\Helpers\CssClasses;
+use App\ToolsBundle\Helpers\Contracts\InstallInterface;
+use App\ToolsBundle\Helpers\CssClasses;
 use App\ToolsBundle\Entity\Administrator;
 use App\ToolsBundle\Entity\Role;
-use App\PublicBundle\Helpers\ModelObjectWrapper;
+use App\ToolsBundle\Helpers\ModelObjectWrapper;
 
 use Doctrine\ORM\EntityManager;
 

@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mario
- * Date: 27.1.2015.
- * Time: 23:49
- */
 
-namespace App\PublicBundle\Helpers;
+namespace App\ToolsBundle\Helpers;
 
 
-use App\PublicBundle\Helpers\Contracts\ModelObjectWrapperInterface;
-use App\PublicBundle\Helpers\Exceptions\ModelException;
+use App\ToolsBundle\Helpers\Contracts\ModelObjectWrapperInterface;
+use App\ToolsBundle\Helpers\Exceptions\ModelException;
 
 class ModelObjectWrapper
 {

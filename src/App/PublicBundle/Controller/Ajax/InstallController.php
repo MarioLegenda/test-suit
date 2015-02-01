@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mario
- * Date: 25.1.2015.
- * Time: 16:38
- */
 
 namespace App\PublicBundle\Controller\Ajax;
 
@@ -12,13 +6,13 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use App\ToolsBundle\Entity\InstallEntity;
-use App\PublicBundle\Helpers\GenericAjaxResponseWrapper;
-use App\PublicBundle\Helpers\InstallHelper;
-use App\PublicBundle\Helpers\ResponseParameters;
-use App\PublicBundle\Helpers\SimpleFormHelper;
-use App\PublicBundle\Helpers\UserSecurityManager;
+use App\ToolsBundle\Helpers\GenericAjaxResponseWrapper;
+use App\ToolsBundle\Helpers\InstallHelper;
+use App\ToolsBundle\Helpers\ResponseParameters;
+use App\ToolsBundle\Helpers\SimpleFormHelper;
+use App\ToolsBundle\Helpers\UserSecurityManager;
 use App\PublicBundle\Models\InstallModel;
-use App\PublicBundle\Helpers\Exceptions\ModelException;
+use App\ToolsBundle\Helpers\Exceptions\ModelException;
 
 class InstallController extends ContainerAware
 {

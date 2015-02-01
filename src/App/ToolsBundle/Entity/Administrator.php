@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use App\PublicBundle\Helpers\Contracts\ModelObjectWrapperInterface;
+use App\ToolsBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 
 /**
  * @ORM\Entity

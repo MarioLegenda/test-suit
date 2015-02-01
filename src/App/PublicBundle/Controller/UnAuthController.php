@@ -3,7 +3,7 @@
 namespace App\PublicBundle\Controller;
 
 use App\PublicBundle\Models\InstallModel;
-use App\PublicBundle\Helpers\InstallHelper;
+use App\ToolsBundle\Helpers\InstallHelper;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;

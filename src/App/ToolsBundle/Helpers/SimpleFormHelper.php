@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mario
- * Date: 26.1.2015.
- * Time: 12:33
- */
 
-namespace App\PublicBundle\Helpers;
+namespace App\ToolsBundle\Helpers;
 
 use App\ToolsBundle\Entity\GenericEntity;
 

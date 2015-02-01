@@ -1,19 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mario
- * Date: 24.1.2015.
- * Time: 3:23
- */
 
 namespace App\PublicBundle\Controller;
 
 
 use App\ToolsBundle\Entity\Administrator;
 use App\PublicBundle\Forms\AdministratorType;
-use App\PublicBundle\Helpers\InstallHelper;
-use App\PublicBundle\Helpers\ResponseParameters;
-use App\PublicBundle\Helpers\SimpleFormHelper;
+use App\ToolsBundle\Helpers\InstallHelper;
+use App\ToolsBundle\Helpers\ResponseParameters;
+use App\ToolsBundle\Helpers\SimpleFormHelper;
 use App\PublicBundle\Models\InstallModel;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
