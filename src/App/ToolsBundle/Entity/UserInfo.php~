@@ -1,0 +1,65 @@
+<?php
+
+namespace App\ToolsBundle\Entity;
+
+use App\ToolsBundle\Helpers\Contracts\ModelObjectWrapperInterface;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="user_info")
+ */
+
+class UserInfo extends GenericEntity implements ModelObjectWrapperInterface
+{
+    /**
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+
+    private $user_info_id;
+
+    /**
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $user_id;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $fields = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $programming_languages = null;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $tools = null;
+
+    /**
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $year_of_experience = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $description;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\ToolsBundle\Entity\User", inversedBy="userInfo")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
+     **/
+    private $user;
+
+    public function __construct() {
+
+    }
+
+
+} 

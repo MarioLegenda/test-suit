@@ -19,7 +19,7 @@ class InstallHelper
         $errors = 0;
 
         $tables = $conn->fetchAll("SELECT TABLE_CATALOG as admin_catalog FROM INFORMATION_SCHEMA.TABLES
-                                   WHERE TABLE_SCHEMA = 'suite' AND TABLE_NAME = 'administrators'
+                                   WHERE TABLE_SCHEMA = 'suite' AND TABLE_NAME = 'users'
                                    UNION ALL
                                    SELECT TABLE_CATALOG as role_catalog FROM INFORMATION_SCHEMA.TABLES
                                    WHERE TABLE_SCHEMA = 'suite' AND TABLE_NAME = 'roles'");
@@ -31,7 +31,7 @@ class InstallHelper
     public function doesAppHasAdmin() {
         $conn = $this->em->getConnection();
 
-        $admins = $conn->fetchAll("SELECT MAX(admin_id) AS admins FROM administrators");
+        $admins = $conn->fetchAll("SELECT MAX(user_id) AS admins FROM users");
 
         return $admins[0]['admins'] !== null;
     }

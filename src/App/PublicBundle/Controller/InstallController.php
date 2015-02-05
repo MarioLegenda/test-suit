@@ -3,8 +3,8 @@
 namespace App\PublicBundle\Controller;
 
 
-use App\ToolsBundle\Entity\Administrator;
-use App\PublicBundle\Forms\AdministratorType;
+use App\ToolsBundle\Entity\User;
+use App\ToolsBundle\Forms\UserType;
 use App\ToolsBundle\Helpers\InstallHelper;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\SimpleFormHelper;
@@ -39,11 +39,11 @@ class InstallController extends ContainerAware
 
         $simpleForm = new SimpleFormHelper();
 
-        $administrator = new Administrator();
+        $administrator = new User();
         $form = $simpleForm->buildForm (
             $this->container->get('form.factory'),
             $administrator,
-            new AdministratorType(),
+            new UserType(),
             $request
         );
 

@@ -1,17 +1,16 @@
 security:
     encoders:
-        App\ToolsBundle\Entity\Administrator:
-            algorithm: bcrypt
-        App\ToolsBundle\Entity\Users:
+        App\ToolsBundle\Entity\User:
             algorithm: bcrypt
 
     role_hierarchy:
-        ROLE_USER:       ROLE_USER
+        ROLE_USER:   ROLE_USER
         ROLE_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOW_TO_SWITCH, ROLE_HANDLE_USERS]
 
     providers:
-        administrators:
-            entity: { class: AppToolsBundle:Administrator, property: username }
+        users:
+            entity: { class: AppToolsBundle:User, property: username }
 
     firewalls:
         dev:
@@ -35,4 +34,4 @@ security:
         - { path: ^/install$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/install/sign-up$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/installment$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, role: [ROLE_USER, ROLE_ADMIN] }
+        - { path: ^/, role: [ROLE_USER, ROLE_ADMIN, ROLE_SUPER_ADMIN] }

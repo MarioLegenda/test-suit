@@ -53,11 +53,6 @@
     &:hover {
       background-color: $mainHoverColor;
     }
-
-    &:hover .TestListPopup {
-      opacity:1;
-      right:-332px;
-    }
   }
 }
 

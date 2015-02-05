@@ -2,6 +2,7 @@
   width:100%;
   float:left;
   margin:50px 0 0 0;
+  color:white;
 
   padding:20px 0 25px 0;
 
@@ -55,6 +56,12 @@
 
   .Home__NewTestSuiteLink {
     background: url(../../images/icons/test-suite.png) no-repeat;
+    background-position: 50% 10%;
+    @include prefix(background-size, 50% 50%);
+  }
+
+  .Home__StandaloneTest {
+    background: url(../../images/icons/test.png) no-repeat;
     background-position: 50% 10%;
     @include prefix(background-size, 50% 50%);
   }

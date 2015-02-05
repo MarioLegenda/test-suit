@@ -28,3 +28,13 @@ $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);
+
+/**
+ * - Primjenit UserRepository na instalaciju
+ * - uredit css
+ * - uredit instalacijski css
+ * - napravit sustav logiranja pogrešaka i gracefull izlaženja iz istih
+ *
+ *
+ *
+ */

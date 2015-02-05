@@ -2,26 +2,28 @@
 
 {% block content %}
     <div class="Container">
-        <div class="InstallForm">
+        <div class="FormPosition  LoginForm">
             <form action="{{ path('login_check') }}" method="POST">
                 {% if error %}
-                    <div class="GlobalErrors">
-                        <label class="GlobalError">Netočno korisničko ime ili lozinka</label>
+                    <div class="FormRow">
+                        <div class="GlobalErrors">
+                            <label class="GlobalError">Netočno korisničko ime ili lozinka</label>
+                        </div>
                     </div>
                 {% endif %}
 
                 <div class="FormRow">
-                    <label for="username" class="FormRow--label  LoginLabel">Korisničko ime:</label>
-                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="FormRow--field  LoginField" />
+                    <label for="username" class="FormRow--label  BasicLabel  LoginLabel">Korisničko ime:</label>
+                    <input type="text" id="username" name="_username" value="{{ last_username }}" class="FormRow--field  BasicField  LoginField" />
                 </div>
 
                 <div class="FormRow">
-                    <label for="password" class="FormRow--label  LoginLabel">Lozinka:</label>
-                    <input type="password" id="password" name="_password" class="FormRow--field  LoginField"  />
+                    <label for="password" class="FormRow--label  BasicLabel  LoginLabel">Lozinka:</label>
+                    <input type="password" id="password" name="_password" class="FormRow--field  BasicField  LoginField"  />
                 </div>
 
-                <div id="FormRow">
-                    <button type="submit" class="FormRow--SubmitButton  InstallSubmit">Suit up</button>
+                <div class="FormRow">
+                    <input type="submit" class="FormRow--SubmitButton  BasicSubmitButton  InstallSubmit" value="Suit up">
                 </div>
             </form>
         </div>

@@ -5,9 +5,103 @@
 
   margin:0 0 15px 0;
 
-  .FormRow--label {
-    width:40%;
+  .GlobalErrors {
+    width:90%;
     float:left;
+
+    .GlobalError {
+      display:block;
+      width:100%;
+      color:white;
+      font-size:1.2em;
+      line-height: 1.2em;
+
+      margin:0 0 10px 0;
+      padding:5px 5px 5px 5px;
+      border:1px solid $errorColor;
+
+    }
+  }
+
+  .FormRow--label {
+    width:30%;
+    float:left;
+  }
+
+  .BasicLabel {
+    color:white;
+    padding:5px;
+    letter-spacing: 0.03em;
+
+    font-size:1.2em;
+  }
+
+  .BasicField {
+    font-size:1.2em;
+
+    padding:5px;
+
+    background-color: rgba(0, 0, 0, 0.2);
+    font-family: 'Open Sans Condensed', sans-serif;
+    letter-spacing: 0.05em;
+    word-spacing: 0.1em;
+    color:white;
+
+    border:1px solid white;
+    border-radius:3px;
+
+    &:focus {
+      background-color: $blueLight;
+    }
+  }
+
+  .BasicTextarea {
+    resize:none;
+    font-size:1.2em;
+    height:200px;
+  }
+
+  .BasicCheckbox {
+    width:18px;
+    height:18px;
+
+    float:right;
+  }
+
+  .BasicSubmitButton {
+    float:right;
+
+    font-family: 'Open Sans Condensed', cursive;
+    font-size:1.2em;
+    color:white;
+    text-align:center;
+    background-color: transparent;
+
+    margin:15px 60px 0 0;
+    padding:10px;
+
+    border:1px solid white;
+
+    @include transition(background-color 0.4s, border 0.4s);
+
+    &:hover {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+
+    &:active {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+  }
+
+  .CheckboxSection {
+    width:100%;
+    float:left;
+
+    padding:5px;
+
+    margin:0 0 5px 0;
   }
 
   .FormRow--field {
@@ -18,9 +112,10 @@
   .FormRow--SubmitButton {
     display:block;
     width:150px;
-    border:none;
     padding:5px;
   }
+
+
 
   .FormError {
     position:absolute;
@@ -30,6 +125,17 @@
     padding:5px 5px 5px 5px;
 
     text-align: center;
+  }
+
+  .BasicError {
+    width: 300px;
+    color: white;
+    left: 550px;
+    top: 4px;
+
+    font-size: 1.2em;
+
+    border: 1px solid $errorColor;
   }
 }
 

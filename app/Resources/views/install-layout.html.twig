@@ -14,7 +14,7 @@
 </head>
 
 <body class="InstallBody">
-<div class="Global  GlobalInstall" ng-app="InstallSuiteApp" ng-strict-id>
+<div class="Global  GlobalInstall" ng-app="inst.app" ng-strict-id>
     <header class="Global__Header  InstallHeader">
         <h1 class="Install__Title">Test Suite</h1>
     </header>
@@ -26,6 +26,8 @@
 {% block javascript %}
     <script src="{{ asset("bower_components/jquery/dist/jquery.min.js") }}"></script>
     <script src="{{ asset("bower_components/angular/angular.min.js") }}"></script>
+    <script src="{{ asset("js/directives.js") }}"></script>
+    <script src="{{ asset("js/factories.js") }}"></script>
     <script src="{{ asset("js/install.js") }}"></script>
 {% endblock %}
 </body>

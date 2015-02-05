@@ -10,8 +10,7 @@ img {
 }
 
 body {
-  overflow:hidden;
-
+  overflow-x: hidden;
   background-color: $textFieldColor;
 }
 
@@ -24,4 +23,29 @@ body {
 
   font-family: 'Open Sans Condensed', sans-serif;
   font-size:16px;
+}
+
+.ContentElement {
+  margin:25px 0 25px 0;
+
+  .ContentMainTitle, .ContentSubTitle {
+    width:100%;
+    float:left;
+    padding:0 0 15px 0;
+    margin:50px 0 50px 0;
+
+    font-size:1.6em;
+    border-bottom:1px solid white;
+  }
+
+  .ContentSubTitle {
+    font-size:1.4em;
+    border-bottom:1px dotted white;
+  }
+
+  .ContentCentered {
+    margin:0 auto;
+
+    margin-bottom:50px;
+  }
 }

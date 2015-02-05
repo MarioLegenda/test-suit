@@ -3,11 +3,13 @@
 namespace App\PublicBundle\Models;
 
 use App\ToolsBundle\Entity\InstallEntity;
+use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Helpers\Contracts\InstallInterface;
 use App\ToolsBundle\Helpers\CssClasses;
-use App\ToolsBundle\Entity\Administrator;
+use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Entity\Role;
 use App\ToolsBundle\Helpers\ModelObjectWrapper;
+use App\ToolsBundle\Models\GenericModel;
 
 use Doctrine\ORM\EntityManager;
 
@@ -26,11 +28,11 @@ class InstallModel extends GenericModel implements InstallInterface
 
     public function runModel() {
         try {
-            $administrator = new Administrator();
-            $administrator->setName($this->installEntity->getName());
-            $administrator->setLastname($this->installEntity->getLastname());
-            $administrator->setUsername($this->installEntity->getUsername());
-            $administrator->setPassword($this->installEntity->getPassword());
+            $user = new User();
+            $user->setName($this->installEntity->getName());
+            $user->setLastname($this->installEntity->getLastname());
+            $user->setUsername($this->installEntity->getUsername());
+            $user->setPassword($this->installEntity->getPassword());
         } catch(\Exception $e) {
             echo $e->getMessage();
             die();
@@ -38,19 +40,30 @@ class InstallModel extends GenericModel implements InstallInterface
 
         $role_admin = new Role();
         $role_admin->setRole('ROLE_ADMIN');
-        $role_admin->setAdministrator($administrator);
+        $role_admin->setUser($user);
 
         $role_user = new Role();
         $role_user->setRole('ROLE_USER');
-        $role_user->setAdministrator($administrator);
+        $role_user->setUser($user);
 
-        $administrator->setRoles($role_admin);
-        $administrator->setRoles($role_user);
+        $role_super_admin = new Role();
+        $role_super_admin->setRole('ROLE_SUPER_ADMIN');
+        $role_super_admin->setUser($user);
+
+        $user->setRoles($role_admin);
+        $user->setRoles($role_user);
+        $user->setRoles($role_super_admin);
+
+        $userInfo = new UserInfo();
+        $userInfo->setUser($user);
+        $user->setUserInfo($userInfo);
 
         $wrapper = new ModelObjectWrapper();
-        $wrapper->addObject('administrator', $administrator);
+        $wrapper->addObject('user', $user);
         $wrapper->addObject('role_admin', $role_admin);
         $wrapper->addObject('role_user', $role_user);
+        $wrapper->addObject('role_super_admin', $role_super_admin);
+        $wrapper->addObject('user_info', $userInfo);
 
         return $wrapper;
     }

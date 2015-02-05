@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="suite.app">
     <head>
         <meta charset="UTF-8" />
         <title>{% block title %}{% endblock %}</title>
@@ -24,31 +24,17 @@
 
                     <div class="UserInfo">
                         <span class="UserInfo--userIcon"></span>
-                        <button class="UserInfo--mail">whitepostmail@gmail.com</button>
+                        <button class="UserInfo--mail">{{ model.getModelData('username') }}</button>
 
                         <div class="TestListPopup">
-                            <section class="PopupSection  Popup--suites">
-                                <h1 class="Popup--mainTitle">Test suites</h1>
 
-                                {% for i in 0..10 %}
-                                <div class="Popup--suiteHolder">
-                                    <h2 class="Popup--suiteTitle">Suite title no more than 30 ch</h2>
-
-                                    <p class="Popup--suiteDescription">
-                                        It can be no more that 256 characters
-                                        dfgadklfgjdlčkfjhčkldjfgkčlasdfjkghasog
-                                    </p>
-                                </div>
-                                {% endfor %}
-                            </section>
-
-                            <section class="PopupSection  Popup--test">
-                                <h1 class="Popup--mainTitle">Standalone tests</h1>
-
-                                {% for i in 0..10 %}
-                                    <a href="">Test suite with 50 charactersldkeisiqpeorieoslclsk</a>
-                                {% endfor %}
-                            </section>
+                            <div class="PopupProfile">
+                                {% if model.isInRole('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_authorized_createUserGet') }}" class="Profile--choiceLink">Create admin/user<span class="PopupIcons  AddUserIcon"></span></a>
+                                {% endif %}
+                                <a href="" class="Profile--choiceLink">Edit profile<span class="PopupIcons  EditProfileIcon"></span></a>
+                                <a href="{{ path('logout') }}" class="Profile--choiceLink">Logout<span class="PopupIcons  LogoutIcon"></span></a>
+                            </div>
                         </div>
                     </div>
                 </nav>
@@ -57,6 +43,12 @@
             {% block content %}{% endblock %}
         </div>
 
-        {% block javascript %}{% endblock %}
+        {% block javascript %}
+            <script src="{{ asset("bower_components/jquery/dist/jquery.min.js") }}"></script>
+            <script src="{{ asset("bower_components/angular/angular.min.js") }}"></script>
+            <script src="{{ asset("js/directives.js") }}"></script>
+            <script src="{{ asset("js/factories.js") }}"></script>
+            <script src="{{ asset("js/add-user.js") }}"></script>
+        {% endblock %}
     </body>
 </html>

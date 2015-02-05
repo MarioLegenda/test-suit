@@ -1,3 +1,13 @@
 app_authorized_home:
     path:     /
     defaults: { _controller: AppAuthorizedBundle:Home:home }
+
+app_authorized_createUserGet:
+    path: /create-user
+    defaults: { _controller: AppAuthorizedBundle:User:userTemplate }
+    methods: [GET]
+
+app_authorized_saveUser:
+    path: /save-user
+    defaults: { _controller: AppAuthorizedBundle:User:saveUser }
+    methods: [POST]

@@ -25,7 +25,6 @@
 }
 
 .InstallInformation {
-  display:none;
   width:600px;
   position:absolute;
   top: 40%;
@@ -113,87 +112,22 @@
   }
 }
 
-.InstallForm {
+.FormPosition {
   width:600px;
   position:absolute;
   top: 50%;
-  left: 50%;
-
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-
-  .GlobalErrors {
-    width:90%;
-    float:left;
-
-    .GlobalError {
-      display:block;
-      width:100%;
-      color:white;
-      font-size:1.2em;
-      line-height: 1.2em;
-
-      margin:0 0 10px 0;
-      padding:5px 5px 5px 5px;
-      border:1px solid $errorColor;
-
-    }
-  }
+  left:50%;
 
   .InstallLabel, .LoginLabel {
-    color:white;
-    padding:5px;
-    letter-spacing: 0.03em;
 
-    font-size:1.2em;
   }
 
   .InstallField, .LoginField {
-    font-size:1.2em;
 
-    padding:5px;
-
-    background-color: rgba(0, 0, 0, 0.2);
-    font-family: 'Open Sans Condensed', sans-serif;
-    letter-spacing: 0.05em;
-    word-spacing: 0.1em;
-    color:white;
-
-    border:1px solid white;
-    border-radius:3px;
-
-    &:focus {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
   }
 
   .InstallSubmit {
-    float:right;
-
-    font-family: 'Open Sans Condensed', cursive;
-    font-size:1.2em;
-    color:white;
-    text-align:center;
-    background-color: transparent;
-
-    margin:15px 60px 0 0;
-    padding:10px;
-
-    border:1px solid white;
-
-    @include transition(background-color 0.4s, border 0.4s);
-
-    &:active {
-      background-color: $mainHoverColor;
-      border:1px solid $mainHoverColor;
-    }
-
-    &:hover {
-      background-color: $mainHoverColor;
-      border:1px solid $mainHoverColor;
-    }
+    margin:15px 120px 0 0;
   }
 
   .Process {
@@ -202,7 +136,7 @@
 
     font-size:1.2em;
     padding:10px;
-    margin:15px 60px 0 0;
+    margin:15px 120px 0 0;
   }
 
   .Process--installing {
@@ -215,16 +149,21 @@
     float:right;
     text-align: right;
   }
+}
 
-  .InstallError {
-    width:300px;
-    color:white;
-    left:550px;
-    top:4px;
 
-    font-size:1.2em;
+.InstallForm {
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
 
-    border:1px solid $errorColor;
+  left: 130%;
+}
 
-  }
+.LoginForm {
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
 }

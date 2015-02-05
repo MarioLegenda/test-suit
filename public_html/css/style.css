@@ -37,16 +37,78 @@ a {
   width: 100%;
   float: left;
   margin: 0 0 15px 0; }
-  .FormRow .FormRow--label {
-    width: 40%;
+  .FormRow .GlobalErrors {
+    width: 90%;
     float: left; }
+    .FormRow .GlobalErrors .GlobalError {
+      display: block;
+      width: 100%;
+      color: white;
+      font-size: 1.2em;
+      line-height: 1.2em;
+      margin: 0 0 10px 0;
+      padding: 5px 5px 5px 5px;
+      border: 1px solid #ff3c2b; }
+  .FormRow .FormRow--label {
+    width: 30%;
+    float: left; }
+  .FormRow .BasicLabel {
+    color: white;
+    padding: 5px;
+    letter-spacing: 0.03em;
+    font-size: 1.2em; }
+  .FormRow .BasicField {
+    font-size: 1.2em;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.2);
+    font-family: 'Open Sans Condensed', sans-serif;
+    letter-spacing: 0.05em;
+    word-spacing: 0.1em;
+    color: white;
+    border: 1px solid white;
+    border-radius: 3px; }
+    .FormRow .BasicField:focus {
+      background-color: #2C84EE; }
+  .FormRow .BasicTextarea {
+    resize: none;
+    font-size: 1.2em;
+    height: 200px; }
+  .FormRow .BasicCheckbox {
+    width: 18px;
+    height: 18px;
+    float: right; }
+  .FormRow .BasicSubmitButton {
+    float: right;
+    font-family: 'Open Sans Condensed', cursive;
+    font-size: 1.2em;
+    color: white;
+    text-align: center;
+    background-color: transparent;
+    margin: 15px 60px 0 0;
+    padding: 10px;
+    border: 1px solid white;
+    -webkit-transition: background-color 0.4s, border 0.4s;
+    -moz-transition: background-color 0.4s, border 0.4s;
+    -ms-transition: background-color 0.4s, border 0.4s;
+    -o-transition: background-color 0.4s, border 0.4s;
+    transition: background-color 0.4s, border 0.4s; }
+    .FormRow .BasicSubmitButton:hover {
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
+    .FormRow .BasicSubmitButton:active {
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
+  .FormRow .CheckboxSection {
+    width: 100%;
+    float: left;
+    padding: 5px;
+    margin: 0 0 5px 0; }
   .FormRow .FormRow--field {
     width: 50%;
     float: left; }
   .FormRow .FormRow--SubmitButton {
     display: block;
     width: 150px;
-    border: none;
     padding: 5px; }
   .FormRow .FormError {
     position: absolute;
@@ -56,6 +118,13 @@ a {
     width: 150px;
     padding: 5px 5px 5px 5px;
     text-align: center; }
+  .FormRow .BasicError {
+    width: 300px;
+    color: white;
+    left: 550px;
+    top: 4px;
+    font-size: 1.2em;
+    border: 1px solid #ff3c2b; }
 
 .FormSeparator {
   width: 90%;
@@ -73,7 +142,7 @@ img {
   width: 100%; }
 
 body {
-  overflow: hidden;
+  overflow-x: hidden;
   background-color: #424242; }
 
 .Global {
@@ -84,177 +153,33 @@ body {
   font-family: 'Open Sans Condensed', sans-serif;
   font-size: 16px; }
 
+.ContentElement {
+  margin: 25px 0 25px 0; }
+  .ContentElement .ContentMainTitle, .ContentElement .ContentSubTitle {
+    width: 100%;
+    float: left;
+    padding: 0 0 15px 0;
+    margin: 50px 0 50px 0;
+    font-size: 1.6em;
+    border-bottom: 1px solid white; }
+  .ContentElement .ContentSubTitle {
+    font-size: 1.4em;
+    border-bottom: 1px dotted white; }
+  .ContentElement .ContentCentered {
+    margin: 0 auto;
+    margin-bottom: 50px; }
+
 .Container {
   width: 1200px;
   margin: 0 auto; }
+
+.OverflowedContainer {
+  overflow: hidden; }
 
 .Global__Header {
   width: 100%;
   float: left;
   background-color: #303133; }
-
-.MainNavigation {
-  z-index: 100; }
-  .MainNavigation .MainNavigation__List {
-    width: 600px;
-    float: left;
-    padding: 5px; }
-    .MainNavigation .MainNavigation__List .List--navigationLink {
-      display: block;
-      float: left;
-      width: 30px;
-      height: 30px;
-      background: url(../images/icons/home-icon.png) no-repeat;
-      -webkit-background-size: cover;
-      -moz-background-size: cover;
-      -ms-background-size: cover;
-      -o-background-size: cover;
-      background-size: cover; }
-  .MainNavigation .UserInfo {
-    width: 250px;
-    float: right;
-    position: relative;
-    z-index: 100;
-    padding: 5px; }
-    .MainNavigation .UserInfo .UserInfo--mail {
-      display: block;
-      width: 190px;
-      float: right;
-      color: white;
-      font-size: 1.2em;
-      background-color: transparent;
-      font-family: "Open Sans Condensed", sans-serif;
-      border: none;
-      text-align: right; }
-    .MainNavigation .UserInfo .UserInfo--userIcon {
-      display: block;
-      float: right;
-      width: 30px;
-      height: 30px;
-      background-image: url(../../images/icons/user-icon.png);
-      background-repeat: no-repeat;
-      -webkit-background-size: cover;
-      -moz-background-size: cover;
-      -ms-background-size: cover;
-      -o-background-size: cover;
-      background-size: cover; }
-    .MainNavigation .UserInfo:hover {
-      background-color: #EC7063; }
-    .MainNavigation .UserInfo:hover .TestListPopup {
-      opacity: 1;
-      right: -332px; }
-
-.TestListPopup {
-  opacity: 0;
-  filter: alpha(opacity=0);
-  position: absolute;
-  top: 100%;
-  right: -950px;
-  z-index: -1;
-  width: 600px;
-  height: 600px;
-  -webkit-transition: right 0.5s ease, opacity 0.5s ease;
-  -moz-transition: right 0.5s ease, opacity 0.5s ease;
-  -ms-transition: right 0.5s ease, opacity 0.5s ease;
-  -o-transition: right 0.5s ease, opacity 0.5s ease;
-  transition: right 0.5s ease, opacity 0.5s ease; }
-
-.Home {
-  width: 100%;
-  float: left;
-  margin: 50px 0 0 0;
-  padding: 20px 0 25px 0; }
-  .Home .Home__New {
-    position: relative;
-    display: block;
-    width: 350px;
-    height: 350px;
-    float: left;
-    margin-left: 35px;
-    -webkit-transition: background-color 0.5s ease, border 0.5s ease;
-    -moz-transition: background-color 0.5s ease, border 0.5s ease;
-    -ms-transition: background-color 0.5s ease, border 0.5s ease;
-    -o-transition: background-color 0.5s ease, border 0.5s ease;
-    transition: background-color 0.5s ease, border 0.5s ease;
-    border: 1px solid #6b6b6b; }
-    .Home .Home__New .NewTestLink--content {
-      width: 100%;
-      position: absolute;
-      top: 180px;
-      left: 0;
-      text-align: center;
-      opacity: 0;
-      color: white;
-      font-size: 1.6em;
-      -webkit-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
-      -moz-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
-      -ms-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
-      -o-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
-      transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out; }
-    .Home .Home__New:hover .NewTestLink--content {
-      top: 240px;
-      opacity: 1; }
-    .Home .Home__New:hover {
-      background-color: #EC7063;
-      border: 1px solid #EC7063; }
-  .Home .Home__NewTestLink {
-    background: url(../../images/icons/code.png) no-repeat;
-    background-position: 50% 10%;
-    -webkit-background-size: 50% 50%;
-    -moz-background-size: 50% 50%;
-    -ms-background-size: 50% 50%;
-    -o-background-size: 50% 50%;
-    background-size: 50% 50%; }
-  .Home .Home__NewTestSuiteLink {
-    background: url(../../images/icons/test-suite.png) no-repeat;
-    background-position: 50% 10%;
-    -webkit-background-size: 50% 50%;
-    -moz-background-size: 50% 50%;
-    -ms-background-size: 50% 50%;
-    -o-background-size: 50% 50%;
-    background-size: 50% 50%; }
-
-.hvr-sweep-to-bottom {
-  display: inline-block;
-  vertical-align: middle;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  box-shadow: 0 0 1px transparent;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -moz-osx-font-smoothing: grayscale;
-  position: relative;
-  -webkit-transition-property: color;
-  transition-property: color;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s; }
-
-.hvr-sweep-to-bottom:before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #EC7063;
-  -webkit-transform: scaleY(0);
-  transform: scaleY(0);
-  -webkit-transform-origin: 50% 0;
-  transform-origin: 50% 0;
-  -webkit-transition-property: transform;
-  transition-property: transform;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
-  -webkit-transition-timing-function: ease-out;
-  transition-timing-function: ease-out; }
-
-.hvr-sweep-to-bottom:hover, .hvr-sweep-to-bottom:focus, .hvr-sweep-to-bottom:active {
-  color: white; }
-
-.hvr-sweep-to-bottom:hover:before, .hvr-sweep-to-bottom:focus:before, .hvr-sweep-to-bottom:active:before {
-  -webkit-transform: scaleY(1);
-  transform: scaleY(1); }
 
 .InstallBody {
   background: url(../../images/install-background.jpg) no-repeat;
@@ -276,7 +201,6 @@ body {
   margin-top: 50px; }
 
 .InstallInformation {
-  display: none;
   width: 600px;
   position: absolute;
   top: 40%;
@@ -348,84 +272,286 @@ body {
     background-color: #EC7063;
     border: 1px solid #EC7063; }
 
-.InstallForm {
+.FormPosition {
   width: 600px;
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%); }
-  .InstallForm .GlobalErrors {
-    width: 90%;
-    float: left; }
-    .InstallForm .GlobalErrors .GlobalError {
-      display: block;
-      width: 100%;
-      color: white;
-      font-size: 1.2em;
-      line-height: 1.2em;
-      margin: 0 0 10px 0;
-      padding: 5px 5px 5px 5px;
-      border: 1px solid #ff3c2b; }
-  .InstallForm .InstallLabel, .InstallForm .LoginLabel {
-    color: white;
-    padding: 5px;
-    letter-spacing: 0.03em;
-    font-size: 1.2em; }
-  .InstallForm .InstallField, .InstallForm .LoginField {
-    font-size: 1.2em;
-    padding: 5px;
-    background-color: rgba(0, 0, 0, 0.2);
-    font-family: 'Open Sans Condensed', sans-serif;
-    letter-spacing: 0.05em;
-    word-spacing: 0.1em;
-    color: white;
-    border: 1px solid white;
-    border-radius: 3px; }
-    .InstallForm .InstallField:focus, .InstallForm .LoginField:focus {
-      background-color: rgba(255, 255, 255, 0.3); }
-  .InstallForm .InstallSubmit {
-    float: right;
-    font-family: 'Open Sans Condensed', cursive;
-    font-size: 1.2em;
-    color: white;
-    text-align: center;
-    background-color: transparent;
-    margin: 15px 60px 0 0;
-    padding: 10px;
-    border: 1px solid white;
-    -webkit-transition: background-color 0.4s, border 0.4s;
-    -moz-transition: background-color 0.4s, border 0.4s;
-    -ms-transition: background-color 0.4s, border 0.4s;
-    -o-transition: background-color 0.4s, border 0.4s;
-    transition: background-color 0.4s, border 0.4s; }
-    .InstallForm .InstallSubmit:active {
-      background-color: #EC7063;
-      border: 1px solid #EC7063; }
-    .InstallForm .InstallSubmit:hover {
-      background-color: #EC7063;
-      border: 1px solid #EC7063; }
-  .InstallForm .Process {
+  left: 50%; }
+  .FormPosition .InstallSubmit {
+    margin: 15px 120px 0 0; }
+  .FormPosition .Process {
     text-align: right;
     color: white;
     font-size: 1.2em;
     padding: 10px;
-    margin: 15px 60px 0 0; }
-  .InstallForm .Process--installing {
+    margin: 15px 120px 0 0; }
+  .FormPosition .Process--installing {
     width: 120px;
     float: right; }
-  .InstallForm .Process--installed {
+  .FormPosition .Process--installed {
     width: 100%;
     float: right;
     text-align: right; }
-  .InstallForm .InstallError {
-    width: 300px;
-    color: white;
-    left: 550px;
-    top: 4px;
-    font-size: 1.2em;
-    border: 1px solid #ff3c2b; }
+
+.InstallForm {
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  left: 130%; }
+
+.LoginForm {
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%); }
+
+.MainNavigation {
+  z-index: 100; }
+  .MainNavigation .MainNavigation__List {
+    width: 600px;
+    float: left;
+    padding: 5px; }
+    .MainNavigation .MainNavigation__List .List--navigationLink {
+      display: block;
+      float: left;
+      width: 30px;
+      height: 30px;
+      background: url(../images/icons/home-icon.png) no-repeat;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -ms-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover; }
+  .MainNavigation .UserInfo {
+    width: 250px;
+    float: right;
+    position: relative;
+    z-index: 100;
+    padding: 5px; }
+    .MainNavigation .UserInfo .UserInfo--mail {
+      display: block;
+      width: 190px;
+      float: right;
+      color: white;
+      font-size: 1.2em;
+      background-color: transparent;
+      font-family: "Open Sans Condensed", sans-serif;
+      border: none;
+      text-align: right; }
+    .MainNavigation .UserInfo .UserInfo--userIcon {
+      display: block;
+      float: right;
+      width: 30px;
+      height: 30px;
+      background-image: url(../../images/icons/user-icon.png);
+      background-repeat: no-repeat;
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -ms-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover; }
+    .MainNavigation .UserInfo:hover {
+      background-color: #EC7063; }
+
+.TestListPopup {
+  opacity: 0;
+  filter: alpha(opacity=0);
+  position: absolute;
+  top: 100%;
+  right: -350%;
+  z-index: -1;
+  width: 250%;
+  height: 600px;
+  padding: 5px;
+  background-color: #EC7063;
+  -webkit-transition: right 0.5s ease, opacity 0.5s ease;
+  -moz-transition: right 0.5s ease, opacity 0.5s ease;
+  -ms-transition: right 0.5s ease, opacity 0.5s ease;
+  -o-transition: right 0.5s ease, opacity 0.5s ease;
+  transition: right 0.5s ease, opacity 0.5s ease; }
+  .TestListPopup .PopupProfile {
+    width: 30%;
+    float: right;
+    background-color: #2C84EE;
+    padding: 5px;
+    -webkit-transition: background-color 0.3s ease-in-out;
+    -moz-transition: background-color 0.3s ease-in-out;
+    -ms-transition: background-color 0.3s ease-in-out;
+    -o-transition: background-color 0.3s ease-in-out;
+    transition: background-color 0.3s ease-in-out; }
+    .TestListPopup .PopupProfile .Profile--choiceLink {
+      width: 100%;
+      display: block;
+      color: white;
+      font-size: 1.2em;
+      padding: 10px; }
+      .TestListPopup .PopupProfile .Profile--choiceLink:hover {
+        background-color: #2C84EE; }
+    .TestListPopup .PopupProfile:hover {
+      background-color: #005AC1; }
+
+.Profile--choiceLink {
+  position: relative;
+  overflow: hidden; }
+  .Profile--choiceLink .PopupIcons {
+    display: block;
+    position: absolute;
+    top: 6px;
+    right: -35px;
+    width: 25px;
+    height: 25px;
+    -webkit-transition: right 0.3s ease-in-out;
+    -moz-transition: right 0.3s ease-in-out;
+    -ms-transition: right 0.3s ease-in-out;
+    -o-transition: right 0.3s ease-in-out;
+    transition: right 0.3s ease-in-out; }
+  .Profile--choiceLink .AddUserIcon {
+    background: url(../images/icons/add-user.png) no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover; }
+  .Profile--choiceLink .LogoutIcon {
+    background: url(../images/icons/logout.png) no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover; }
+  .Profile--choiceLink .EditProfileIcon {
+    background: url(../images/icons/edit-profile.png) no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover; }
+  .Profile--choiceLink:hover .PopupIcons {
+    right: 10px; }
+
+.UserInfo:hover .TestListPopup {
+  opacity: 1;
+  right: 0; }
+
+.Home {
+  width: 100%;
+  float: left;
+  margin: 50px 0 0 0;
+  color: white;
+  padding: 20px 0 25px 0; }
+  .Home .Home__New {
+    position: relative;
+    display: block;
+    width: 350px;
+    height: 350px;
+    float: left;
+    margin-left: 35px;
+    -webkit-transition: background-color 0.5s ease, border 0.5s ease;
+    -moz-transition: background-color 0.5s ease, border 0.5s ease;
+    -ms-transition: background-color 0.5s ease, border 0.5s ease;
+    -o-transition: background-color 0.5s ease, border 0.5s ease;
+    transition: background-color 0.5s ease, border 0.5s ease;
+    border: 1px solid #6b6b6b; }
+    .Home .Home__New .NewTestLink--content {
+      width: 100%;
+      position: absolute;
+      top: 180px;
+      left: 0;
+      text-align: center;
+      opacity: 0;
+      color: white;
+      font-size: 1.6em;
+      -webkit-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      -moz-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      -ms-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      -o-transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+      transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out; }
+    .Home .Home__New:hover .NewTestLink--content {
+      top: 240px;
+      opacity: 1; }
+    .Home .Home__New:hover {
+      background-color: #EC7063;
+      border: 1px solid #EC7063; }
+  .Home .Home__NewTestLink {
+    background: url(../../images/icons/code.png) no-repeat;
+    background-position: 50% 10%;
+    -webkit-background-size: 50% 50%;
+    -moz-background-size: 50% 50%;
+    -ms-background-size: 50% 50%;
+    -o-background-size: 50% 50%;
+    background-size: 50% 50%; }
+  .Home .Home__NewTestSuiteLink {
+    background: url(../../images/icons/test-suite.png) no-repeat;
+    background-position: 50% 10%;
+    -webkit-background-size: 50% 50%;
+    -moz-background-size: 50% 50%;
+    -ms-background-size: 50% 50%;
+    -o-background-size: 50% 50%;
+    background-size: 50% 50%; }
+  .Home .Home__StandaloneTest {
+    background: url(../../images/icons/test.png) no-repeat;
+    background-position: 50% 10%;
+    -webkit-background-size: 50% 50%;
+    -moz-background-size: 50% 50%;
+    -ms-background-size: 50% 50%;
+    -o-background-size: 50% 50%;
+    background-size: 50% 50%; }
+
+.hvr-sweep-to-bottom {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  -webkit-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s; }
+
+.hvr-sweep-to-bottom:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #EC7063;
+  -webkit-transform: scaleY(0);
+  transform: scaleY(0);
+  -webkit-transform-origin: 50% 0;
+  transform-origin: 50% 0;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out; }
+
+.hvr-sweep-to-bottom:hover, .hvr-sweep-to-bottom:focus, .hvr-sweep-to-bottom:active {
+  color: white; }
+
+.hvr-sweep-to-bottom:hover:before, .hvr-sweep-to-bottom:focus:before, .hvr-sweep-to-bottom:active:before {
+  -webkit-transform: scaleY(1);
+  transform: scaleY(1); }
+
+.CreateUser {
+  color: white; }
+
+.MainContent {
+  width: 800px; }
+  .MainContent .CheckboxExplanation {
+    margin: 15px 0 15px 0;
+    padding: 5px 5px 5px 5px;
+    border-top: 1px dotted white; }
+  .MainContent .CreateUserSubmitButton {
+    margin: 15px 160px 0 0 !important; }
+  .MainContent .CreateUserError {
+    left: 650px; }
 
 /*# sourceMappingURL=style.css.map */

@@ -29,13 +29,18 @@ class UnAuthController extends ContainerAware
         $em = $doctrine->getManager();
         $installHelper = new InstallHelper($em);
 
+        // provjerava da li je baza i tablica napravljena te provjerava da li postoje upisani useri
         if( ! $installHelper->isAppInstalled() OR ! $installHelper->doesAppHasAdmin()) {
             $templating = $this->container->get('templating');
 
             return $templating->renderResponse('AppPublicBundle:Login:uninstalled.html.twig');
         }
 
-        /*var_dump(password_hash('blues_boy1986', PASSWORD_BCRYPT, array('salt' => crypt('ddi5sf4gd4g8ds4gsd596g'), 'cost' => '10')));
+        /*$options = [
+            'cost' => 11,
+            'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM),
+        ];
+        var_dump(password_hash('sashapopara', PASSWORD_BCRYPT, $options));
 die();*/
 
 

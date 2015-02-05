@@ -23,7 +23,7 @@ class Role implements RoleInterface, ModelObjectWrapperInterface
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-    private $admin_id;
+    private $user_id;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=false)
@@ -31,10 +31,10 @@ class Role implements RoleInterface, ModelObjectWrapperInterface
     private $role;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\ToolsBundle\Entity\Administrator", inversedBy="roles")
-     * @ORM\JoinColumn(name="admin_id", referencedColumnName="admin_id")
+     * @ORM\ManyToOne(targetEntity="App\ToolsBundle\Entity\User", inversedBy="roles")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      **/
-    private $administrator;
+    private $user;
 
     public function setRoleId($id) {
         $this->role_id = $id;
@@ -44,16 +44,16 @@ class Role implements RoleInterface, ModelObjectWrapperInterface
         return $this->role_id;
     }
 
-    public function setAdministrator(Administrator $admin) {
-        $this->administrator = $admin;
+    public function setUser(User $admin) {
+        $this->user = $admin;
     }
 
-    public function setAdminId($id) {
-        $this->admin_id = $id;
+    public function setUserId($id) {
+        $this->user_id = $id;
     }
 
-    public function getAdminId() {
-        return $this->admin_id;
+    public function getUserId() {
+        return $this->user_id;
     }
 
     public function setRole($role) {

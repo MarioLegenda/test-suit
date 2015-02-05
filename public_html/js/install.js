@@ -1,108 +1,12 @@
 "use strict";
 
-
 ( function() {
 
-    var suitApp = angular.module("InstallSuiteApp", []).config(
-        ['$provide', '$compileProvider', '$interpolateProvider', function($provide, $compileProvider, $interpolateProvider) {
+    var suitApp = angular.module("inst.app", ['suite.directives', 'suite.factories']).config(['$interpolateProvider', function($interpolateProvider) {
             $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-
-            $provide.factory('$', function () {
-                return jQuery;
-            });
-
-            $provide.factory('installFactory', function ($http) {
-                return {
-                    config: {},
-
-                    setConfig: function (config) {
-                        this.config = config;
-                        return this;
-                    },
-
-                    install: function () {
-                        return $http(this.config);
-                    }
-                };
-            });
-
-            $provide.factory('$', function () {
-                return jQuery;
-            });
-
-            $provide.factory('formHandler', function() {
-                var initForm = {};
-
-                initForm.init = function($scope, formName) {
-                    return {
-                        equalChecks: 0,
-
-                        notExists: function(prop) {
-                            return $scope[formName][prop].$error.required && $scope[formName][prop].$dirty;
-                        },
-
-                        notMinLength: function(prop) {
-                            return $scope[formName][prop].$error.minlength;
-                        },
-
-                        notEmail: function(prop) {
-                            return $scope[formName][prop].$error.email;
-                        },
-
-                        notEquals: function(prop1, prop2) {
-                            if($scope[formName][prop1].$viewValue !== $scope[formName][prop2].$viewValue) {
-                                this.equalChecks++;
-                                return true;
-                            }
-
-                            this.equalChecks = 0;
-                            return false;
-                        },
-
-                        isValidForm: function() {
-                            if($scope[formName].$valid && this.equalChecks == 0) {
-                                return true;
-                            }
-
-                            return false;
-                        }
-                    };
-                };
-
-                return initForm;
-            });
-
-            $compileProvider.directive('processUiInstalling', function() {
-                return {
-                    restrict: 'EA',
-                    replace: true,
-                    template: "<p class='Process  Process--installing' ng-model='process.installing' ng-show='!process.installed && process.installing'>Please wait...</p>",
-                    link: function(scope, elem, attrs) {
-                    }
-                }
-            });
-
-            $compileProvider.directive('processUiInstalled', function($timeout, $window) {
-                return {
-                    restrict: 'EA',
-                    replace: true,
-                    template: "<p class='Process  Process--installed' ng-show='process.installed'>" +
-                    "Registration complete. You will be redirected to login page</p>",
-                    link: function(scope, elem, attrs) {
-                        scope.$watch(function() { return scope.process.installed }, function(oldValue, newValue, scope) {
-                            if(scope.process.installed === true) {
-                                $timeout(function() {
-                                    $window.location.replace('/app_dev.php/suit-up');
-                                }, 2000);
-                            }
-                        });
-                    }
-                }
-            });
-
     }]);
 
-    suitApp.controller('InformationController', ['$scope', '$', function($scope, $) {
+    suitApp.controller('inst.informationCtrl', ['$scope', '$', function($scope, $) {
         $scope.showForm = function() {
             $('.InstallInformation').animate({
                 top: '150%'
@@ -114,7 +18,7 @@
         }
     }]);
 
-    suitApp.controller('InstallFormController', ['$scope', 'installFactory', 'formHandler', function($scope, installFactory, formHandler) {
+    suitApp.controller('inst.InstallFormCtrl', ['$scope', 'installFactory', 'formHandler', function($scope, installFactory, formHandler) {
         $scope.globalErrors = {
             errors: [],
             show: false
@@ -132,7 +36,7 @@
             lastname: '',
             username: '',
             userPassword: '',
-            userPassRepeat: '',
+            userPassRepeat: ''
         };
 
         $scope.install = {
@@ -156,8 +60,6 @@
                     $scope.globalErrors.errors = parsedData;
 
                     $scope.globalErrors.show = true;
-
-                    console.log(parsedData[0].exception);
                 });
             }
         };

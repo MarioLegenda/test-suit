@@ -16,7 +16,7 @@ use App\ToolsBundle\Helpers\Exceptions\ModelException;
 
 class InstallController extends ContainerAware
 {
-    public function installAction($testingValues = null) {
+    public function installAction() {
         $request = $this->container->get('request');
 
         $doctrine = $this->container->get('doctrine');
@@ -34,6 +34,7 @@ class InstallController extends ContainerAware
         $simpleForm = new SimpleFormHelper();
         $formValues = (array)json_decode($request->getContent());
         $installEntity = new InstallEntity($formValues);
+
         if($simpleForm->evaluateForm($installEntity, $this->container->get('validator')) !== true) {
             $responseParameters = new ResponseParameters();
             $responseParameters->addParameter('form_errors', $simpleForm->getErrors());
@@ -48,12 +49,10 @@ class InstallController extends ContainerAware
 
         try {
             $modelObjectWrapper = $installModel->runModel();
-            $administrator = $modelObjectWrapper->getObject('administrator');
-            $administrator->setPassword(UserSecurityManager::initEncoder($encoder)->encodePassword($administrator));
+            $user = $modelObjectWrapper->getObject('user');
+            $user->setPassword(UserSecurityManager::initEncoder($encoder)->encodePassword($user));
 
-            $em->persist($modelObjectWrapper->getObject('administrator'));
-            $em->persist($modelObjectWrapper->getObject('role_user'));
-            $em->persist($modelObjectWrapper->getObject('role_admin'));
+            $em->persist($modelObjectWrapper->getObject('user'));
             $em->flush();
         } catch(ModelException $e) {
             $responseParameters = new ResponseParameters();
@@ -65,10 +64,17 @@ class InstallController extends ContainerAware
             $ajaxResponse = new GenericAjaxResponseWrapper(400, 'BAD', $responseParameters);
 
             return $ajaxResponse->getResponse();
+
         } catch(\Exception $e) {
-            // make response to client with friendly error message
-            echo $e->getMessage();
-            die();
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter(0, array(
+                'message' => 'Something unexpected happend. Please, try again are contact whitepostmail@gmail.com or check the browser console for more information',
+                'exception' => $e->getMessage()
+            ));
+
+            $ajaxResponse = new GenericAjaxResponseWrapper(400, 'BAD', $responseParameters);
+
+            return $ajaxResponse->getResponse();
         }
 
         $responseParameters = new ResponseParameters();

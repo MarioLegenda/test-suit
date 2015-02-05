@@ -11,7 +11,7 @@ class SimpleFormHelper
 {
     private $modelErrors = false;
 
-    public function buildForm($formFactory, GenericEntity $administrator, AbstractType $type, Request $request) {
+    public function buildForm($formFactory, GenericEntity $administrator, AbstractType $type, $request) {
         $form = $formFactory->createBuilder($type, $administrator)->getForm();
         $form->handleRequest($request);
         return $form;
