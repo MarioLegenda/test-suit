@@ -1,11 +1,9 @@
-app_install:
-    path: /install
-    defaults: { _controller: AppPublicBundle:Install:install }
-
 app_signUp:
     path: /install/sign-up
     defaults: { _controller: AppPublicBundle:Install:signUp }
+    methods: [GET]
 
 app_install_ajax:
     path: /installment
     defaults: { _controller: AppPublicBundle:Ajax\Install:install}
+    methods: [POST]

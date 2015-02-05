@@ -16,7 +16,7 @@ use App\ToolsBundle\Helpers\Contracts\ModelObjectWrapperInterface;
  * @ORM\Table(name="users")
  */
 
-class User extends GenericEntity implements UserInterface, \Serializable, ModelObjectWrapperInterface, \JsonSerializable
+class User extends GenericEntity implements UserInterface, \Serializable, \JsonSerializable
 {
     /**
      * @ORM\Column(type="integer")

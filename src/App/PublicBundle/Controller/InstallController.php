@@ -15,15 +15,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class InstallController extends ContainerAware
 {
-    public function installAction() {
-        $doctrine = $this->container->get('doctrine');
-        $request = $this->container->get('request');
-
-        $em = $doctrine->getManager();
-        $installHelper = new InstallHelper($em);
-
-    }
-
     public function signUpAction() {
         $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
@@ -47,12 +38,10 @@ class InstallController extends ContainerAware
             $request
         );
 
-        $installModel = new InstallModel($em);
         $templating = $this->container->get('templating');
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('form', $form->createView());
-        $responseParameters->addParameter('cssClasses', $installModel->createViewClasses());
         return $templating->renderResponse('AppPublicBundle:Installation:installation.html.twig', $responseParameters->getParameters());
     }
 } 

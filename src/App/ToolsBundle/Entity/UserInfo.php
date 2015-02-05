@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="user_info")
  */
 
-class UserInfo extends GenericEntity implements ModelObjectWrapperInterface
+class UserInfo extends GenericEntity
 {
     /**
      * @ORM\Column(type="integer")

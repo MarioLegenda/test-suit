@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Role\RoleInterface;
  * @ORM\Table(name="roles")
  */
 
-class Role implements RoleInterface, ModelObjectWrapperInterface
+class Role implements RoleInterface
 {
     /**
      * @ORM\Column(type="integer")

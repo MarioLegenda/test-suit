@@ -13,8 +13,8 @@ class UserRepository
     private $em;
     private $security;
 
-    private $user;
-    private $userInfo;
+    private $user = null;
+    private $userInfo = null;
     private $roles = array();
 
     public function __construct($em, $security) {
@@ -56,7 +56,7 @@ class UserRepository
         $isValid = array_diff_key($validValues, $userArray);
 
         if( ! empty($isValid)) {
-            throw new RepositoryException("RepositoryException: Given valus are not equal in UserRepository::createUserFromArray()");
+            throw new RepositoryException("RepositoryException: Given values are not equal in UserRepository::createUserFromArray()");
         }
 
         if($user !== null) {
@@ -125,7 +125,32 @@ class UserRepository
     }
 
     public function createUser(User $user, array $roles, UserInfo $userInfo = null) {
+        $this->user = $user;
+        $encodedPassword = $this->security->encodePassword($this->user, $this->user->getPassword());
+        $this->user->setPassword($encodedPassword);
 
+        foreach($roles as $role) {
+            $temp = new Role();
+            $temp->setRole($role);
+            $temp->setUser($this->user);
+
+            $this->roles[] = $temp;
+        }
+
+        if($userInfo !== null) {
+            $this->userInfo = $userInfo;
+        }
+        else {
+            $this->userInfo = new UserInfo();
+            $this->userInfo->setUser($this->user);
+            $this->user->setUserInfo($this->userInfo);
+        }
+
+        foreach($this->roles as $role) {
+            $this->user->setRoles($role);
+        }
+
+        return $this;
     }
 
     public function saveUser() {
@@ -136,5 +161,9 @@ class UserRepository
             echo $e->getMessage();
             die();
         }
+
+        $this->user = null;
+        $this->userInfo = null;
+        $this->roles = null;
     }
 } 
