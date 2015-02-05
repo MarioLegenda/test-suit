@@ -25,6 +25,7 @@
     <div class="FormPosition  InstallForm" ng-controller="inst.InstallFormCtrl">
         {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
 
+
         <div class="GlobalErrors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
             <label class="GlobalError">{[{ error.message }]}</label>
         </div>

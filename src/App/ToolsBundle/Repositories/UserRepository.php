@@ -137,14 +137,9 @@ class UserRepository
             $this->roles[] = $temp;
         }
 
-        if($userInfo !== null) {
-            $this->userInfo = $userInfo;
-        }
-        else {
-            $this->userInfo = new UserInfo();
-            $this->userInfo->setUser($this->user);
-            $this->user->setUserInfo($this->userInfo);
-        }
+        $this->userInfo = ($userInfo !== null) ? $userInfo : new UserInfo();
+        $this->userInfo->setUser($this->user);
+        $this->user->setUserInfo($this->userInfo);
 
         foreach($this->roles as $role) {
             $this->user->setRoles($role);
