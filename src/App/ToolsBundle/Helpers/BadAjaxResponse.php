@@ -10,7 +10,7 @@ namespace App\ToolsBundle\Helpers;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class BadAjaxRequest
+class BadAjaxResponse
 {
     private $errors = array();
 
@@ -18,7 +18,7 @@ class BadAjaxRequest
 
     public static function init($message, array $errors = null) {
         if( ! self::$instance instanceof self) {
-            self::$instance = new BadAjaxRequest($message, $errors);
+            self::$instance = new BadAjaxResponse($message, $errors);
         }
 
         return self::$instance;

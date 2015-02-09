@@ -8,6 +8,8 @@ use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 
+use Doctrine\ORM\Query;
+
 class UserRepository
 {
     private $em;
@@ -17,8 +19,9 @@ class UserRepository
     private $userInfo = null;
     private $roles = array();
 
-    public function __construct($em, $security) {
-        $this->em = $em;
+    public function __construct($doctrine, $security) {
+        $this->doctrine = $doctrine;
+        $this->em = $this->doctrine->getManager();
         $this->security = $security;
     }
 
@@ -36,6 +39,21 @@ class UserRepository
         }
 
         return $result[0];
+    }
+
+    public function getAllUsers() {
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select('u.user_id', 'u.username', 'u.name', 'u.lastname', 'u.logged')
+            ->from('AppToolsBundle:User', 'u')
+            ->orderBy('u.logged', 'DESC')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        if(empty($result)) {
+            return null;
+        }
+
+        return $result;
     }
 
     public function createUserFromArray(array $userArray, User $user = null, UserInfo $userInfo = null, array $roles = null) {
@@ -93,23 +111,22 @@ class UserRepository
         }
         else {
             $permissions = (array)$userArray['userPermissions'];
+            $validPermissions = array('role_test_solver' => '', 'role_test_creator' => '', 'role_user_manager' => '');
 
-            if($permissions['role_super_admin'] === true) {
-                $roleSuperAdmin = new Role('ROLE_SUPER_ADMIN');
-                $roleSuperAdmin->setRole('ROLE_SUPER_ADMIN');
-                $roleSuperAdmin->setUser($this->user);
+            $diff = array_diff_key($permissions, $validPermissions);
+            if( ! empty($diff)) {
+                throw new RepositoryException('UserRepository: some of the permissions sent from the client are not valid');
+            }
 
-                $roleAdmin = new Role();
-                $roleAdmin->setRole('ROLE_ADMIN');
-                $roleAdmin->setUser($this->user);
+            foreach($permissions as $permission => $valid) {
+                if($valid === true) {
+                    $role = strtoupper($permission);
+                    $tempRole = new Role();
+                    $tempRole->setRole($role);
+                    $tempRole->setUser($this->user);
 
-                $roleUser = new Role();
-                $roleUser->setRole('ROLE_USER');
-                $roleUser->setUser($this->user);
-
-                $this->roles[] = $roleSuperAdmin;
-                $this->roles[] = $roleAdmin;
-                $this->roles[] = $roleUser;
+                    $this->roles[] = $tempRole;
+                }
             }
         }
 

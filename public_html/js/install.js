@@ -26,10 +26,11 @@
 
         $scope.process = {
             installing: false,
-            installed: false
+            installed: false,
+            url: false
         };
 
-        $scope.form = formHandler.init($scope, 'insForm');
+        $scope.theForm = formHandler.init($scope, 'insForm');
 
         $scope.administrator = {
             name: '',
@@ -45,21 +46,18 @@
 
                 var promise = installFactory.setConfig({
                     method: 'POST',
-                    url: '/installment',
+                    url: '/app_dev.php/installment',
                     data: $scope.administrator
                 }).install();
 
                 promise.then(function(data, status, headers, config) {
                     $scope.process.installed = true;
-                    $scope.process.installing = false;
+                    $scope.process.url = '/app_dev.php/suit-up'
                 }, function(data, status, headers, config) {
-                    $scope.process.installing = false;
-                    $scope.process.installed = false;
-                    var parsedData = JSON.parse(data.data);
 
+                    var parsedData = JSON.parse(data.data);
                     $scope.globalErrors.errors = parsedData;
 
-                    $scope.globalErrors.show = true;
                 });
             }
         };
@@ -67,7 +65,7 @@
         $scope.install.submit = function($event) {
             $event.preventDefault();
 
-            if($scope.form.isValidForm()) {
+            if($scope.theForm.isValidForm()) {
                 $scope.install.installApp();
             }
         }

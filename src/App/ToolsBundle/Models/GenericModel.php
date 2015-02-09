@@ -7,7 +7,9 @@ abstract class GenericModel
     abstract function runModel();
 
     protected  $modelData = array();
-    protected  $user;
+
+    protected $security;
+    protected $user;
 
     public function setModelData($key, $value) {
         $this->modelData[$key] = $value;
@@ -22,6 +24,6 @@ abstract class GenericModel
     }
 
     public function isInRole($roleType) {
-        return $this->user->isInRole($roleType);
+        return $this->security->isGranted($roleType);
     }
 } 

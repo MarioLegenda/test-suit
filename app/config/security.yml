@@ -4,9 +4,9 @@ security:
             algorithm: bcrypt
 
     role_hierarchy:
-        ROLE_USER:   ROLE_USER
-        ROLE_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
-        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOW_TO_SWITCH, ROLE_HANDLE_USERS]
+        ROLE_TEST_SOLVER:   ROLE_TEST_SOLVER
+        ROLE_TEST_CREATOR: [ROLE_TEST_SOLVER, ROLE_TEST_CREATOR, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_USER_MANAGER: [ROLE_TEST_SOLVER, ROLE_TEST_CREATOR, ROLE_ALLOW_TO_SWITCH, ROLE_USER_MANAGER]
 
     providers:
         users:
@@ -34,4 +34,4 @@ security:
         - { path: ^/install$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/install/sign-up$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/installment$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/, role: [ROLE_USER, ROLE_ADMIN, ROLE_SUPER_ADMIN] }
+        - { path: ^/, role: [ROLE_TEST_CREATOR, ROLE_TEST_SOLVER, ROLE_USER_MANAGER] }

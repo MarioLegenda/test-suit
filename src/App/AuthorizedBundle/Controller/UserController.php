@@ -5,16 +5,14 @@ namespace App\AuthorizedBundle\Controller;
 use App\AuthorizedBundle\Models\CreateUserModel;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Entity\UserInfo;
-use App\ToolsBundle\Entity\ValidateUser;
-use App\ToolsBundle\Forms\ValidateUserType;
-use App\ToolsBundle\Helpers\BadAjaxRequest;
+use App\ToolsBundle\Helpers\BadAjaxResponse;
+use App\ToolsBundle\Helpers\ConvenienceValidator;
+use App\ToolsBundle\Helpers\GoodAjaxRequest;
 use App\ToolsBundle\Helpers\ResponseParameters;
-use App\ToolsBundle\Helpers\GenericAjaxResponseWrapper;
 
-use App\ToolsBundle\Helpers\SimpleFormHelper;
+
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 use App\ToolsBundle\Repositories\UserRepository;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\DependencyInjection\ContainerAware;
@@ -23,8 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 class UserController extends ContainerAware
 {
     /**
-     * @Security("has_role('ROLE_ADMIN')")
-     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     * @Security("has_role('ROLE_USER_MANAGER')")
      */
     public function userTemplateAction() {
         $templating = $this->container->get('templating');
@@ -36,23 +33,70 @@ class UserController extends ContainerAware
         $createUserModel = new CreateUserModel($security);
         $createUserModel->runModel();
 
-        if( ! $createUserModel->isInRole('ROLE_ADMIN') AND ! $createUserModel->isInRole('ROLE_SUPER_ADMIN')) {
-            $router = $this->container->get('router');
-
-            return new RedirectResponse($router->generate('app_authorized_home'), 302);
-        }
-
 
         $responseParameters->addParameter('model', $createUserModel);
-        return $templating->renderResponse('AppAuthorizedBundle:CreateUser:createUser.html.twig', $responseParameters->getParameters());
+        return $templating->renderResponse('AppAuthorizedBundle:User:createUser.html.twig', $responseParameters->getParameters());
     }
 
     /**
-     * @Security("has_role('ROLE_ADMIN')")
-     * @Security("has_role('ROLE_SUPER_ADMIN')")
+     * @Security("has_role('ROLE_USER_MANAGER')")
+     */
+    public function userManagmentTemplateAction() {
+        $templating = $this->container->get('templating');
+        $security = $this->container->get('security.context');
+
+
+        $responseParameters = new ResponseParameters();
+
+        $createUserModel = new CreateUserModel($security);
+        $createUserModel->runModel();
+
+
+        $responseParameters->addParameter('model', $createUserModel);
+        return $templating->renderResponse('AppAuthorizedBundle:User:userManagment.html.twig', $responseParameters->getParameters());
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER_MANAGER')")
+     */
+    public function userFilterAction() {
+
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER_MANAGER')")
+     */
+    public function userListingAction() {
+        $doctrine = $this->container->get('doctrine');
+        $em = $this->container->get('doctrine')->getManager();
+
+        $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
+        $users = $userRepo->getAllUsers();
+
+        $responseParameters = new ResponseParameters();
+        if($users !== null) {
+            $responseParameters->addParameter('users', $users);
+
+            return GoodAjaxRequest::init($responseParameters)->getResponse();
+        }
+
+        $responseParameters->addParameter('users', array());
+        return GoodAjaxRequest::init($responseParameters)->getResponse();
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER_MANAGER')")
+     */
+    public function userInfoAction() {
+
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER_MANAGER')")
      */
     public function saveUserAction() {
         $request = $this->container->get('request');
+        $doctrine = $this->container->get('doctrine');
 
         $formValues = (array)json_decode($request->getContent());
         $permissionArrayfied = (array)$formValues['userPermissions'];
@@ -65,35 +109,31 @@ class UserController extends ContainerAware
         $user->setPassword($formValues['userPassword']);
         $user->setPassRepeat($formValues['userPassRepeat']);
 
-        $validator = $this->container->get('validator');
-        $constraintVioliationList = $validator->validate($user);
+        $userInfo = new UserInfo();
+        $userInfo->setYearsOfExperience($formValues['years_of_experience']);
+        $toValidate = array($user, $userInfo);
+        $errors = ConvenienceValidator::init($toValidate, $this->container->get('validator'))->getErrors();
 
-        if(count($constraintVioliationList) > 0) {
-            $errors = array();
-            for($i = 0; $i < count($constraintVioliationList); $i++) {
-                $errors["errors"][] = $constraintVioliationList->get($i)->getMessage();
-            }
-
-            $response = new Response(json_encode($errors));
-            $response->setStatusCode(400, "BAD");
-            return $response;
+        if($errors !== null) {
+            return BadAjaxResponse::init(null, $errors)->getResponse();
         }
 
-        $em = $this->container->get('doctrine')->getManager();
-        $userRepo = new UserRepository($em, $encoder = $this->container->get('security.password_encoder'));
+        $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
         $result = $userRepo->getUserByUsername($user->getUsername());
 
         if($result !== null) {
-            return BadAjaxRequest::init("User with these credentials already exists.")->getResponse();
+            return BadAjaxResponse::init("User with these credentials already exists.")->getResponse();
         }
 
         try {
             $userRepo->createUserFromArray($formValues, $user);
             $userRepo->saveUser();
         } catch(RepositoryException $e) {
-            return BadAjaxRequest::init("Something unexpected happend. Please, refresh the page and try again")->getResponse();
+            return BadAjaxResponse::init("Something unexpected happend. Please, refresh the page and try again")->getResponse();
+            //return BadAjaxResponse::init($e->getMessage())->getResponse();
         } catch(\Exception $e) {
-            return BadAjaxRequest::init("Something unexpected happend. Please, refresh the page and try again")->getResponse();
+            return BadAjaxResponse::init("Something unexpected happend. Please, refresh the page and try again")->getResponse();
+            //return BadAjaxResponse::init($e->getMessage())->getResponse();
         }
 
         return new Response('success', 200);

@@ -14,9 +14,9 @@ use App\ToolsBundle\Models\GenericModel;
 class HomeModel extends GenericModel
 {
 
-    public function __construct($security) {
+    public function __construct($security, $user) {
         $this->security = $security;
-        $this->user = $security->getToken()->getUser();
+        $this->user = $user;
     }
 
     public function runModel() {

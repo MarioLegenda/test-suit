@@ -1,0 +1,55 @@
+.UserManagment {
+}
+
+.ContentElement {
+  .ContentMainTitle {
+    color:white;
+  }
+}
+
+.UserManagmentMain {
+
+  .UserExpandable {
+    display:block;
+    width:100%;
+    float:left;
+
+    margin:0 0 10px 0;
+
+    border:1px solid white;
+
+  }
+
+  .ExpandableClick {
+    width:100%;
+    float:left;
+    display:block;
+
+    padding:15px;
+
+    @include transition(background-color 0.2s);
+
+    .Expandable {
+      display:block;
+      float:left;
+      color:white;
+    }
+
+    .Expandable--name {
+      margin:0 5px 0 0;
+    }
+
+    .Expandable--username {
+      float:right;
+    }
+
+    &:hover {
+      cursor:pointer !important;
+      background-color: $blueLight !important;
+    }
+  }
+}
+
+.UserManagment__UserInfo {
+  width:100%;
+}

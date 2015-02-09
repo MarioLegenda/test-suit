@@ -2,14 +2,11 @@
 
 namespace App\ToolsBundle\Entity;
 
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use App\ToolsBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 
 /**
  * @ORM\Entity

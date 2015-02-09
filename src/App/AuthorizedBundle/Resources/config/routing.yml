@@ -1,6 +1,7 @@
 app_authorized_home:
     path:     /
     defaults: { _controller: AppAuthorizedBundle:Home:home }
+    methods: [GET]
 
 app_authorized_createUserGet:
     path: /create-user
@@ -10,4 +11,19 @@ app_authorized_createUserGet:
 app_authorized_saveUser:
     path: /save-user
     defaults: { _controller: AppAuthorizedBundle:User:saveUser }
+    methods: [POST]
+
+app_authorized_userManagment:
+    path: /user-managment
+    defaults: { _controller: AppAuthorizedBundle:User:userManagmentTemplate }
+    methods: [GET]
+
+app_authorized_allUsers:
+    path: /user-managment/user-list
+    defaults: { _controller: AppAuthorizedBundle:User:userListing }
+    methods: [POST]
+
+app_authorized_userInfo:
+    path: /user-managment/user-info
+    defaults: { _controller: AppAuthorizedBundle:User:userInfo }
     methods: [POST]

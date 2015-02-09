@@ -19,10 +19,10 @@ class InstallHelper
         $errors = 0;
 
         $tables = $conn->fetchAll("SELECT TABLE_CATALOG as admin_catalog FROM INFORMATION_SCHEMA.TABLES
-                                   WHERE TABLE_SCHEMA = 'suite' AND TABLE_NAME = 'users'
+                                   WHERE TABLE_SCHEMA = 'suit' AND TABLE_NAME = 'users'
                                    UNION ALL
                                    SELECT TABLE_CATALOG as role_catalog FROM INFORMATION_SCHEMA.TABLES
-                                   WHERE TABLE_SCHEMA = 'suite' AND TABLE_NAME = 'roles'");
+                                   WHERE TABLE_SCHEMA = 'suit' AND TABLE_NAME = 'roles'");
 
         return count($tables) === 2;
 

@@ -3,7 +3,7 @@ app_signUp:
     defaults: { _controller: AppPublicBundle:Install:signUp }
     methods: [GET]
 
-app_install_ajax:
+app_install:
     path: /installment
-    defaults: { _controller: AppPublicBundle:Ajax\Install:install}
+    defaults: { _controller: AppPublicBundle:Install:install}
     methods: [POST]

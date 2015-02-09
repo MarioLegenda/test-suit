@@ -20,7 +20,7 @@ angular.module('suite.factories', []).factory('$', function () {
 
     initForm.init = function($scope, formName) {
         return {
-            equalChecks: 0,
+            invalidSum: 0,
 
             notExists: function(prop) {
                 return $scope[formName][prop].$error.required && $scope[formName][prop].$dirty;
@@ -36,11 +36,11 @@ angular.module('suite.factories', []).factory('$', function () {
 
             notEquals: function(prop1, prop2) {
                 if($scope[formName][prop1].$viewValue !== $scope[formName][prop2].$viewValue) {
-                    this.equalChecks++;
+                    this.invalidSum++;
                     return true;
                 }
 
-                this.equalChecks = 0;
+                this.invalidSum = 0;
                 return false;
             },
 
@@ -55,8 +55,12 @@ angular.module('suite.factories', []).factory('$', function () {
                 return checked === 0;
             },
 
+            regexValid: function(prop) {
+                return $scope[formName][prop].$error.pattern;
+            },
+
             isValidForm: function() {
-                if($scope[formName].$valid && this.equalChecks == 0) {
+                if($scope[formName].$valid && this.invalidSum == 0) {
                     return true;
                 }
 
@@ -69,7 +73,8 @@ angular.module('suite.factories', []).factory('$', function () {
 }).factory('User', function($http) {
     return {
         urls: {
-            saveUrl: '/app_dev.php/save-user'
+            saveUrl: '/app_dev.php/save-user',
+            allUsersUrl: '/app_dev.php/user-managment/user-list'
         },
 
         save: function(user) {
@@ -94,6 +99,13 @@ angular.module('suite.factories', []).factory('$', function () {
 
         deleteUserByUsername: function(username) {
 
+        },
+
+        getAllUsers: function() {
+            return $http({
+                method: 'POST',
+                url: this.urls.allUsersUrl
+            });
         }
     };
 });

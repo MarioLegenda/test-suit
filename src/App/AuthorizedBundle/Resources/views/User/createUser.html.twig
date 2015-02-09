@@ -2,8 +2,8 @@
 
 {% block content %}
 
-    <div class="Container  OverflowedContainer" ng-controller="suite.addUserCtrl">
-        <div class="ContentElement  CreateUser">
+    <div class="ContentElement" ng-controller="suite.addUserCtrl">
+        <div class="Container  CreateUser">
             <h1 class="ContentMainTitle">Add a user</h1>
 
             <div class="MainContent  ContentCentered">
@@ -64,36 +64,36 @@
                         <label for="pass_repeat" class="FormRow--label  BasicLabel">User permissions</label>
                         <div class="CheckboxWidget  FormRow--field  BasicField">
                             <section class="CheckboxSection">
-                                <label class="BasicLabel">Basic user</label>
-                                <input type="checkbox" name="role_user" value="role_user" class="BasicCheckbox" ng-model="user.userPermissions.role_user" ng-change="user.userPermissions.role_user" required>
+                                <label class="BasicLabel">Test solver...</label>
+                                <input type="checkbox" name="role_test_solver" value="role_test_solver" class="BasicCheckbox" ng-model="user.userPermissions.role_test_solver" ng-change="user.userPermissions.role_test_solver" required>
 
                                 <p class="CheckboxExplanation">
-                                    A basic user can only solve tests but does not have access
+                                    ...can only solve tests but does not have access
                                 to creating tests or creating/editing/deleting users
                                 </p>
                             </section>
 
                             <section class="CheckboxSection">
-                                <label class="BasicLabel">Admin user</label>
-                                <input type="checkbox" name="role_admin" value="role_admin" class="BasicCheckbox" ng-model="user.userPermissions.role_admin" ng-change="user.userPermissions.role_admin" ng-click="user.userPermissions.examinePermissions('role_admin')">
+                                <label class="BasicLabel">Test creator...</label>
+                                <input type="checkbox" name="role_test_creator" value="role_test_creator" class="BasicCheckbox" ng-model="user.userPermissions.role_test_creator" ng-change="user.userPermissions.role_test_creator" ng-click="user.userPermissions.examinePermissions('role_test_creator')">
 
                                 <p class="CheckboxExplanation">
-                                    An admin user can create/solve tests and also create/edit users but cannot delete users
+                                    ...can create/solve tests but cannot create/edit/delete users
                                 </p>
                             </section>
 
                             <section class="CheckboxSection">
 
-                                <label class="BasicLabel">Super admin user</label>
-                                <input type="checkbox" name="role_super_admin" value="role_super_admin" class="BasicCheckbox" ng-model="user.userPermissions.role_super_admin" ng-change="user.userPermissions.role_super_admin" ng-click="user.userPermissions.examinePermissions('role_super_admin')">
+                                <label class="BasicLabel">User manager...</label>
+                                <input type="checkbox" name="role_user_manager" value="role_user_manager" class="BasicCheckbox" ng-model="user.userPermissions.role_user_manager" ng-change="user.userPermissions.role_user_manager" ng-click="user.userPermissions.examinePermissions('role_user_manager')">
 
                                 <p class="CheckboxExplanation">
-                                    Super admin can create/solve test and create/edit/delete users.
+                                    ...can create/solve test and create/edit/delete users.
                                 </p>
                             </section>
                         </div>
 
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.enforceChecked(1, ['role_user', 'role_admin', 'role_super_admin'])">
+                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.enforceChecked(1, ['role_test_solver', 'role_test_creator', 'role_user_manager'])">
                             <p>At least one permission has to be given</p>
                         </div>
 
@@ -118,7 +118,11 @@
 
                     <div class="FormRow">
                         <label for="years_of_experience" class="FormRow--label  BasicLabel">Years of experience</label>
-                        <input type="text" name="years_of_experience" class="FormRow--field  BasicField" ng-model="user.years_of_experience"/>
+                        <input type="text" name="years_of_experience" class="FormRow--field  BasicField" ng-model="user.years_of_experience" ng-pattern="/^[0-9]+/"/>
+
+                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.regexValid('years_of_experience')">
+                            <p>You don't have to supply it, but it has to be a number</p>
+                        </div>
                     </div>
 
                     <div class="FormRow">
@@ -132,7 +136,11 @@
                     </div>
 
                     <div class="FormRow">
-                        <input type="submit" value="Add user" class="FormRow--submitButton  BasicSubmitButton  CreateUserSubmitButton" ng-click="user.submit($event)">
+                        <input type="submit" value="Add user" class="FormRow--submitButton  BasicSubmitButton  CreateUserSubmitButton"
+                               ng-click="user.submit($event)"
+                               ng-model="process.installed"
+                               ng-show="process.installed == false && process.installing == false" />
+                        <process-ui-installing installing="{[{ process.installing }]}" installed="{[{ process.installed }]}"></process-ui-installing>
                     </div>
                 </form>
             </div>

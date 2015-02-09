@@ -1,0 +1,24 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+
+    <div class="ContentElement" ng-controller="suite.userManagmentCtrl">
+        <div class="Container  UserManagment">
+            <h1 class="ContentMainTitle">Users</h1>
+
+            <div class="MainContent  ContentCentered  UserManagmentMain">
+                <section class="UserExpandable" ng-repeat="user in users" expand-height="300" expand-section>
+                    <a href="" class="ExpandableClick" ng-click="managment.expandAction($event, user.user_id)">
+                        <span class="Expandable  Expandable--name">{[{ user.name }]}</span>
+                        <span class="Expandable  Expandable--lastname">{[{ user.lastname }]}</span>
+                        <span class="Expandable  Expandable--username">{[{ user.username }]}</span>
+                    </a>
+
+                    <div class="UserManagment__UserInfo">
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}

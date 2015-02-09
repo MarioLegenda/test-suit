@@ -1,110 +1,96 @@
 {% extends "::install-layout.html.twig" %}
 
 {% block content %}
-
     <div class="Container">
-    <div class="InstallInformation" ng-controller="inst.informationCtrl">
-        <p class="InstallInformation--paragraph">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent non sollicitudin dui.
-            Vivamus tempus ex nisl, nec gravida massa mattis facilisis. Nullam dapibus lorem in blandit
-            finibus. Morbi arcu augue, tincidunt vitae tristique a, lacinia vitae arcu. Integer vel
-            molestie ipsum, ac pellentesque nibh.
-        </p>
+        <div class="InstallInformation" ng-controller="inst.informationCtrl">
+            <p class="InstallInformation--paragraph">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent non sollicitudin dui.
+                Vivamus tempus ex nisl, nec gravida massa mattis facilisis. Nullam dapibus lorem in blandit
+                finibus. Morbi arcu augue, tincidunt vitae tristique a, lacinia vitae arcu. Integer vel
+                molestie ipsum, ac pellentesque nibh.
+            </p>
 
-        <p class="InstallInformation--paragraph">
-            In hac habitasse platea dictumst. Quisque semper est
-            ut odio mollis tempus. Sed ut mattis ante. Mauris quis sollicitudin sapien. Nullam augue
-            quam, suscipit at felis ac, sodales pulvinar justo. Sed ante ex, pulvinar quis porta sit
-            amet, mollis sed nunc. In lacinia eu sem laoreet fringilla. In eget lacus eu turpis dapibus
-            scelerisque.
-        </p>
+            <p class="InstallInformation--paragraph">
+                In hac habitasse platea dictumst. Quisque semper est
+                ut odio mollis tempus. Sed ut mattis ante. Mauris quis sollicitudin sapien. Nullam augue
+                quam, suscipit at felis ac, sodales pulvinar justo. Sed ante ex, pulvinar quis porta sit
+                amet, mollis sed nunc. In lacinia eu sem laoreet fringilla. In eget lacus eu turpis dapibus
+                scelerisque.
+            </p>
 
-        <button class="InstallInformation--continueButton" ng-click="showForm()">Continue</button>
-    </div>
-
-    <div class="FormPosition  InstallForm" ng-controller="inst.InstallFormCtrl">
-        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
-
-
-        <div class="GlobalErrors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
-            <label class="GlobalError">{[{ error.message }]}</label>
-        </div>
-        <div class="FormRow">
-            {{ form_label(form.name, null, {'label_attr' : { class : 'FormRow--label  BasicLabel  InstallLabel'}}) }}
-            {{ form_widget(form.name, {'full_name': 'name', 'attr' : {
-                class : 'FormRow--field  BasicField  InstallField',
-                'ng-model': 'administrator.name'
-            }}) }}
-
-            <div class="FormError  BasicError" ng-show="form.notExists('name')">
-                <p>Name has to be provided</p>
-            </div>
-
+            <button class="InstallInformation--continueButton" ng-click="showForm()">Continue</button>
         </div>
 
-        <div class="FormRow">
-            {{ form_label(form.lastname, null, {'label_attr' : { class : 'FormRow--label  BasicLabel  InstallLabel'}} ) }}
-            {{ form_widget(form.lastname, {'full_name': 'lastname', 'attr' : {
-                class : 'FormRow--field  BasicField  InstallField',
-                'ng-model': 'administrator.lastname',
-                'form-error': 'form-error',
-                'lastname-regex-validate': '[a-zA-Z0-9]+',
-                'lastname-message': 'Lastname has to be provided'
-            }}) }}
+        <div class="FormPosition  InstallForm" ng-controller="inst.InstallFormCtrl">
+            <form name="insForm" action="" method="POST" novalidate="novalidate">
 
-            <div class="FormError  BasicError" ng-show="form.notExists('lastname')">
-                <p>Lastname has to be provided</p>
-            </div>
+                <div class="FormRow">
+                    <div class="GlobalErrors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
+                        <label class="GlobalError">{[{ error }]}</label>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label name="name" class="FormRow--label  BasicLabel  InstallLabel">Name</label>
+                    <input type="text" name="name" class="FormRow--field  BasicField  InstallField" ng-model="administrator.name" required="">
+
+                    <div class="FormError  BasicError" ng-show="theForm.notExists('name')">
+                        <p>Name has to be provided</p>
+                    </div>
+
+                </div>
+
+                <div class="FormRow">
+                    <label class="FormRow--label  BasicLabel  InstallLabel" for="lastname">Lastname</label>
+                    <input type="text" name="lastname" ng-model="administrator.lastname" class="FormRow--field  BasicField  InstallField" required>
+
+                    <div class="FormError  BasicError" ng-show="theForm.notExists('lastname')">
+                        <p>Lastname has to be provided</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label class="FormRow--label  BasicLabel  InstallLabel" for="username">Username</label>
+                    <input type="email" name="username" ng-model="administrator.username" class="FormRow--field  BasicField  InstallField" placeholder="...it has to be an email" required>
+
+                    <div class="FormError  BasicError" ng-show="theForm.notExists('username') || theForm.notEmail('username')">
+                        <p>A valid email has to be provided</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label class="FormRow--label  BasicLabel  InstallLabel" for="password">Password</label>
+
+                    <input type="password" name="password" class="FormRow--field  BasicField  InstallField" ng-model="administrator.userPassword" ng-minlength="8" required>
+
+                    <div class="FormError  BasicError" ng-show="theForm.notExists('password') || theForm.notMinLength('password')">
+                        <p>Password has to have at least 8 characters</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label class="FormRow--label  BasicLabel  InstallLabel" for="pass_repeat">Confirm password</label>
+                    <input type="password" class="FormRow--field  BasicField  InstallField" name="pass_repeat" ng-model="administrator.userPassRepeat" ng-minlength="8" required>
+
+                    <div class="FormError  BasicError"
+                         ng-show="theForm.notExists('pass_repeat') || theForm.notEquals('password', 'pass_repeat')">
+                        <p>Given passwords have to match</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <input type="submit" value="Sign up" class="FormRow--SubmitButton  BasicSubmitButton  InstallSubmit"
+                           ng-click="install.submit($event)"
+                           ng-model="process.installed"
+                           ng-show="process.installed == false && process.installing == false"/>
+
+                    <process-ui-installing installing="{[{ process.installing }]}"
+                                           installed="{[{ process.installed }]}"></process-ui-installing>
+                    <process-ui-installed installing="{[{ process.installing }]}" installed="{[{ process.installed }]}"
+                                          countdown="10"></process-ui-installed>
+                </div>
+
+            </form>
         </div>
-
-        <div class="FormRow">
-            {{ form_label(form.username, null, {'label_attr' : { class : 'FormRow--label  BasicLabel  InstallLabel'}}) }}
-            {{ form_widget(form.username, {'full_name' : 'username', 'attr' : {
-                class : 'FormRow--field  BasicField  InstallField',
-                'ng-model': 'administrator.username',
-                'placeholder': '...it has to be an email'
-            }}) }}
-
-            <div class="FormError  BasicError" ng-show="form.notExists('username') || form.notEmail('username')">
-                <p>A valid email has to be provided</p>
-            </div>
-        </div>
-
-        <div class="FormRow">
-            {{ form_label(form.password, null, {'label_attr' : { class : 'FormRow--label  BasicLabel  InstallLabel'}}) }}
-            {{ form_widget(form.password, {'full_name': 'password', 'attr' : {
-                class : 'FormRow--field  BasicField  InstallField',
-                'ng-model': 'administrator.userPassword',
-                'ng-minlength': '8'
-            }}) }}
-
-            <div class="FormError  BasicError" ng-show="form.notExists('password') || form.notMinLength('password')">
-                <p>Password has to have at least 8 characters</p>
-            </div>
-        </div>
-
-        <div class="FormRow">
-            {{ form_label(form.repeat_password, null, {'label_attr' : { class : 'FormRow--label  BasicLabel  InstallLabel'}}) }}
-            {{ form_widget(form.repeat_password, {'full_name': 'pass_repeat', 'attr' : {
-                class : 'FormRow--field  BasicField  InstallField',
-                'ng-model': 'administrator.userPassRepeat',
-                'ng-minlength': '8'
-            }}) }}
-
-            <div class="FormError  BasicError" ng-show="form.notExists('pass_repeat') || form.notEquals('password', 'pass_repeat')">
-                <p>Given passwords have to match</p>
-            </div>
-        </div>
-
-        <div class="FormRow">
-            <input type="submit" value="Sign up" class="FormRow--SubmitButton  BasicSubmitButton  InstallSubmit" ng-click="install.submit($event)"
-                   ng-model="process.installed" ng-show="process.installed == false && process.installing == false" />
-
-            <process-ui-installing installing="{[{ process.installing }]}" installed="{[{ process.installed }]}"></process-ui-installing>
-            <process-ui-installed installing="{[{ process.installing }]}" installed="{[{ process.installed }]}" countdown="10"></process-ui-installed>
-        </div>
-
-        {{ form_end(form) }}
-    </div>
     </div>
 {% endblock %}

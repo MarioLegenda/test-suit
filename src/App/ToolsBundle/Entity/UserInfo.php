@@ -2,9 +2,9 @@
 
 namespace App\ToolsBundle\Entity;
 
-use App\ToolsBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity
@@ -43,6 +43,7 @@ class UserInfo extends GenericEntity
 
     /**
      * @ORM\Column(type="smallint", nullable=true)
+     *
      */
     private $years_of_experience = null;
 
@@ -57,7 +58,7 @@ class UserInfo extends GenericEntity
     private $description;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\ToolsBundle\Entity\User", inversedBy="userInfo")
+     * @ORM\OneToOne(targetEntity="App\ToolsBundle\Entity\User", inversedBy="user_info")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      **/
     private $user;
@@ -160,5 +161,18 @@ class UserInfo extends GenericEntity
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @Assert\Callback
+     */
+    public function validatePasswordEquality(ExecutionContextInterface $context)
+    {
+        $yof = $this->getYearsOfExperience();
+        if($yof !== null AND !is_numeric($yof)) {
+            $context->buildViolation('If provided, years of experience have to be an number')
+                ->atPath('years_of_experience')
+                ->addViolation();
+        }
     }
 }
