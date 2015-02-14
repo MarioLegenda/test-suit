@@ -19,10 +19,29 @@ class UserRepository
     private $userInfo = null;
     private $roles = array();
 
-    public function __construct($doctrine, $security) {
+    public function __construct($doctrine, $security = null) {
         $this->doctrine = $doctrine;
         $this->em = $this->doctrine->getManager();
-        $this->security = $security;
+
+        if($security !== null) {
+            $this->security = $security;
+        }
+    }
+
+    public function getUserById($id) {
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select('ui.user_id', 'ui.fields', 'ui.programming_languages', 'ui.tools', 'ui.years_of_experience', 'ui.future_plans', 'ui.description')
+            ->from('AppToolsBundle:UserInfo', 'ui')
+            ->where($qb->expr()->eq('ui.user_id', ':user_id'))
+            ->setParameter(':user_id', $id)
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        if(empty($result)) {
+            return null;
+        }
+
+        return $result[0];
     }
 
     public function getUserByUsername($username) {
@@ -46,6 +65,23 @@ class UserRepository
         $result = $qb->select('u.user_id', 'u.username', 'u.name', 'u.lastname', 'u.logged')
             ->from('AppToolsBundle:User', 'u')
             ->orderBy('u.logged', 'DESC')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        if(empty($result)) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    public function getPaginatedUsers($offset, $limit) {
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select('u.user_id', 'u.username', 'u.name', 'u.lastname', 'u.logged')
+            ->from('AppToolsBundle:User', 'u')
+            ->orderBy('u.logged', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 

@@ -3,6 +3,7 @@
 
 .ContentElement {
   .ContentMainTitle {
+    position:relative;
     color:white;
   }
 }
@@ -10,8 +11,11 @@
 .UserManagmentMain {
 
   .UserExpandable {
+    position:relative;
+    overflow:hidden;
     display:block;
     width:100%;
+
     float:left;
 
     margin:0 0 10px 0;
@@ -22,6 +26,7 @@
 
   .ExpandableClick {
     width:100%;
+    height:46px;
     float:left;
     display:block;
 
@@ -50,6 +55,38 @@
   }
 }
 
-.UserManagment__UserInfo {
+.UserManagment--info {
+  position:absolute;
+  top:46px; left:0;
+
   width:100%;
+  float:left;
+
+  padding:10px;
+
+  .InfoSection {
+    width:100%;
+    float:left;
+
+    margin:10px 0 10px 0;
+
+
+    .InfoSection--title {
+      width:100%;
+      float:left;
+
+      padding:5px 0 5px 0;
+
+      color:white;
+      border-bottom:1px solid white;
+    }
+
+    .InfoSection--text {
+      width:100%;
+      float:left;
+      padding:10px;
+
+      color:white;
+    }
+  }
 }

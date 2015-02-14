@@ -4,18 +4,45 @@
 
     <div class="ContentElement" ng-controller="suite.userManagmentCtrl">
         <div class="Container  UserManagment">
-            <h1 class="ContentMainTitle">Users</h1>
-
+            <h1 class="ContentMainTitle">Users<loading class="Loading" ng-show="loading.loading">{[{ loading.loadingText }]}</loading></h1>
             <div class="MainContent  ContentCentered  UserManagmentMain">
-                <section class="UserExpandable" ng-repeat="user in users" expand-height="300" expand-section>
+                <section class="UserExpandable" ng-repeat="user in users" expand-section user-id="{[{ user.user_id }]}">
                     <a href="" class="ExpandableClick" ng-click="managment.expandAction($event, user.user_id)">
                         <span class="Expandable  Expandable--name">{[{ user.name }]}</span>
                         <span class="Expandable  Expandable--lastname">{[{ user.lastname }]}</span>
                         <span class="Expandable  Expandable--username">{[{ user.username }]}</span>
                     </a>
 
-                    <div class="UserManagment__UserInfo">
+                    <div class="UserManagment--info">
+                        <div class="InfoSection">
+                            <h2 class="InfoSection--title">Fields</h2>
+                            <p class="InfoSection--text">{[{ userInfo[user.user_id].fields }]}</p>
+                        </div>
 
+                        <div class="InfoSection">
+                            <h2 class="InfoSection--title">Programming languages</h2>
+                            <p class="InfoSection--text">{[{ userInfo[user.user_id].programming_languages }]}</p>
+                        </div>
+
+                        <div class="InfoSection">
+                            <h2 class="InfoSection--title">Tools</h2>
+                            <p class="InfoSection--text">{[{ userInfo[user.user_id].tools }]}</p>
+                        </div>
+
+                        <div class="InfoSection">
+                            <h2 class="InfoSection--title">Years of experience</h2>
+                            <p class="InfoSection--text">{[{ userInfo[user.user_id].years_of_experience }]}</p>
+                        </div>
+
+                        <div class="InfoSection">
+                            <h2 class="InfoSection--title">Future plans</h2>
+                            <p class="InfoSection--text">{[{ userInfo[user.user_id].future_plans }]}</p>
+                        </div>
+
+                        <div class="InfoSection">
+                            <h2 class="InfoSection--title">Personal description</h2>
+                            <p class="InfoSection--text">{[{ userInfo[user.user_id].description }]}</p>
+                        </div>
                     </div>
                 </section>
             </div>

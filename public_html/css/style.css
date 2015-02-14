@@ -52,6 +52,13 @@ a {
   .FormRow .FormRow--label {
     width: 30%;
     float: left; }
+  .FormRow .FormRow--field {
+    width: 50%;
+    float: left; }
+  .FormRow .FormRow--SubmitButton {
+    display: block;
+    width: 150px;
+    padding: 5px; }
   .FormRow .BasicLabel {
     color: white;
     padding: 5px;
@@ -77,6 +84,16 @@ a {
     width: 18px;
     height: 18px;
     float: right; }
+  .FormRow .BasicSelect {
+    width: 200px;
+    float: left;
+    padding: 2px;
+    font-family: "Open Sans Condensed", sans-serif;
+    font-size: 1.2em;
+    background-color: #303133;
+    border: 1px solid white;
+    border-radius: 2px;
+    color: white; }
   .FormRow .BasicSubmitButton {
     float: right;
     font-family: 'Open Sans Condensed', cursive;
@@ -103,13 +120,6 @@ a {
     float: left;
     padding: 5px;
     margin: 0 0 5px 0; }
-  .FormRow .FormRow--field {
-    width: 50%;
-    float: left; }
-  .FormRow .FormRow--SubmitButton {
-    display: block;
-    width: 150px;
-    padding: 5px; }
   .FormRow .FormError {
     position: absolute;
     top: -2px;
@@ -168,7 +178,8 @@ body {
 
 .ContentElement {
   width: 100%;
-  float: left; }
+  float: left;
+  position: relative; }
   .ContentElement .ContentMainTitle, .ContentElement .ContentSubTitle {
     width: 100%;
     float: left;
@@ -182,6 +193,16 @@ body {
   .ContentElement .ContentCentered {
     margin: 0 auto;
     margin-bottom: 50px; }
+
+.Loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  color: white; }
 
 .Container {
   width: 1200px;
@@ -353,7 +374,10 @@ body {
       -o-background-size: cover;
       background-size: cover; }
     .MainNavigation .UserInfo:hover {
-      background-color: #EC7063; }
+      background-color: white;
+      color: #EC7063; }
+    .MainNavigation .UserInfo:hover .UserInfo--mail {
+      color: #303133; }
 
 .TestListPopup {
   opacity: 0;
@@ -365,7 +389,7 @@ body {
   width: 250%;
   height: 600px;
   padding: 5px;
-  background-color: #EC7063;
+  background-color: white;
   -webkit-transition: right 0.5s ease, opacity 0.5s ease;
   -moz-transition: right 0.5s ease, opacity 0.5s ease;
   -ms-transition: right 0.5s ease, opacity 0.5s ease;
@@ -552,9 +576,12 @@ body {
     left: 650px; }
 
 .ContentElement .ContentMainTitle {
+  position: relative;
   color: white; }
 
 .UserManagmentMain .UserExpandable {
+  position: relative;
+  overflow: hidden;
   display: block;
   width: 100%;
   float: left;
@@ -562,6 +589,7 @@ body {
   border: 1px solid white; }
 .UserManagmentMain .ExpandableClick {
   width: 100%;
+  height: 46px;
   float: left;
   display: block;
   padding: 15px;
@@ -582,7 +610,89 @@ body {
     cursor: pointer !important;
     background-color: #2C84EE !important; }
 
-.UserManagment__UserInfo {
-  width: 100%; }
+.UserManagment--info {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  width: 100%;
+  float: left;
+  padding: 10px; }
+  .UserManagment--info .InfoSection {
+    width: 100%;
+    float: left;
+    margin: 10px 0 10px 0; }
+    .UserManagment--info .InfoSection .InfoSection--title {
+      width: 100%;
+      float: left;
+      padding: 5px 0 5px 0;
+      color: white;
+      border-bottom: 1px solid white; }
+    .UserManagment--info .InfoSection .InfoSection--text {
+      width: 100%;
+      float: left;
+      padding: 10px;
+      color: white; }
+
+.Toolbox {
+  position: fixed;
+  top: 150px;
+  left: -370px;
+  width: 400px;
+  height: 400px;
+  z-index: 100;
+  -webkit-transition: left 0.5s;
+  -moz-transition: left 0.5s;
+  -ms-transition: left 0.5s;
+  -o-transition: left 0.5s;
+  transition: left 0.5s;
+  background-color: white; }
+  .Toolbox:hover {
+    left: 0; }
+  .Toolbox .Toolbox--title {
+    width: 100%;
+    float: left;
+    padding: 5px;
+    color: white;
+    background-color: #2C84EE; }
+  .Toolbox .Toolbox--icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+    float: right; }
+  .Toolbox .Icon--title {
+    background: url(../images/icons/toolbox.png) no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -ms-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover; }
+
+.TestCreation .ContentSubTitle {
+  color: white; }
+.TestCreation .TestRestrictions .UserTable {
+  background-color: #303133;
+  color: white;
+  width: 300px;
+  height: 300px; }
+  .TestCreation .TestRestrictions .UserTable .ListTable--label {
+    width: 100%;
+    float: left;
+    padding: 10px;
+    cursor: pointer;
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    -ms-transition: background-color 0.3s;
+    -o-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .TestCreation .TestRestrictions .UserTable .ListTable--label:hover {
+      background-color: #2C84EE; }
+.TestCreation .TestRestrictions .UserListTable {
+  float: left;
+  margin-right: 20px;
+  border: 1px solid white; }
+.TestCreation .TestRestrictions .UserAllowedTable {
+  width: 40%;
+  float: left;
+  border: 1px solid white; }
 
 /*# sourceMappingURL=style.css.map */

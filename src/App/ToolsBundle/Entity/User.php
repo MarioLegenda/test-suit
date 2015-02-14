@@ -85,6 +85,11 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
      **/
     private $user_info;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\ToolsBundle\Entity\TestControl", mappedBy="user")
+     **/
+    private $test_control;
+
     public function __construct() {
         $this->logged = new \DateTime();
         $this->roles = new ArrayCollection();

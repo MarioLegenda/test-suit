@@ -21,6 +21,7 @@ angular.module('suite.factories', []).factory('$', function () {
     initForm.init = function($scope, formName) {
         return {
             invalidSum: 0,
+            invalidForm: null,
 
             notExists: function(prop) {
                 return $scope[formName][prop].$error.required && $scope[formName][prop].$dirty;
@@ -41,6 +42,7 @@ angular.module('suite.factories', []).factory('$', function () {
                 }
 
                 this.invalidSum = 0;
+                this.invalidForm = true;
                 return false;
             },
 
@@ -55,12 +57,25 @@ angular.module('suite.factories', []).factory('$', function () {
                 return checked === 0;
             },
 
+            hasArrayValues: function(arr) {
+                var isArray = ({}).toString.call(arr).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+                if(isArray === 'array') {
+                    return arr.length === 0;
+                }
+
+                return false;
+            },
+
             regexValid: function(prop) {
                 return $scope[formName][prop].$error.pattern;
             },
 
             isValidForm: function() {
-                if($scope[formName].$valid && this.invalidSum == 0) {
+                if($scope[formName].$valid && this.invalidForm === true) {
+                    return true;
+                }
+
+                if($scope[formName].$valid && this.invalidForm === null) {
                     return true;
                 }
 
@@ -74,7 +89,8 @@ angular.module('suite.factories', []).factory('$', function () {
     return {
         urls: {
             saveUrl: '/app_dev.php/save-user',
-            allUsersUrl: '/app_dev.php/user-managment/user-list'
+            allUsersUrl: '/app_dev.php/user-managment/user-list',
+            userInfo: '/app_dev.php/user-managment/user-info'
         },
 
         save: function(user) {
@@ -85,8 +101,14 @@ angular.module('suite.factories', []).factory('$', function () {
             });
         },
 
-        getUserById: function(id) {
-
+        getUsersById: function(id, cache) {
+            cache = typeof cache !== 'undefined';
+            return $http({
+                method: 'POST',
+                url: this.urls.userInfo,
+                data: id,
+                cache: cache
+            });
         },
 
         getUserByUsername: function(username) {
@@ -105,6 +127,64 @@ angular.module('suite.factories', []).factory('$', function () {
             return $http({
                 method: 'POST',
                 url: this.urls.allUsersUrl
+            });
+        }
+    };
+}).factory('List', function() {
+    function List() {
+        var list = [];
+
+        this.add = function(object, compareWith) {
+            if(list.length === 0) {
+                list[0] = object;
+                return list;
+            }
+
+            var itemExists = false;
+            for(var i = 0; i < list.length; i++) {
+                var item = list[i];
+
+                if(item[compareWith] === object[compareWith]) {
+                    itemExists = true;
+                }
+            }
+
+            if( ! itemExists) {
+                list[list.length] = object;
+            }
+
+            return list;
+        };
+
+        this.remove = function(object, compareWith) {
+            for(var i = 0; i < list.length; i++) {
+                var item = list[i];
+
+                if(item[compareWith] === object[compareWith]) {
+                    list.splice(i, 1);
+                    break;
+                }
+            }
+
+            return list;
+        };
+
+        this.clear = function() {
+
+        };
+    }
+
+    return new List();
+}).factory('TestControl', function($http) {
+    return {
+        urls: {
+            saveTestUrl: '/app_dev.php/create-test'
+        },
+
+        saveTest: function() {
+            return $http({
+                method: 'POST',
+                url: this.urls.saveTestUrl
             });
         }
     };

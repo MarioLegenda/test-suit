@@ -28,6 +28,7 @@ body {
 .ContentElement {
   width:100%;
   float:left;
+  position:relative;
 
   .ContentMainTitle, .ContentSubTitle {
     width:100%;
@@ -49,4 +50,15 @@ body {
 
     margin-bottom:50px;
   }
+}
+
+.Loading {
+  position:absolute;
+  top:50%; left:50%;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+
+  color:white;
 }

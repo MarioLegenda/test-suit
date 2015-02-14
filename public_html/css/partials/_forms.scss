@@ -28,6 +28,18 @@
     float:left;
   }
 
+
+  .FormRow--field {
+    width:50%;
+    float:left;
+  }
+
+  .FormRow--SubmitButton {
+    display:block;
+    width:150px;
+    padding:5px;
+  }
+
   .BasicLabel {
     color:white;
     padding:5px;
@@ -68,6 +80,20 @@
     float:right;
   }
 
+  .BasicSelect {
+    width:200px;
+    float:left;
+    padding:2px;
+
+    font-family: "Open Sans Condensed", sans-serif;
+    font-size:1.2em;
+    background-color: $mainColor;
+    border:1px solid white;
+    border-radius: 2px;
+
+    color:white;
+  }
+
   .BasicSubmitButton {
     float:right;
 
@@ -102,17 +128,6 @@
     padding:5px;
 
     margin:0 0 5px 0;
-  }
-
-  .FormRow--field {
-    width:50%;
-    float:left;
-  }
-
-  .FormRow--SubmitButton {
-    display:block;
-    width:150px;
-    padding:5px;
   }
 
 

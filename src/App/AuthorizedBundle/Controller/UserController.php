@@ -87,8 +87,42 @@ class UserController extends ContainerAware
     /**
      * @Security("has_role('ROLE_USER_MANAGER')")
      */
-    public function userInfoAction() {
+    public function userPaginatedAction() {
+        $doctrine = $this->container->get('doctrine');
+        $em = $this->container->get('doctrine')->getManager();
 
+        $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
+        $users = $userRepo->getPaginatedUsers(0, 10);
+
+        $responseParameters = new ResponseParameters();
+        if($users !== null) {
+            $responseParameters->addParameter('users', $users);
+
+            return GoodAjaxRequest::init($responseParameters)->getResponse();
+        }
+
+        $responseParameters->addParameter('users', array());
+        return GoodAjaxRequest::init($responseParameters)->getResponse();
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER_MANAGER')")
+     */
+    public function userInfoAction() {
+        $request = $this->container->get('request');
+        $doctrine = $this->container->get('doctrine');
+        $id = (array)json_decode($request->getContent());
+
+        if(empty($id) OR ! array_key_exists('id', $id)) {
+            return BadAjaxResponse::init('Invalid request from client')->getResponse();
+        }
+
+        $userRepo = new UserRepository($doctrine);
+        $user = $userRepo->getUserById($id['id']);
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('user', $user);
+        return GoodAjaxRequest::init($responseParameters)->getResponse();
     }
 
     /**

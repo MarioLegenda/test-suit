@@ -27,3 +27,13 @@ app_authorized_userInfo:
     path: /user-managment/user-info
     defaults: { _controller: AppAuthorizedBundle:User:userInfo }
     methods: [POST]
+
+app_authorized_createTestTemplate:
+    path: /create-test
+    defaults: { _controller: AppAuthorizedBundle:Test:createTestTemplate }
+    methods: [GET]
+
+app_authorized_createTest:
+    path: /create-test
+    defaults: { _controller: AppAuthorizedBundle:Test:createTest }
+    methods: [POST]

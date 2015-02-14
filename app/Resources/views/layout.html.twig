@@ -11,7 +11,17 @@
             <link rel="stylesheet" href="{{ asset("css/style.css") }}">
         {% endblock %}
 
+        <script type="text/ng-template" id="permissionTemplate.html">
+                <div class="TestRestrictions">
+                    <div class="UserTable  UserListTable">
+                        <label class="ListTable--label" ng-click="managment.addUser(user)" ng-repeat="user in available_users" data-selected-user="{[{ user }]}">{[{ user.username }]}</label>
+                    </div>
 
+                    <div class="UserTable  UserAllowedTable">
+                        <label class="ListTable--label" ng-click="managment.removeUser(user)" ng-repeat="user in allowedUsers" data-selected-user="{[{ user }]}">{[{ user.username }]}</label>
+                    </div>
+                </div>
+        </script>
 
     </head>
     <body>

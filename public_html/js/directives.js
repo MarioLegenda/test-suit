@@ -12,9 +12,6 @@ angular.module('suite.directives', []).directive('processUiInstalling', function
                         $window.location.replace(scope.process.url);
                     }, 1000);
                 }
-                else if(scope.process.installed === true) {
-
-                }
             });
         }
     }
@@ -34,43 +31,128 @@ angular.module('suite.directives', []).directive('processUiInstalling', function
             });
         }
     }
-}).directive('expandSection', function($) {
+}).directive('loading', function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        link: function(scope, elem, attrs) {
+
+        }
+    }
+}).directive('expandSection', function($, User, $timeout) {
     return {
         restrict: 'A',
-        scope: {
-            expandHeight: '@expandHeight'
-        },
         link : function(scope, elem, attrs) {
-            var currHeight = elem.innerHeight();
-            var show = false;
+            var userId = attrs.userId;
 
-            elem.click(function() {
-                if(show === false) {
-                    show = true;
-                    $(this).animate({
-                        height: scope.expandHeight + 'px'
-                    }, 500);
+            var animation = ( function () {
 
-                    elem.css({
-                        border:'1px solid #2C84EE'
-                    });
+                var show = false;
+                return {
+                    toggle: function(elem, clickedElem) {
+                        var h = elem.find('.UserManagment--info').outerHeight() + 50;
+                        if(show === false) {
+                            elem.animate({
+                                height: h + 'px'
+                            });
 
-                    elem.find('.ExpandableClick').css({
-                        backgroundColor: '#2C84EE'
+                            elem.css({
+                                border: '1px solid #2C84EE'
+                            });
+
+                            clickedElem.find('.ExpandableClick').css({
+                                backgroundColor: '#2C84EE'
+                            });
+
+                            show = true;
+                        }
+                        else if(show === true) {
+                            elem.animate({
+                                height: 45 + 'px'
+                            });
+
+
+                            elem.css({
+                                border: '1px solid white'
+                            });
+
+                            clickedElem.find('.ExpandableClick').css({
+                                backgroundColor: 'transparent'
+                            });
+
+                            show = false;
+                        }
+                    }
+                };
+
+            } () );
+
+            elem.click(function(event) {
+                event.preventDefault();
+
+                var localThis = $(this);
+
+                if( ! scope.userInfo.hasOwnProperty(userId)) {
+                    scope.loading.loading = true;
+
+                    var promise = User.getUsersById({
+                        id: userId
+                    }, true);
+
+                    promise.then(function(data, status, headers, config) {
+                        var userInfo = data.data.user;
+                        scope.userInfo[userInfo.user_id] = userInfo;
+
+                        scope.loading.loaded = !scope.loading.loaded;
+                        scope.loading.loading = false;
+
+                        $timeout(function() {
+                            animation.toggle(elem, localThis);
+                        }, 100);
+
+                    }, function(data, status, headers, config) {
+                        console.log(data, status);
+                        animation.toggle(elem, localThis);
                     });
                 }
-                else if(show === true) {
-                    show = false;
-                    $(this).animate({
-                        height: (currHeight + 2) + 'px'
-                    }, 500);
+                else {
+                    $timeout(function() {
+                        animation.toggle(elem, localThis);
+                    }, 100);
+                }
 
-                    elem.css({
-                        border:'1px solid white'
-                    });
+                return false;
+            });
+        }
+    }
+}).directive('userRestriction', function($, User, List) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            permission: '@permission',
+            allowedUsers: '=allowedUsers'
+        },
+        templateUrl: 'permissionTemplate.html',
+        link: function(scope, elem, attrs) {
+            scope.available_users = null;
+            scope.managment = {
+                addUser: function(user) {
+                    scope.allowedUsers = List.add(user, 'user_id');
+                },
+                removeUser: function(user) {
+                    console.log('idiot');
+                    scope.allowedUsers = List.remove(user, 'user_id');
+                }
+            };
 
-                    elem.find('.ExpandableClick').css({
-                        backgroundColor: 'transparent'
+            scope.$watch(function() { return scope.permission }, function(newVal, oldVal, scope) {
+                if(scope.available_users === null && scope.permission === 'restricted') {
+                    var promise = User.getAllUsers();
+                    promise.then(function(data, status, headers, config) {
+                        scope.available_users = data.data.users;
+                    }, function(data, status, headers, config) {
+                        console.log('Something bad happend', data, status);
                     });
                 }
             });

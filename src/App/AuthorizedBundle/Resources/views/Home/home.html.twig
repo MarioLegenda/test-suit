@@ -5,7 +5,7 @@
         <div class="Container  Home">
             {% if model.isInRole('ROLE_TEST_CREATOR') or model.isInRole('ROLE_USER_MANAGER') %}
             <h1 class="ContentMainTitle">Build...</h1>
-            <a href="" class="Home__New  Home__NewTestLink">
+            <a href="{{ path('app_authorized_createTest') }}" class="Home__New  Home__NewTestLink">
                 <span class="NewTestLink--content">Build a standalone test</span>
             </a>
             {% endif %}
