@@ -66,6 +66,26 @@ angular.module('suite.factories', []).factory('$', function () {
                 return false;
             },
 
+            notValidArray: function(arr, value) {
+                for(var i = 0; i < arr.length; i++) {
+                    if(arr[i] === value) {
+                        return true;
+                    }
+                }
+
+                return false;
+            },
+
+            notEmptyArray: function(arr) {
+                if(arr.length === 0) {
+                    this.invalidForm = true;
+                    return true;
+                }
+
+                this.invalidForm = false;
+                return false;
+            },
+
             regexValid: function(prop) {
                 return $scope[formName][prop].$error.pattern;
             },
@@ -181,10 +201,11 @@ angular.module('suite.factories', []).factory('$', function () {
             saveTestUrl: '/app_dev.php/create-test'
         },
 
-        saveTest: function() {
+        saveTest: function(data) {
             return $http({
                 method: 'POST',
-                url: this.urls.saveTestUrl
+                url: this.urls.saveTestUrl,
+                data: data
             });
         }
     };

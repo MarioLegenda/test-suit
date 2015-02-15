@@ -103,7 +103,6 @@
     text-align:center;
     background-color: transparent;
 
-    margin:15px 60px 0 0;
     padding:10px;
 
     border:1px solid white;
@@ -154,24 +153,20 @@
   }
 
 
-  .Process {
+  .Action {
+    width:120px;
+    float:left;
     text-align: right;
     color:white;
 
     font-size:1.2em;
     padding:10px;
-    margin:15px 120px 0 0;
   }
 
-  .Process--installing {
-    width:120px;
+  .ActionSubmitDirective {
+    width:50%;
     float:right;
-  }
-
-  .Process--installed {
-    width:100%;
-    float:right;
-    text-align: right;
+    margin-right:160px;
   }
 }
 

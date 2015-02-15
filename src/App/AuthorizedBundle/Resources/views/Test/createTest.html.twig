@@ -2,61 +2,71 @@
 
 {% block content %}
     <div class="ContentElement">
+        <script type="text/ng-template" id="createTest.html">
+            <form action="" name="CreateTestForm" method="POST">
+
+                <div class="FormRow">
+                    <action-global-error></action-global-error>
+                </div>
+
+                <div class="FormRow">
+                    <label for="test_name" class="FormRow--label  BasicLabel">Test name</label>
+                    <input type="text" name="test_name" class="FormRow--field  BasicField" ng-model="test.test_name" required/>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('test_name')">
+                        <p>Test name has to be provided</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label for="test_name" class="FormRow--label  BasicLabel">Visibility</label>
+                    <select ng-model="test.current_permission" ng-options="permission for permission in test.permission_items" class="BasicSelect"></select>
+                </div>
+
+                <div class="FormRow">
+
+                    <div class="FormError  BasicError  CreateUserError"
+                         ng-show="test.current_permission == 'restricted' && theForm.notEmptyArray(test.allowed_users)">
+                        <p>If restriction is not public, at least one user has to be provided</p>
+                    </div>
+
+                    <div class="TestRestrictions" ng-show="test.current_permission == 'restricted'">
+                        <div class="UserTable  UserListTable">
+                            <label class="ListTable--label" ng-click="managment.addUser(user)" ng-repeat="user in available_users">{[{ user.username }]}</label>
+                        </div>
+
+                        <div class="UserTable  UserAllowedTable">
+                            <label class="ListTable--label" ng-click="managment.removeUser(user)" ng-repeat="user in test.allowed_users">{[{ user.username }]}</label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="FormRow">
+                    <label for="future_plans" class="FormRow--label  BasicLabel">Remarks</label>
+                    <textarea name="remarks" class="FormRow--field  BasicField  BasicTextarea" ng-model="test.remarks"></textarea>
+                </div>
+
+                <div class="FormRow">
+                    <action-submit></action-submit>
+                   <!-- <input type="submit" value="Create test" class="FormRow--submitButton  BasicSubmitButton  CreateUserSubmitButton"
+                           ng-click="test.submit($event)"/>
+                    <action-awaiting></action-awaiting>-->
+                </div>
+            </form>
+
+        </script>
+
         <div class="Toolbox">
             <h1 class="Toolbox--title">Toolbox<span class="Toolbox--icon  Icon--title"></span></h1>
         </div>
 
-        <div class="Container  TestCreation" ng-controller="suite.testCreateCtrl">
+        <div class="Container  TestCreation">
             <h1 class="ContentMainTitle  TestCreation--title">Create test</h1>
 
             <div class="MainContent  ContentCentered">
                 <h2 class="ContentSubTitle">Mandatory information</h2>
-                <form action="" name="CreateTestForm" method="POST">
-
-                    <div class="FormRow">
-                        <div class="GlobalErrors" ng-model="globalErrors.errors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
-                            <label class="GlobalError">{[{ error }]}</label>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="test_name" class="FormRow--label  BasicLabel">Test name</label>
-                        <input type="text" name="test_name" class="FormRow--field  BasicField" ng-model="test.test_name" required/>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('test_name')">
-                            <p>Test name has to be provided</p>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="test_name" class="FormRow--label  BasicLabel">Visibility</label>
-                        <select ng-model="test.current_permission" ng-options="permission for permission in test.permission_items" class="BasicSelect"></select>
-                    </div>
-
-                    <div class="FormRow">
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="test.current_permission == 'restricted' && theForm.hasArrayValues(test.allowed_users)">
-                            <p>If restriction is not public, at least one user has to be provided</p>
-                        </div>
-                        <user-restriction ng-show="test.current_permission == 'restricted'"
-                                          permission="{[{ test.current_permission }]}"
-                                          allowed_users="test.allowed_users">
-                                          </user-restriction>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="future_plans" class="FormRow--label  BasicLabel">Remarks</label>
-                        <textarea name="remarkks" class="FormRow--field  BasicField  BasicTextarea" ng-model="test.remarks"></textarea>
-                    </div>
-
-                    <div class="FormRow">
-                        <input type="submit" value="Create test" class="FormRow--submitButton  BasicSubmitButton  CreateUserSubmitButton"
-                               ng-click="test.submit($event)"
-                               ng-model="process.installed"
-                               ng-show="process.installed == false && process.installing == false" />
-                        <process-ui-installing installing="{[{ process.installing }]}" installed="{[{ process.installed }]}"></process-ui-installing>
-                    </div>
-                </form>
+                <test-naming></test-naming>
             </div>
         </div>
 

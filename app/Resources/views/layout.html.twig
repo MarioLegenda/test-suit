@@ -7,20 +7,26 @@
         <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <link href='http://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css'>
 
+        <!-- CreateUserSubmitButton -->
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset("css/style.css") }}">
         {% endblock %}
 
-        <script type="text/ng-template" id="permissionTemplate.html">
-                <div class="TestRestrictions">
-                    <div class="UserTable  UserListTable">
-                        <label class="ListTable--label" ng-click="managment.addUser(user)" ng-repeat="user in available_users" data-selected-user="{[{ user }]}">{[{ user.username }]}</label>
-                    </div>
+        <script type="text/ng-template" id="globalError.html">
+            <div class="GlobalErrors" ng-model="globalErrors.errors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
+                <label class="GlobalError">{[{ error }]}</label>
+            </div>
+        </script>
 
-                    <div class="UserTable  UserAllowedTable">
-                        <label class="ListTable--label" ng-click="managment.removeUser(user)" ng-repeat="user in allowedUsers" data-selected-user="{[{ user }]}">{[{ user.username }]}</label>
-                    </div>
-                </div>
+        <script type="text/ng-template" id="actionSubmit.html">
+            <div class="ActionSubmitDirective">
+                <input type="submit" value="Create test" class="FormRow--submitButton  BasicSubmitButton  {[{ action.userSpecificClasses }]}"
+                       ng-click="action.submit($event)"
+                        ng-disabled="(action.finished && action.awaiting) || action.awaiting"/>
+                <p class='Action'
+                   ng-model='action.awaiting'
+                   ng-show='(action.finished && action.awaiting) || action.awaiting'>{[{ action.message }]}</p>
+            </div>
         </script>
 
     </head>

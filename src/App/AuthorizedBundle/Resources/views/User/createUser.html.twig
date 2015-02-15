@@ -2,148 +2,148 @@
 
 {% block content %}
 
-    <div class="ContentElement" ng-controller="suite.addUserCtrl">
+    <script type="text/ng-template" id="createUserTemplate.html">
+        <div class="MainContent  ContentCentered">
+            <form action="" name="AddUserForm" method="POST" novalidate>
+                <h2 class="ContentSubTitle">Mandatory information</h2>
+
+                <div class="FormRow">
+                    <div class="GlobalErrors" ng-model="globalErrors.errors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
+                        <label class="GlobalError">{[{ error }]}</label>
+                    </div>
+                </div>
+                <div class="FormRow">
+                    <label for="name" class="FormRow--label  BasicLabel">Name</label>
+                    <input type="text" name="name" class="FormRow--field  BasicField" ng-model="user.name" required/>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('name')">
+                        <p>Name has to be provided</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label for="lastname" class="FormRow--label  BasicLabel">Lastname</label>
+                    <input type="text" name="lastname" class="FormRow--field  BasicField" ng-model="user.lastname" required/>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('lastname')">
+                        <p>Lastname has to be provided</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label for="username" class="FormRow--label  BasicLabel">Username</label>
+                    <input type="email" name="username" placeholder="...has to be an email" class="FormRow--field  BasicField" ng-model="user.username" required/>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('username') || theForm.notEmail('username')">
+                        <p>A valid email has to be provided</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label for="password" class="FormRow--label  BasicLabel">Password</label>
+                    <input type="password" name="password" class="FormRow--field  BasicField" ng-model="user.userPassword" ng-minlength="8" required/>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('password') || theForm.notMinLength('password')">
+                        <p>Password has to have at least 8 characters</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label for="pass_repeat" class="FormRow--label  BasicLabel">Repeat password</label>
+                    <input type="password" name="pass_repeat" class="FormRow--field  BasicField" ng-model="user.userPassRepeat" ng-minlength="8" required/>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('pass_repeat') || theForm.notEquals('password', 'pass_repeat')">
+                        <p>Given passwords have to match</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label for="pass_repeat" class="FormRow--label  BasicLabel">User permissions</label>
+                    <div class="CheckboxWidget  FormRow--field  BasicField">
+                        <section class="CheckboxSection">
+                            <label class="BasicLabel">Test solver...</label>
+                            <input type="checkbox" name="role_test_solver" value="role_test_solver" class="BasicCheckbox" ng-model="user.userPermissions.role_test_solver" ng-change="user.userPermissions.role_test_solver" required>
+
+                            <p class="CheckboxExplanation">
+                                ...can only solve tests but does not have access
+                                to creating tests or creating/editing/deleting users
+                            </p>
+                        </section>
+
+                        <section class="CheckboxSection">
+                            <label class="BasicLabel">Test creator...</label>
+                            <input type="checkbox" name="role_test_creator" value="role_test_creator" class="BasicCheckbox" ng-model="user.userPermissions.role_test_creator" ng-change="user.userPermissions.role_test_creator" ng-click="user.userPermissions.examinePermissions('role_test_creator')">
+
+                            <p class="CheckboxExplanation">
+                                ...can create/solve tests but cannot create/edit/delete users
+                            </p>
+                        </section>
+
+                        <section class="CheckboxSection">
+
+                            <label class="BasicLabel">User manager...</label>
+                            <input type="checkbox" name="role_user_manager" value="role_user_manager" class="BasicCheckbox" ng-model="user.userPermissions.role_user_manager" ng-change="user.userPermissions.role_user_manager" ng-click="user.userPermissions.examinePermissions('role_user_manager')">
+
+                            <p class="CheckboxExplanation">
+                                ...can create/solve test and create/edit/delete users.
+                            </p>
+                        </section>
+                    </div>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.enforceChecked(1, ['role_test_solver', 'role_test_creator', 'role_user_manager'])">
+                        <p>At least one permission has to be given</p>
+                    </div>
+
+                </div>
+
+                <h2 class="ContentSubTitle">Optional information</h2>
+
+                <div class="FormRow">
+                    <label for="fields" class="FormRow--label  BasicLabel">Tehnical fields</label>
+                    <input type="text" name="tehnical_fields" class="FormRow--field  BasicField" ng-model="user.fields"/>
+                </div>
+
+                <div class="FormRow">
+                    <label for="programming_languages" class="FormRow--label  BasicLabel">Programming languages</label>
+                    <input type="text" name="programming_languages" class="FormRow--field  BasicField" ng-model="user.programming_languages"/>
+                </div>
+
+                <div class="FormRow">
+                    <label for="tools" class="FormRow--label  BasicLabel">Know these useful tools...</label>
+                    <input type="text" name="tools" class="FormRow--field  BasicField" ng-model="user.tools"/>
+                </div>
+
+                <div class="FormRow">
+                    <label for="years_of_experience" class="FormRow--label  BasicLabel">Years of experience</label>
+                    <input type="text" name="years_of_experience" class="FormRow--field  BasicField" ng-model="user.years_of_experience" ng-pattern="/^[0-9]+/"/>
+
+                    <div class="FormError  BasicError  CreateUserError" ng-show="theForm.regexValid('years_of_experience')">
+                        <p>You don't have to supply it, but it has to be a number</p>
+                    </div>
+                </div>
+
+                <div class="FormRow">
+                    <label for="future_plans" class="FormRow--label  BasicLabel">Future plans</label>
+                    <textarea name="future_plans" class="FormRow--field  BasicField  BasicTextarea" ng-model="user.future_plans"></textarea>
+                </div>
+
+                <div class="FormRow">
+                    <label for="description" class="FormRow--label  BasicLabel">Personal description</label>
+                    <textarea name="description" class="FormRow--field  BasicField  BasicTextarea" ng-model="user.description"></textarea>
+                </div>
+
+                <div class="FormRow">
+                    <action-submit></action-submit>
+                </div>
+            </form>
+        </div>
+    </script>
+
+    <div class="ContentElement">
         <div class="Container  CreateUser">
             <h1 class="ContentMainTitle">Add a user</h1>
 
-            <div class="MainContent  ContentCentered">
-                <form action="" name="AddUserForm" method="POST" novalidate>
-                    <h2 class="ContentSubTitle">Mandatory information</h2>
-
-                    <div class="FormRow">
-                        <div class="GlobalErrors" ng-model="globalErrors.errors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
-                            <label class="GlobalError">{[{ error }]}</label>
-                        </div>
-                    </div>
-                    <div class="FormRow">
-                        <label for="name" class="FormRow--label  BasicLabel">Name</label>
-                        <input type="text" name="name" class="FormRow--field  BasicField" ng-model="user.name" required/>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('name')">
-                            <p>Name has to be provided</p>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="lastname" class="FormRow--label  BasicLabel">Lastname</label>
-                        <input type="text" name="lastname" class="FormRow--field  BasicField" ng-model="user.lastname" required/>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('lastname')">
-                            <p>Lastname has to be provided</p>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="username" class="FormRow--label  BasicLabel">Username</label>
-                        <input type="email" name="username" placeholder="...has to be an email" class="FormRow--field  BasicField" ng-model="user.username" required/>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('username') || theForm.notEmail('username')">
-                            <p>A valid email has to be provided</p>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="password" class="FormRow--label  BasicLabel">Password</label>
-                        <input type="password" name="password" class="FormRow--field  BasicField" ng-model="user.userPassword" ng-minlength="8" required/>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('password') || theForm.notMinLength('password')">
-                            <p>Password has to have at least 8 characters</p>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="pass_repeat" class="FormRow--label  BasicLabel">Repeat password</label>
-                        <input type="password" name="pass_repeat" class="FormRow--field  BasicField" ng-model="user.userPassRepeat" ng-minlength="8" required/>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('pass_repeat') || theForm.notEquals('password', 'pass_repeat')">
-                            <p>Given passwords have to match</p>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="pass_repeat" class="FormRow--label  BasicLabel">User permissions</label>
-                        <div class="CheckboxWidget  FormRow--field  BasicField">
-                            <section class="CheckboxSection">
-                                <label class="BasicLabel">Test solver...</label>
-                                <input type="checkbox" name="role_test_solver" value="role_test_solver" class="BasicCheckbox" ng-model="user.userPermissions.role_test_solver" ng-change="user.userPermissions.role_test_solver" required>
-
-                                <p class="CheckboxExplanation">
-                                    ...can only solve tests but does not have access
-                                to creating tests or creating/editing/deleting users
-                                </p>
-                            </section>
-
-                            <section class="CheckboxSection">
-                                <label class="BasicLabel">Test creator...</label>
-                                <input type="checkbox" name="role_test_creator" value="role_test_creator" class="BasicCheckbox" ng-model="user.userPermissions.role_test_creator" ng-change="user.userPermissions.role_test_creator" ng-click="user.userPermissions.examinePermissions('role_test_creator')">
-
-                                <p class="CheckboxExplanation">
-                                    ...can create/solve tests but cannot create/edit/delete users
-                                </p>
-                            </section>
-
-                            <section class="CheckboxSection">
-
-                                <label class="BasicLabel">User manager...</label>
-                                <input type="checkbox" name="role_user_manager" value="role_user_manager" class="BasicCheckbox" ng-model="user.userPermissions.role_user_manager" ng-change="user.userPermissions.role_user_manager" ng-click="user.userPermissions.examinePermissions('role_user_manager')">
-
-                                <p class="CheckboxExplanation">
-                                    ...can create/solve test and create/edit/delete users.
-                                </p>
-                            </section>
-                        </div>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.enforceChecked(1, ['role_test_solver', 'role_test_creator', 'role_user_manager'])">
-                            <p>At least one permission has to be given</p>
-                        </div>
-
-                    </div>
-
-                    <h2 class="ContentSubTitle">Optional information</h2>
-
-                    <div class="FormRow">
-                        <label for="fields" class="FormRow--label  BasicLabel">Tehnical fields</label>
-                        <input type="text" name="tehnical_fields" class="FormRow--field  BasicField" ng-model="user.fields"/>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="programming_languages" class="FormRow--label  BasicLabel">Programming languages</label>
-                        <input type="text" name="programming_languages" class="FormRow--field  BasicField" ng-model="user.programming_languages"/>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="tools" class="FormRow--label  BasicLabel">Know these useful tools...</label>
-                        <input type="text" name="tools" class="FormRow--field  BasicField" ng-model="user.tools"/>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="years_of_experience" class="FormRow--label  BasicLabel">Years of experience</label>
-                        <input type="text" name="years_of_experience" class="FormRow--field  BasicField" ng-model="user.years_of_experience" ng-pattern="/^[0-9]+/"/>
-
-                        <div class="FormError  BasicError  CreateUserError" ng-show="theForm.regexValid('years_of_experience')">
-                            <p>You don't have to supply it, but it has to be a number</p>
-                        </div>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="future_plans" class="FormRow--label  BasicLabel">Future plans</label>
-                        <textarea name="future_plans" class="FormRow--field  BasicField  BasicTextarea" ng-model="user.future_plans"></textarea>
-                    </div>
-
-                    <div class="FormRow">
-                        <label for="description" class="FormRow--label  BasicLabel">Personal description</label>
-                        <textarea name="description" class="FormRow--field  BasicField  BasicTextarea" ng-model="user.description"></textarea>
-                    </div>
-
-                    <div class="FormRow">
-                        <input type="submit" value="Add user" class="FormRow--submitButton  BasicSubmitButton  CreateUserSubmitButton"
-                               ng-click="user.submit($event)"
-                               ng-model="process.installed"
-                               ng-show="process.installed == false && process.installing == false" />
-                        <process-ui-installing installing="{[{ process.installing }]}" installed="{[{ process.installed }]}"></process-ui-installing>
-                    </div>
-                </form>
-            </div>
+            <create-user></create-user>
         </div>
     </div>
 
