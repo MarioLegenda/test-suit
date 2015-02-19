@@ -28,13 +28,12 @@ body {
 .ContentElement {
   width:100%;
   float:left;
+  margin:50px 0 0 0;
   position:relative;
 
   .ContentMainTitle, .ContentSubTitle {
     width:100%;
-    float:left;
     padding:0 0 15px 0;
-    margin:25px 0 25px 0;
 
     font-size:1.6em;
     border-bottom:1px solid white;
@@ -43,6 +42,8 @@ body {
   .ContentSubTitle {
     font-size:1.4em;
     border-bottom:1px dotted white;
+
+    margin:25px 0 25px 0;
   }
 
   .ContentCentered {

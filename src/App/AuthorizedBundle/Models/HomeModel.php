@@ -13,7 +13,6 @@ use App\ToolsBundle\Models\GenericModel;
 
 class HomeModel extends GenericModel
 {
-
     public function __construct($security, $user) {
         $this->security = $security;
         $this->user = $user;

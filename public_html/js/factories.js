@@ -76,7 +76,7 @@ angular.module('suite.factories', []).factory('$', function () {
                 return false;
             },
 
-            notEmptyArray: function(arr) {
+            notEmpty: function(arr, value) {
                 if(arr.length === 0) {
                     this.invalidForm = true;
                     return true;
@@ -96,6 +96,10 @@ angular.module('suite.factories', []).factory('$', function () {
                 }
 
                 if($scope[formName].$valid && this.invalidForm === null) {
+                    return true;
+                }
+
+                if($scope[formName].$valid && this.invalidForm === false) {
                     return true;
                 }
 
@@ -152,7 +156,8 @@ angular.module('suite.factories', []).factory('$', function () {
     };
 }).factory('List', function() {
     function List() {
-        var list = [];
+        var list = [],
+            index = 0;
 
         this.add = function(object, compareWith) {
             if(list.length === 0) {
@@ -209,4 +214,73 @@ angular.module('suite.factories', []).factory('$', function () {
             });
         }
     };
+}).factory('DataShepard', function() {
+    function DataShepard() {
+        var counter = 0,
+            heard = [];
+
+        this.current = function() {
+            return counter;
+        };
+
+        this.reverse = function() {
+            counter--;
+        };
+
+        this.exact = function() {
+            return counter - 1;
+        };
+
+        this.next = function() {
+            counter++;
+        };
+
+        this.add = function(object) {
+            heard[heard.length] = object;
+            return this;
+        };
+
+        this.get = function(index) {
+            if((index in list) === false) {
+                return null;
+            }
+
+            return heard[index];
+        };
+
+        this.all = function() {
+            return heard;
+        };
+
+        this.clear = function() {
+            counter = 0;
+            heard = [];
+        };
+    }
+
+    return new DataShepard();
+}).factory('BlockType', function() {
+    return {
+        initObj: null,
+        save: function(initObj) {
+            this.initObj = initObj;
+        },
+        create: function() {
+            var immutableTemp =  {
+                type: this.initObj.type,
+                block_type: this.initObj.block_type,
+                element: this.initObj.element,
+                block_id: this.initObj.block_id,
+                placeholder: this.initObj.placeholder,
+                data: {
+                    type: this.initObj.data.type,
+                    data: null
+                }
+            };
+
+            this.initObj = null;
+
+            return immutableTemp;
+        }
+    }
 });

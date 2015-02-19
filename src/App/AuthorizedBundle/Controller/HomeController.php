@@ -8,6 +8,8 @@ use App\ToolsBundle\Helpers\ResponseParameters;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
+use RandomLib;
+
 class HomeController extends ContainerAware
 {
     /**

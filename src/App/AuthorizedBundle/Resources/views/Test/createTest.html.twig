@@ -26,7 +26,7 @@
                 <div class="FormRow">
 
                     <div class="FormError  BasicError  CreateUserError"
-                         ng-show="test.current_permission == 'restricted' && theForm.notEmptyArray(test.allowed_users)">
+                         ng-show="test.current_permission == 'restricted' && theForm.notEmpty(test.allowed_users)">
                         <p>If restriction is not public, at least one user has to be provided</p>
                     </div>
 
@@ -49,17 +49,10 @@
 
                 <div class="FormRow">
                     <action-submit></action-submit>
-                   <!-- <input type="submit" value="Create test" class="FormRow--submitButton  BasicSubmitButton  CreateUserSubmitButton"
-                           ng-click="test.submit($event)"/>
-                    <action-awaiting></action-awaiting>-->
                 </div>
             </form>
 
         </script>
-
-        <div class="Toolbox">
-            <h1 class="Toolbox--title">Toolbox<span class="Toolbox--icon  Icon--title"></span></h1>
-        </div>
 
         <div class="Container  TestCreation">
             <h1 class="ContentMainTitle  TestCreation--title">Create test</h1>

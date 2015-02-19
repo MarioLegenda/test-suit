@@ -1,0 +1,64 @@
+{% extends '::layout.html.twig' %}
+
+{% block content %}
+
+    <script type="text/ng-template" id="plainTextSuite.html">
+        <div class="Block  PlainTextBlock">
+            <div class="FormRow">
+                <textarea
+                        ng-model="block.data.data"
+                        class="FormRow--field  BasicField  BasicTextarea  QuestionTextarea"
+                        placeholder="{[{ block.placeholder }]}">
+                </textarea>
+
+                <div class="BlockEvents">
+                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="workspace.html">
+        <div class="Builder">
+            <div class="BuilderMenu">
+                <h1 class="BuildMenu--title  ContentSubTitle">Blocks menu<span class="BuilderMenu--icon"></span></h1>
+
+                <section class="Blocks  QuestionBlocks">
+                    <h2 class="Blocks--title">Question blocks<span class="Block--icon  Question--icon"></span></h2>
+
+                    <p class="BlockType" ng-click="builder.buildQuestion('plain-text-box')"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType"><span class="ContentCentering">Code block</span></p>
+                </section>
+
+                <section class="Blocks  AnswerBlocks">
+                    <h2 class="Blocks--title">Answer blocks<span class="Block--icon  Answer--icon"></span></h2>
+
+                    <p class="BlockType"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType"><span class="ContentCentering">Select block</span></p>
+                    <p class="BlockType"><span class="ContentCentering">Checkbox block</span></p>
+                    <p class="BlockType"><span class="ContentCentering">Code block</span></p>
+                </section>
+            </div>
+
+            <form action="" method="POST" name="suitForm">
+                <div class="SuitBlocks">
+                </div>
+
+                <div class="FormRow">
+                    <action-submit></action-submit>
+                </div>
+            </form>
+        </div>
+    </script>
+
+    <div class="ContentElement">
+        <div class="Container  WorkspaceTemplate">
+            <h1 class="ContentMainTitle">{{ model.getProperty('test-name') }}</h1>
+
+            <div class="BuilderContent">
+                <builder current_test_id="{{ model.getProperty('test-id') }}"></builder>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

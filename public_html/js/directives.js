@@ -1,6 +1,39 @@
 "use strict";
 
-angular.module('suite.directives', []).directive('processUiInstalling', function($window, $timeout) {
+angular.module('suite.directives', [])
+    .directive('plainTextSuitBlock', function(BlockType, DataShepard) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: true,
+        templateUrl: 'plainTextSuite.html',
+        controller: function($scope) {
+        },
+        link: function(scope, elem, attrs) {
+        },
+        compile: function(tElem, tAttrs) {
+            return {
+                pre: function(scope, iElement, iAttrs, controller) {
+                    scope.block = BlockType.create();
+
+                    console.log('Link: ' + scope.block.block_id);
+
+                    scope.$on('data-collection', function(event, data) {
+                        scope.$emit('data-receiving', scope.block);
+                    });
+
+                    scope.blockEvents = {
+                        remove: function() {
+                            DataShepard.reverse();
+                            scope.$destroy();
+                            iElement.remove();
+                        }
+                    };
+                }
+            }
+        }
+    }
+}).directive('processUiInstalling', function($window, $timeout) {
     return {
         restrict: 'EA',
         replace: true,
@@ -205,12 +238,12 @@ angular.module('suite.directives', []).directive('processUiInstalling', function
             });
         }
     }
-}).directive('testNaming', function(User, List, $timeout) {
+}).directive('testNaming', function(TestControl) {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: 'createTest.html',
-        controller: function($scope, formHandler, TestControl) {
+        controller: function($scope, formHandler, $timeout, List, User) {
             $scope.theForm = formHandler.init($scope, 'CreateTestForm');
 
             $scope.globalErrors = {
@@ -232,43 +265,8 @@ angular.module('suite.directives', []).directive('processUiInstalling', function
                 test_name: '',
                 current_permission: 'public',
                 permission_items: ['public', 'restricted'],
-                allowed_users: [],
-                remarks: '',
-                submit: function($event) {
-
-                    $event.preventDefault();
-                    if($scope.theForm.isValidForm()) {
-                        $scope.$broadcast('action-await', {
-                            awaiting: true
-                        });
-
-                        var promise = TestControl.saveTest({
-                            test_name: $scope.test.test_name,
-                            test_solvers: $scope.test.allowed_users,
-                            remarks: $scope.test.remarks
-                        });
-
-                        promise.then(function (data, status, headers, config) {
-                            $scope.$broadcast('action-finished', {
-                                awaiting: true,
-                                finished: true
-                            });
-                        }, function (data, status, headers, config) {
-                            $scope.$broadcast('action-await', {
-                                awaiting: false,
-                                finished: false,
-                                redirect: false
-                            });
-
-                            $scope.$broadcast('action-error', {
-                                show: true,
-                                errors: data.data['errors']
-                            });
-
-                            window.scrollTo(0, 0);
-                        });
-                    }
-                }
+                allowed_users: ['public'],
+                remarks: ''
             };
 
             $scope.managment = {
@@ -292,6 +290,55 @@ angular.module('suite.directives', []).directive('processUiInstalling', function
             });
         },
         link: function(scope, elem, attrs) {
+            scope.test.submit = function($event) {
+                $event.preventDefault();
+                if (scope.theForm.isValidForm()) {
+                    scope.$broadcast('action-await', {
+                        awaiting: true
+                    });
+
+                    var promise = TestControl.saveTest({
+                        test_name: scope.test.test_name,
+                        test_solvers: ( function() {
+                            if(scope.test.allowed_users.length === 1 && scope.test.allowed_users[0] === 'public') {
+                                return scope.test.allowed_users;
+                            }
+
+                            var idsArray = [];
+                            for(var i = 0; i < scope.test.allowed_users.length; i++) {
+                                var idObject = {};
+                                idObject.user_id = scope.test.allowed_users[i].user_id;
+
+                                idsArray[idsArray.length] = idObject;
+                            }
+
+                            return idsArray;
+                        } () ),
+                        remarks: scope.test.remarks
+                    });
+
+                    promise.then(function (data, status, headers, config) {
+                        scope.$broadcast('action-finished', {
+                            awaiting: true,
+                            finished: true,
+                            redirect: true,
+                            url: '/app_dev.php' + data.data.redirectUrl
+                        });
+                    }, function (data, status, headers, config) {
+                        scope.$broadcast('action-await', {
+                            awaiting: false,
+                            finished: false
+                        });
+
+                        scope.$broadcast('action-error', {
+                            show: true,
+                            errors: data.data['errors']
+                        });
+
+                        window.scrollTo(0, 0);
+                    });
+                }
+            }
         }
     }
 }).directive('createUser', function() {
@@ -383,6 +430,122 @@ angular.module('suite.directives', []).directive('processUiInstalling', function
         },
         link: function(scope, elem, attrs) {
 
+        }
+    }
+}).directive('builder', function($, $compile, DataShepard, BlockType) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            currentTestId: '@currentTestId'
+        },
+        templateUrl: 'workspace.html',
+        controller: function($scope, $timeout) {
+            $timeout(function() {
+                $scope.$broadcast('action-initialization', {
+                    message: 'Please wait...',
+                    submitProp: 'test',
+                    userSpecificClasses: 'BlockFinishButton'
+                });
+            }, 200);
+
+            $scope.builder = {
+                buildQuestion: function(directiveType) {
+                    var el;
+                    switch(directiveType) {
+                        case 'plain-text-box':
+                            BlockType.save({
+                                type: 'text',
+                                block_type: 'question',
+                                element: 'textarea',
+                                block_id: DataShepard.current(),
+                                data: {
+                                    type: 'text',
+                                    data: null
+                                }
+                            });
+                            el = $compile("<plain-text-suit-block></plain-text-suit-block>")($scope.$new());
+                            break;
+                    }
+
+                    $('.SuitBlocks').append(el);
+                    DataShepard.next();
+                },
+                buildAnswer: function(directiveType) {
+                    var el;
+                    switch(directiveType) {
+                        case 'plain-text-box':
+                            BlockType.save({
+                                type: 'text',
+                                block_type: 'answer',
+                                element: 'textarea',
+                                block_id: DataShepard.current(),
+                                placeholder: 'Type your question here...',
+                                data: {
+                                    type: 'text',
+                                    data: null
+                                }
+                            });
+                            el = $compile("<plain-text-suit-block></plain-text-suit-block>")($scope.$new());
+                            break;
+                    }
+
+                    $('.SuitBlocks').append(el);
+                    DataShepard.next();
+                }
+            };
+
+            $scope.test = {
+                submit: function($event) {
+                    $event.preventDefault();
+                    $scope.$broadcast('action-await', {
+                        awaiting: true
+                    });
+
+                    $scope.$broadcast('data-collection', {});
+                }
+            };
+
+            var counter = 0;
+            $scope.$on('data-receiving', function(event, data) {
+                DataShepard.add(data);
+
+                if(DataShepard.exact() === counter) {
+                    $scope.$broadcast('action-finished', {
+                        awaiting: false
+                    });
+
+                    DataShepard.clear();
+                }
+
+                counter++;
+            });
+
+
+        },
+        link: function(scope, $elem, $attrs) {
+        },
+        compile: function(tElem, tAttrs) {
+            return {
+                post: function(scope, iElement, iAttrs, controller) {
+                    BlockType.save({
+                        type: 'text',
+                        block_type: 'question',
+                        element: 'textarea',
+                        block_id: DataShepard.current(),
+                        placeholder: 'Type your question here...',
+                        data: {
+                            type: 'text',
+                            data: null
+                        }
+                    });
+
+                    var el = $compile("<plain-text-suit-block></plain-text-suit-block>")(scope.$new());
+
+                    $('.SuitBlocks').append(el);
+                    DataShepard.next();
+                }
+            }
         }
     }
 });

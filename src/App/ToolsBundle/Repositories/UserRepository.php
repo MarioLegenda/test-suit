@@ -10,23 +10,11 @@ use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 
 use Doctrine\ORM\Query;
 
-class UserRepository
+class UserRepository extends Repository
 {
-    private $em;
-    private $security;
-
     private $user = null;
     private $userInfo = null;
     private $roles = array();
-
-    public function __construct($doctrine, $security = null) {
-        $this->doctrine = $doctrine;
-        $this->em = $this->doctrine->getManager();
-
-        if($security !== null) {
-            $this->security = $security;
-        }
-    }
 
     public function getUserById($id) {
         $qb = $this->em->createQueryBuilder();

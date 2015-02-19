@@ -1,0 +1,135 @@
+.MainContent {
+  padding:50px 0 0 0;
+}
+
+.WorkspaceTemplate {
+
+  .BuilderContent {
+    width:100%;
+    float:left;
+
+    margin:50px 0 50px 0;
+  }
+
+  .Workspace {
+  }
+}
+
+.Builder {
+  width:800px;
+  margin:0 auto;
+
+  .BuilderMenu {
+    width:100%;
+    float:left;
+
+    padding-bottom:50px;
+    margin-bottom:100px;
+
+    border-bottom:1px dotted white;
+
+  }
+
+  .Blocks {
+    width:50%;
+    float:left;
+
+    .Blocks--title {
+      position:relative;
+      color:white;
+      font-size:1.2em;
+      padding:10px 0 10px 40px;
+
+      margin-bottom:20px;
+
+
+      .Block--icon {
+        display:block;
+        position:absolute;
+        top:7px; left:0;
+        width:25px;
+        height:25px;
+      }
+
+      .Question--icon {
+        background: url(../images/icons/question-block.png) no-repeat;
+        @include prefix(background-size, 100% 100%);
+      }
+
+      .Answer--icon {
+        background: url(../images/icons/answer-block.png) no-repeat;
+        @include prefix(background-size, 100% 100%);
+      }
+    }
+
+    .BlockType {
+      width:100px;
+      height:100px;
+      float:left;
+      border:1px solid white;
+      color:white;
+
+      margin:0 10px 10px 0;
+
+      @include transition(background-color 0.2s);
+
+      &:hover {
+        cursor: pointer;
+        background-color: $blueLight;
+      }
+
+      .ContentCentering {
+        display:block;
+
+        padding:5px;
+        margin-top:10px;
+
+        font-size:1.2em;
+        text-align: center;
+      }
+    }
+  }
+
+  .BuildMenu--title {
+    color:white;
+  }
+}
+
+.SuitBlocks {
+  width:800px;
+  margin:0 auto;
+
+  &:hover .BlockEvents {
+    @include prefix(opacity, 1);
+  }
+
+  .BlockEvents {
+    opacity:0;
+    width:150px;
+    position:absolute;
+    top:0; left:-150px;
+
+    @include transition(opacity 0.3s);
+
+    .Event {
+      color:white;
+      display:block;
+      width:100%;
+      padding:5px;
+      font-size:1.2em;
+      text-align: right;
+
+      @include transition(background-color 0.3s, color 0.3s);
+
+      &:hover {
+        cursor: pointer;
+        background-color: $blueLight;
+        color:white;
+      }
+    }
+  }
+
+  .QuestionTextarea {
+    width:100%;
+  }
+}

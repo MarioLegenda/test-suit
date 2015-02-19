@@ -142,9 +142,8 @@ a {
     font-size: 1.2em;
     padding: 10px; }
   .FormRow .ActionSubmitDirective {
-    width: 50%;
-    float: right;
-    margin-right: 160px; }
+    width: 100%;
+    float: right; }
 
 .FormSeparator {
   width: 90%;
@@ -176,17 +175,17 @@ body {
 .ContentElement {
   width: 100%;
   float: left;
+  margin: 50px 0 0 0;
   position: relative; }
   .ContentElement .ContentMainTitle, .ContentElement .ContentSubTitle {
     width: 100%;
-    float: left;
     padding: 0 0 15px 0;
-    margin: 25px 0 25px 0;
     font-size: 1.6em;
     border-bottom: 1px solid white; }
   .ContentElement .ContentSubTitle {
     font-size: 1.4em;
-    border-bottom: 1px dotted white; }
+    border-bottom: 1px dotted white;
+    margin: 25px 0 25px 0; }
   .ContentElement .ContentCentered {
     margin: 0 auto;
     margin-bottom: 50px; }
@@ -576,36 +575,38 @@ body {
   position: relative;
   color: white; }
 
-.UserManagmentMain .UserExpandable {
-  position: relative;
-  overflow: hidden;
-  display: block;
-  width: 100%;
-  float: left;
-  margin: 0 0 10px 0;
-  border: 1px solid white; }
-.UserManagmentMain .ExpandableClick {
-  width: 100%;
-  height: 46px;
-  float: left;
-  display: block;
-  padding: 15px;
-  -webkit-transition: background-color 0.2s;
-  -moz-transition: background-color 0.2s;
-  -ms-transition: background-color 0.2s;
-  -o-transition: background-color 0.2s;
-  transition: background-color 0.2s; }
-  .UserManagmentMain .ExpandableClick .Expandable {
+.UserManagmentMain {
+  padding: 50px 0 0 0; }
+  .UserManagmentMain .UserExpandable {
+    position: relative;
+    overflow: hidden;
     display: block;
+    width: 100%;
     float: left;
-    color: white; }
-  .UserManagmentMain .ExpandableClick .Expandable--name {
-    margin: 0 5px 0 0; }
-  .UserManagmentMain .ExpandableClick .Expandable--username {
-    float: right; }
-  .UserManagmentMain .ExpandableClick:hover {
-    cursor: pointer !important;
-    background-color: #2C84EE !important; }
+    margin: 0 0 10px 0;
+    border: 1px solid white; }
+  .UserManagmentMain .ExpandableClick {
+    width: 100%;
+    height: 46px;
+    float: left;
+    display: block;
+    padding: 15px;
+    -webkit-transition: background-color 0.2s;
+    -moz-transition: background-color 0.2s;
+    -ms-transition: background-color 0.2s;
+    -o-transition: background-color 0.2s;
+    transition: background-color 0.2s; }
+    .UserManagmentMain .ExpandableClick .Expandable {
+      display: block;
+      float: left;
+      color: white; }
+    .UserManagmentMain .ExpandableClick .Expandable--name {
+      margin: 0 5px 0 0; }
+    .UserManagmentMain .ExpandableClick .Expandable--username {
+      float: right; }
+    .UserManagmentMain .ExpandableClick:hover {
+      cursor: pointer !important;
+      background-color: #2C84EE !important; }
 
 .UserManagment--info {
   position: absolute;
@@ -629,40 +630,6 @@ body {
       float: left;
       padding: 10px;
       color: white; }
-
-.Toolbox {
-  position: fixed;
-  top: 150px;
-  left: -370px;
-  width: 400px;
-  height: 400px;
-  z-index: 100;
-  -webkit-transition: left 0.5s;
-  -moz-transition: left 0.5s;
-  -ms-transition: left 0.5s;
-  -o-transition: left 0.5s;
-  transition: left 0.5s;
-  background-color: white; }
-  .Toolbox:hover {
-    left: 0; }
-  .Toolbox .Toolbox--title {
-    width: 100%;
-    float: left;
-    padding: 5px;
-    color: white;
-    background-color: #2C84EE; }
-  .Toolbox .Toolbox--icon {
-    display: block;
-    width: 20px;
-    height: 20px;
-    float: right; }
-  .Toolbox .Icon--title {
-    background: url(../images/icons/toolbox.png) no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -ms-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover; }
 
 .TestCreation .ContentSubTitle {
   color: white; }
@@ -691,5 +658,115 @@ body {
   width: 40%;
   float: left;
   border: 1px solid white; }
+
+.MainContent {
+  padding: 50px 0 0 0; }
+
+.WorkspaceTemplate .BuilderContent {
+  width: 100%;
+  float: left;
+  margin: 50px 0 50px 0; }
+
+.Builder {
+  width: 800px;
+  margin: 0 auto; }
+  .Builder .BuilderMenu {
+    width: 100%;
+    float: left;
+    padding-bottom: 50px;
+    margin-bottom: 100px;
+    border-bottom: 1px dotted white; }
+  .Builder .Blocks {
+    width: 50%;
+    float: left; }
+    .Builder .Blocks .Blocks--title {
+      position: relative;
+      color: white;
+      font-size: 1.2em;
+      padding: 10px 0 10px 40px;
+      margin-bottom: 20px; }
+      .Builder .Blocks .Blocks--title .Block--icon {
+        display: block;
+        position: absolute;
+        top: 7px;
+        left: 0;
+        width: 25px;
+        height: 25px; }
+      .Builder .Blocks .Blocks--title .Question--icon {
+        background: url(../images/icons/question-block.png) no-repeat;
+        -webkit-background-size: 100% 100%;
+        -moz-background-size: 100% 100%;
+        -ms-background-size: 100% 100%;
+        -o-background-size: 100% 100%;
+        background-size: 100% 100%; }
+      .Builder .Blocks .Blocks--title .Answer--icon {
+        background: url(../images/icons/answer-block.png) no-repeat;
+        -webkit-background-size: 100% 100%;
+        -moz-background-size: 100% 100%;
+        -ms-background-size: 100% 100%;
+        -o-background-size: 100% 100%;
+        background-size: 100% 100%; }
+    .Builder .Blocks .BlockType {
+      width: 100px;
+      height: 100px;
+      float: left;
+      border: 1px solid white;
+      color: white;
+      margin: 0 10px 10px 0;
+      -webkit-transition: background-color 0.2s;
+      -moz-transition: background-color 0.2s;
+      -ms-transition: background-color 0.2s;
+      -o-transition: background-color 0.2s;
+      transition: background-color 0.2s; }
+      .Builder .Blocks .BlockType:hover {
+        cursor: pointer;
+        background-color: #2C84EE; }
+      .Builder .Blocks .BlockType .ContentCentering {
+        display: block;
+        padding: 5px;
+        margin-top: 10px;
+        font-size: 1.2em;
+        text-align: center; }
+  .Builder .BuildMenu--title {
+    color: white; }
+
+.SuitBlocks {
+  width: 800px;
+  margin: 0 auto; }
+  .SuitBlocks:hover .BlockEvents {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    -ms-opacity: 1;
+    -o-opacity: 1;
+    opacity: 1; }
+  .SuitBlocks .BlockEvents {
+    opacity: 0;
+    width: 150px;
+    position: absolute;
+    top: 0;
+    left: -150px;
+    -webkit-transition: opacity 0.3s;
+    -moz-transition: opacity 0.3s;
+    -ms-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
+    transition: opacity 0.3s; }
+    .SuitBlocks .BlockEvents .Event {
+      color: white;
+      display: block;
+      width: 100%;
+      padding: 5px;
+      font-size: 1.2em;
+      text-align: right;
+      -webkit-transition: background-color 0.3s, color 0.3s;
+      -moz-transition: background-color 0.3s, color 0.3s;
+      -ms-transition: background-color 0.3s, color 0.3s;
+      -o-transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s, color 0.3s; }
+      .SuitBlocks .BlockEvents .Event:hover {
+        cursor: pointer;
+        background-color: #2C84EE;
+        color: white; }
+  .SuitBlocks .QuestionTextarea {
+    width: 100%; }
 
 /*# sourceMappingURL=style.css.map */

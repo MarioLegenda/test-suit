@@ -5,7 +5,7 @@
     <div class="ContentElement" ng-controller="suite.userManagmentCtrl">
         <div class="Container  UserManagment">
             <h1 class="ContentMainTitle">Users<loading class="Loading" ng-show="loading.loading">{[{ loading.loadingText }]}</loading></h1>
-            <div class="MainContent  ContentCentered  UserManagmentMain">
+            <div class="MainContent  ContentCentered  OverflowContainer  UserManagmentMain">
                 <section class="UserExpandable" ng-repeat="user in users" expand-section user-id="{[{ user.user_id }]}">
                     <a href="" class="ExpandableClick" ng-click="managment.expandAction($event, user.user_id)">
                         <span class="Expandable  Expandable--name">{[{ user.name }]}</span>
