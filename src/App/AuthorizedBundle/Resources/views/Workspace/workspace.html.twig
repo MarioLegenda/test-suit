@@ -64,18 +64,18 @@
                 <section class="Blocks  QuestionBlocks">
                     <h2 class="Blocks--title">Question blocks<span class="Block--icon  Question--icon"></span></h2>
 
-                    <p class="BlockType" ng-click="builder.buildQuestion('plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
-                    <p class="BlockType" ng-click="builder.buildQuestion('code-block')"><span class="ContentCentering">Code block</span></p>
+                    <p class="BlockType" ng-click="builder.build('question', 'text', 'plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType" ng-click="builder.build('question', 'text', 'code-block')"><span class="ContentCentering">Code block</span></p>
                 </section>
 
                 <section class="Blocks  AnswerBlocks">
                     <h2 class="Blocks--title">Answer blocks<span class="Block--icon  Answer--icon"></span></h2>
 
-                    <p class="BlockType" ng-click="builder.buildAnswer('plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
-                    <p class="BlockType" ng-click="builder.buildAnswer('select-block')"><span class="ContentCentering">Select block</span></p>
-                    <p class="BlockType" ng-click="builder.buildAnswer('checkbox-block')"><span class="ContentCentering">Checkbox block</span></p>
-                    <p class="BlockType" ng-click="builder.buildAnswer('code-block')"><span class="ContentCentering">Code block</span></p>
-                    <p class="BlockType" ng-click="builder.buildAnswer('radio-block')"><span class="ContentCentering">Radio button block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'text', 'plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'object', 'select-block')"><span class="ContentCentering">Select block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'object', 'checkbox-block')"><span class="ContentCentering">Checkbox block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'test', 'code-block')"><span class="ContentCentering">Code block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'object', 'radio-block')"><span class="ContentCentering">Radio button block</span></p>
                 </section>
             </div>
 

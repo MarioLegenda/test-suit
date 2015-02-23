@@ -5,15 +5,25 @@ String.prototype.cFirstUpper = function() {
 };
 
 angular.module('suite.directives', [])
-    .directive('plainTextSuitBlock', function(BlockType, DataShepard, $timeout) {
+    .directive('plainTextSuitBlock', function(DataShepard, Types, $timeout) {
     return {
         restrict: 'E',
         replace: true,
         scope: {
-            block: '@block'
+            blockId: '@blockId',
+            dataType: '@blockDataType',
+            blockType: '@blockType',
+            directiveType: '@blockDirectiveType'
         },
         templateUrl: 'plainTextSuite.html',
         controller: function($scope) {
+            $scope.block = Types.createType(
+                $scope.blockId,
+                $scope.dataType,
+                $scope.blockType,
+                $scope.directiveType
+            );
+
             DataShepard.add($scope.block.block_id, $scope.block);
         },
         link: function(scope, elem, attrs) {
@@ -34,18 +44,29 @@ angular.module('suite.directives', [])
             });
         }
     }
-}).directive('codeBlockSuite', function(BlockType, DataShepard, $timeout) {
+}).directive('codeBlockSuite', function(DataShepard, Types, $timeout) {
     return {
         restrict: 'E',
         replace: true,
         scope: {
-            block: '@block'
+            blockId: '@blockId',
+            dataType: '@blockDataType',
+            blockType: '@blockType',
+            directiveType: '@blockDirectiveType'
         },
         templateUrl: 'codeBlockSuite.html',
         controller: function($scope) {
+            console.log($scope.blockId, $scope.dataType, $scope.blockType, $scope.directiveType);
+            $scope.block = Types.createType(
+                $scope.blockId,
+                $scope.dataType,
+                $scope.blockType,
+                $scope.directiveType
+            );
+
+            DataShepard.add($scope.block.block_id, $scope.block);
         },
         link: function(scope, elem, attrs) {
-            DataShepard.add(scope.block.block_id, scope.block);
 
             var editor = ace.edit(elem.find('.AceEditor').get(0));
             var session = editor.getSession();
@@ -57,6 +78,15 @@ angular.module('suite.directives', [])
             editor.setWrapBehavioursEnabled(true);
             editor.setOption('firstLineNumber', 1);
             editor.setValue(scope.block.data.data);
+
+            scope.code = editor.getValue();
+            scope.$watch(function() {
+                scope.code = editor.getValue();
+                return scope.code;
+            }, function(newVal, oldVal, scope) {
+                scope.block.data.data = newVal;
+                DataShepard.add(scope.block.block_id, scope.block);
+            });
 
             scope.blockEvents = {
                 remove: function() {
@@ -75,23 +105,29 @@ angular.module('suite.directives', [])
             });
         }
     }
-}).directive('genericBlockSuit', function(DataShepard, BlockType, $timeout) {
+}).directive('genericBlockSuit', function(DataShepard, Types, $timeout) {
     return {
         restrict: 'E',
         scope: {
-            block: '@block'
+            blockId: '@blockId',
+            dataType: '@blockDataType',
+            blockType: '@blockType',
+            directiveType: '@blockDirectiveType'
         },
         templateUrl: 'selectBlockSuit.html',
         controller: function($scope) {
+            $scope.block = Types.createType(
+                $scope.blockId,
+                $scope.dataType,
+                $scope.blockType,
+                $scope.directiveType
+            );
+
+            DataShepard.add($scope.block.block_id, $scope.block)
+
+            $scope.block.data.data[$scope.block.data.data.length] = '';
         },
         link: function(scope, elem, attrs) {
-            DataShepard.add(scope.block.block_id, scope.block);
-
-            scope.innerBlock = {
-                data: []
-            };
-
-            scope.block.data.data[scope.block.data.data.length] = '';
 
             scope.blockEvents = {
                 remove: function() {
@@ -517,7 +553,7 @@ angular.module('suite.directives', [])
 
         }
     }
-}).directive('builder', function($, $compile, DataShepard, BlockType, DataMediator, Test, Types, $interval) {
+}).directive('builder', function($, $compile, DataShepard, DataMediator, Test, CompileCommander) {
     return {
         restrict: 'E',
         replace: true,
@@ -532,7 +568,12 @@ angular.module('suite.directives', [])
             $scope.maxId = parseInt($scope.maxId);
             $scope.dataShepard = DataShepard;
 
-            $scope.block = null;
+            $scope.directiveData = {
+                block_id: null,
+                data_type: null,
+                type: null,
+                directive_type: null
+            };
 
             DataMediator.addMediateData('action-next-test', {
                 message: 'Please wait...',
@@ -562,46 +603,15 @@ angular.module('suite.directives', [])
             });
 
             $scope.builder = {
-                buildQuestion: function(directiveType) {
-                    var el, type;
-                    switch(directiveType) {
-                        case "plain-text-block":
-                            type = Types.createType($scope.dataShepard.current(), 'question', 'text', directiveType);
-                            $scope.block = type;
-                            el = $compile("<plain-text-suit-block block='{[{ block }]}'></plain-text-suit-block>")($scope.$new(true));
-                            break;
-                        case 'code-block':
-                            type = Types.createType($scope.dataShepard.current(), 'question', 'text', directiveType);
-                            $scope.block = type;
-                            el = $compile("<code-block-suite block='{[{ block }]}'></code-block-suite>")($scope.$new(true));
-                            break;
-                    }
+                build: function(dataType, type, directiveType) {
+                    $scope.directiveData = {
+                        blockId: $scope.dataShepard.current(),
+                        dataType: dataType,
+                        type: type,
+                        directiveType: directiveType
+                    };
 
-                    $('.SuitBlocks').append(el);
-                    $scope.dataShepard.next();
-                },
-                buildAnswer: function(directiveType) {
-                    var el, type;
-                    switch(directiveType) {
-                        case "plain-text-block":
-                            type = Types.createType($scope.dataShepard.current(), 'answer', 'text', directiveType);
-                            $scope.block = type;
-                            el = $compile("<plain-text-suit-block block='{[{ block }]}'></plain-text-suit-block>")($scope.$new(true));
-                            break;
-                        case 'code-block':
-                            type = Types.createType($scope.dataShepard.current(), 'answer', 'text', directiveType);
-                            $scope.block = type;
-                            el = $compile("<code-block-suite block='{[{ block }]}'></code-block-suite>")($scope.$new(true));
-                            break;
-                        case 'select-block':
-                        case 'checkbox-block':
-                        case 'radio-block':
-                            type = Types.createType($scope.dataShepard.current(), 'answer', 'object', directiveType);
-                            $scope.block = type;
-                            el = $compile("<generic-block-suit block='{[{ block }]}'></generic-block-suit>")($scope.$new(true));
-                            break;
-                    }
-
+                    var el = CompileCommander.compile($scope);
                     $('.SuitBlocks').append(el);
                     $scope.dataShepard.next();
                 }
@@ -610,42 +620,19 @@ angular.module('suite.directives', [])
         link: function(scope, $elem, $attrs) {
 
             var createFirstElement = function() {
-                var type = Types.createType(scope.dataShepard.current(), 'question', 'text', 'plain-text-block');
-                scope.block = type;
+                scope.directiveData = {
+                    blockId: scope.dataShepard.current(),
+                    dataType: 'question',
+                    type: 'text',
+                    directiveType: 'plain-text-block'
+                };
 
-                var el = $compile("<plain-text-suit-block block='block'></plain-text-suit-block>")(scope.$new());
+                var el = CompileCommander.compile(scope);
                 $('.SuitBlocks').append(el);
                 scope.dataShepard.next();
             };
 
-            if(scope.minId > 0) {
-                var promise = Test.getTest(scope.minId);
-
-                promise.then(function(data, status, headers, config) {
-                    var test = JSON.parse(data.data.test);
-                    for(var i = 0; i < test.length; i++) {
-                        var t = test[i];
-                        var elem;
-
-                        BlockType.save(t);
-
-                        var blockType = t.data.type;
-                        if(blockType === 'plain-text-block') {
-                            elem = $compile("<plain-text-suit-block></plain-text-suit-block>")(scope.$new(true));
-                        }
-                        else if(blockType === 'code-block') {
-                            elem = $compile("<code-block-suite></code-block-suite>")(scope.$new(true));
-                        }
-
-                        $('.SuitBlocks').append(elem);
-                    }
-                }, function(data, status, headers, config) {
-                    createFirstElement();
-                });
-            }
-            else if(scope.minId === 0) {
-                createFirstElement();
-            }
+            createFirstElement();
 
             scope.next = {
                 submit: function($event) {

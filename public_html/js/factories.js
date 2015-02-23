@@ -236,7 +236,8 @@ angular.module('suite.factories', []).factory('$', function () {
             return $http({
                 method: 'POST',
                 url: urls.getTestUrl,
-                data: [id]
+                data: [id],
+                cache: true
             });
         }
     }
@@ -328,19 +329,24 @@ angular.module('suite.factories', []).factory('$', function () {
     }
 
     return new Types();
-}).factory('BlockType', function() {
-    return {
-        initObj: null,
-        save: function(initObj) {
-            this.initObj = initObj;
-        },
-        create: function() {
-            var temp = this.initObj;
-            this.initObj = null;
+}).factory('CompileCommander', function($compile) {
+    function CompileCommander() {
+        this.compile = function($scope) {
+            switch($scope.directiveData.directiveType) {
+                case 'plain-text-block':
+                    return $compile("<plain-text-suit-block block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}'></plain-text-suit-block>")($scope.$new());
+                case 'code-block':
+                    return $compile("<code-block-suite block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}'></code-block-suite>")($scope.$new());
+                case 'select-block':
+                case 'checkbox-block':
+                case 'radio-block':
+                    return $compile("<generic-block-suit block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}'></generic-block-suit>")($scope.$new());
 
-            return temp;
+            }
         }
     }
+
+    return new CompileCommander();
 }).factory('DataMediator', function() {
     function DataMediator() {
         var mediateData = {};
