@@ -1,36 +1,116 @@
 "use strict";
 
+String.prototype.cFirstUpper = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+};
+
 angular.module('suite.directives', [])
-    .directive('plainTextSuitBlock', function(BlockType, DataShepard) {
+    .directive('plainTextSuitBlock', function(BlockType, DataShepard, $timeout) {
     return {
         restrict: 'E',
         replace: true,
-        scope: true,
+        scope: {
+            block: '@block'
+        },
         templateUrl: 'plainTextSuite.html',
+        controller: function($scope) {
+            DataShepard.add($scope.block.block_id, $scope.block);
+        },
+        link: function(scope, elem, attrs) {
+            scope.blockEvents = {
+                remove: function() {
+                    DataShepard.remove(scope.block.block_id);
+                    scope.$destroy();
+                    elem.remove();
+                }
+            };
+
+            scope.$on("destroy-directive", function(event, data) {
+                $timeout(function() {
+                    DataShepard.remove(scope.block.block_id);
+                    scope.$destroy();
+                    elem.remove();
+                }, 500);
+            });
+        }
+    }
+}).directive('codeBlockSuite', function(BlockType, DataShepard, $timeout) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            block: '@block'
+        },
+        templateUrl: 'codeBlockSuite.html',
         controller: function($scope) {
         },
         link: function(scope, elem, attrs) {
-        },
-        compile: function(tElem, tAttrs) {
-            return {
-                pre: function(scope, iElement, iAttrs, controller) {
-                    scope.block = BlockType.create();
+            DataShepard.add(scope.block.block_id, scope.block);
 
-                    console.log('Link: ' + scope.block.block_id);
+            var editor = ace.edit(elem.find('.AceEditor').get(0));
+            var session = editor.getSession();
 
-                    scope.$on('data-collection', function(event, data) {
-                        scope.$emit('data-receiving', scope.block);
-                    });
+            editor.getSession().setMode("ace/mode/javascript");
+            editor.renderer.setShowGutter(true);
+            editor.setFontSize(18);
+            editor.setHighlightActiveLine(true);
+            editor.setWrapBehavioursEnabled(true);
+            editor.setOption('firstLineNumber', 1);
+            editor.setValue(scope.block.data.data);
 
-                    scope.blockEvents = {
-                        remove: function() {
-                            DataShepard.reverse();
-                            scope.$destroy();
-                            iElement.remove();
-                        }
-                    };
+            scope.blockEvents = {
+                remove: function() {
+                    DataShepard.remove(scope.block.block_id);
+                    scope.$destroy();
+                    elem.remove();
                 }
-            }
+            };
+
+            scope.$on("destroy-directive",function(event, data) {
+                $timeout(function() {
+                    DataShepard.remove(scope.block.block_id);
+                    scope.$destroy();
+                    elem.remove();
+                }, 500);
+            });
+        }
+    }
+}).directive('genericBlockSuit', function(DataShepard, BlockType, $timeout) {
+    return {
+        restrict: 'E',
+        scope: {
+            block: '@block'
+        },
+        templateUrl: 'selectBlockSuit.html',
+        controller: function($scope) {
+        },
+        link: function(scope, elem, attrs) {
+            DataShepard.add(scope.block.block_id, scope.block);
+
+            scope.innerBlock = {
+                data: []
+            };
+
+            scope.block.data.data[scope.block.data.data.length] = '';
+
+            scope.blockEvents = {
+                remove: function() {
+                    DataShepard.remove(scope.block.block_id);
+                    scope.$destroy();
+                    elem.remove();
+                },
+                addSelectBox: function() {
+                    scope.block.data.data[scope.block.data.data.length] = '';
+                }
+            };
+
+            scope.$on("destroy-directive",function(event, data) {
+                $timeout(function() {
+                    DataShepard.remove(scope.block.block_id);
+                    scope.$destroy();
+                    elem.remove();
+                }, 500);
+            });
         }
     }
 }).directive('processUiInstalling', function($window, $timeout) {
@@ -95,17 +175,27 @@ angular.module('suite.directives', [])
     return {
         restrict: 'E',
         replace: true,
-        scope: true,
+        scope: {
+            initKey: '@initKey'
+        },
         templateUrl: 'actionSubmit.html',
-        controller: function($scope, $window) {
+        controller: function($scope, $window, DataMediator) {
+            var initData = DataMediator.getMediateData($scope.initKey);
+
+            if(initData === null) {
+                throw new Error("DataMedisator: initData is not properly initialized");
+            }
+
             $scope.action = {
                 awaiting: false,
                 finished: false,
                 redirect: false,
                 url: null,
-                submitProp: null,
-                userSpecificClasses: null,
-                message: 'Please wait...',
+                submitProp: initData.submitProp,
+                userSpecificClasses: initData.userSpecificClasses,
+                awaitClasses: initData.awaitClasses,
+                message: initData.message,
+                textValue: initData.textValue,
                 submit: function($event) {
                     $scope.$parent[this.submitProp].submit($event);
                 }
@@ -119,11 +209,7 @@ angular.module('suite.directives', [])
                 }
             };
 
-            $scope.$on('action-await', function(event, values) {
-                scopeAssigner(values);
-            });
-
-            $scope.$on('action-initialization', function(event, values) {
+            $scope.$on(initData.awaitEvent, function(event, values) {
                 scopeAssigner(values);
             });
 
@@ -238,7 +324,7 @@ angular.module('suite.directives', [])
             });
         }
     }
-}).directive('testNaming', function(TestControl) {
+}).directive('testNaming', function(TestControl, DataMediator) {
     return {
         restrict: 'E',
         replace: true,
@@ -251,13 +337,12 @@ angular.module('suite.directives', [])
                 show: false
             };
 
-            $timeout(function() {
-                $scope.$broadcast('action-initialization', {
-                    message: 'Please wait...',
-                    userSpecificClasses: 'TempSubmitButton',
-                    submitProp: 'test'
-                });
-            }, 200);
+            DataMediator.addMediateData('action-create-test', {
+                message: 'Please wait...',
+                userSpecificClasses: 'TempSubmitButton',
+                submitProp: 'test',
+                textValue: 'Create test'
+            });
 
             $scope.available_users = null;
 
@@ -297,7 +382,7 @@ angular.module('suite.directives', [])
                         awaiting: true
                     });
 
-                    var promise = TestControl.saveTest({
+                    var promise = TestControl.createTest({
                         test_name: scope.test.test_name,
                         test_solvers: ( function() {
                             if(scope.test.allowed_users.length === 1 && scope.test.allowed_users[0] === 'public') {
@@ -432,120 +517,189 @@ angular.module('suite.directives', [])
 
         }
     }
-}).directive('builder', function($, $compile, DataShepard, BlockType) {
+}).directive('builder', function($, $compile, DataShepard, BlockType, DataMediator, Test, Types, $interval) {
     return {
         restrict: 'E',
         replace: true,
         scope: {
-            currentTestId: '@currentTestId'
+            currentTestId: '@currentTestId',
+            minId: '@minId',
+            maxId: '@maxId'
         },
         templateUrl: 'workspace.html',
-        controller: function($scope, $timeout) {
-            $timeout(function() {
-                $scope.$broadcast('action-initialization', {
-                    message: 'Please wait...',
-                    submitProp: 'test',
-                    userSpecificClasses: 'BlockFinishButton'
-                });
-            }, 200);
+        controller: function($scope) {
+            $scope.minId = parseInt($scope.minId);
+            $scope.maxId = parseInt($scope.maxId);
+            $scope.dataShepard = DataShepard;
+
+            $scope.block = null;
+
+            DataMediator.addMediateData('action-next-test', {
+                message: 'Please wait...',
+                submitProp: 'next',
+                userSpecificClasses: 'ActionMoveRight',
+                awaitClasses: 'AwaitRight',
+                textValue: 'Next question',
+                awaitEvent: 'await-next'
+            });
+
+            DataMediator.addMediateData('action-previous-test', {
+                message: 'Please wait...',
+                submitProp: 'previous',
+                userSpecificClasses: 'ActionMoveLeft',
+                awaitClasses: 'AwaitLeft',
+                textValue: 'Previous question',
+                awaitEvent: 'await-previous'
+            });
+
+            DataMediator.addMediateData('action-finish-test', {
+                message: 'Please wait...',
+                submitProp: 'finished',
+                userSpecificClasses: 'BlockFinishButton',
+                awaitClasses: 'AwaitRight',
+                textValue: 'Finish test',
+                awaitEvent: 'await-finish'
+            });
 
             $scope.builder = {
                 buildQuestion: function(directiveType) {
-                    var el;
+                    var el, type;
                     switch(directiveType) {
-                        case 'plain-text-box':
-                            BlockType.save({
-                                type: 'text',
-                                block_type: 'question',
-                                element: 'textarea',
-                                block_id: DataShepard.current(),
-                                data: {
-                                    type: 'text',
-                                    data: null
-                                }
-                            });
-                            el = $compile("<plain-text-suit-block></plain-text-suit-block>")($scope.$new());
+                        case "plain-text-block":
+                            type = Types.createType($scope.dataShepard.current(), 'question', 'text', directiveType);
+                            $scope.block = type;
+                            el = $compile("<plain-text-suit-block block='{[{ block }]}'></plain-text-suit-block>")($scope.$new(true));
+                            break;
+                        case 'code-block':
+                            type = Types.createType($scope.dataShepard.current(), 'question', 'text', directiveType);
+                            $scope.block = type;
+                            el = $compile("<code-block-suite block='{[{ block }]}'></code-block-suite>")($scope.$new(true));
                             break;
                     }
 
                     $('.SuitBlocks').append(el);
-                    DataShepard.next();
+                    $scope.dataShepard.next();
                 },
                 buildAnswer: function(directiveType) {
-                    var el;
+                    var el, type;
                     switch(directiveType) {
-                        case 'plain-text-box':
-                            BlockType.save({
-                                type: 'text',
-                                block_type: 'answer',
-                                element: 'textarea',
-                                block_id: DataShepard.current(),
-                                placeholder: 'Type your question here...',
-                                data: {
-                                    type: 'text',
-                                    data: null
-                                }
-                            });
-                            el = $compile("<plain-text-suit-block></plain-text-suit-block>")($scope.$new());
+                        case "plain-text-block":
+                            type = Types.createType($scope.dataShepard.current(), 'answer', 'text', directiveType);
+                            $scope.block = type;
+                            el = $compile("<plain-text-suit-block block='{[{ block }]}'></plain-text-suit-block>")($scope.$new(true));
+                            break;
+                        case 'code-block':
+                            type = Types.createType($scope.dataShepard.current(), 'answer', 'text', directiveType);
+                            $scope.block = type;
+                            el = $compile("<code-block-suite block='{[{ block }]}'></code-block-suite>")($scope.$new(true));
+                            break;
+                        case 'select-block':
+                        case 'checkbox-block':
+                        case 'radio-block':
+                            type = Types.createType($scope.dataShepard.current(), 'answer', 'object', directiveType);
+                            $scope.block = type;
+                            el = $compile("<generic-block-suit block='{[{ block }]}'></generic-block-suit>")($scope.$new(true));
                             break;
                     }
 
                     $('.SuitBlocks').append(el);
-                    DataShepard.next();
+                    $scope.dataShepard.next();
                 }
             };
-
-            $scope.test = {
-                submit: function($event) {
-                    $event.preventDefault();
-                    $scope.$broadcast('action-await', {
-                        awaiting: true
-                    });
-
-                    $scope.$broadcast('data-collection', {});
-                }
-            };
-
-            var counter = 0;
-            $scope.$on('data-receiving', function(event, data) {
-                DataShepard.add(data);
-
-                if(DataShepard.exact() === counter) {
-                    $scope.$broadcast('action-finished', {
-                        awaiting: false
-                    });
-
-                    DataShepard.clear();
-                }
-
-                counter++;
-            });
-
-
         },
         link: function(scope, $elem, $attrs) {
-        },
-        compile: function(tElem, tAttrs) {
-            return {
-                post: function(scope, iElement, iAttrs, controller) {
-                    BlockType.save({
-                        type: 'text',
-                        block_type: 'question',
-                        element: 'textarea',
-                        block_id: DataShepard.current(),
-                        placeholder: 'Type your question here...',
-                        data: {
-                            type: 'text',
-                            data: null
+
+            var createFirstElement = function() {
+                var type = Types.createType(scope.dataShepard.current(), 'question', 'text', 'plain-text-block');
+                scope.block = type;
+
+                var el = $compile("<plain-text-suit-block block='block'></plain-text-suit-block>")(scope.$new());
+                $('.SuitBlocks').append(el);
+                scope.dataShepard.next();
+            };
+
+            if(scope.minId > 0) {
+                var promise = Test.getTest(scope.minId);
+
+                promise.then(function(data, status, headers, config) {
+                    var test = JSON.parse(data.data.test);
+                    for(var i = 0; i < test.length; i++) {
+                        var t = test[i];
+                        var elem;
+
+                        BlockType.save(t);
+
+                        var blockType = t.data.type;
+                        if(blockType === 'plain-text-block') {
+                            elem = $compile("<plain-text-suit-block></plain-text-suit-block>")(scope.$new(true));
                         }
-                    });
+                        else if(blockType === 'code-block') {
+                            elem = $compile("<code-block-suite></code-block-suite>")(scope.$new(true));
+                        }
 
-                    var el = $compile("<plain-text-suit-block></plain-text-suit-block>")(scope.$new());
-
-                    $('.SuitBlocks').append(el);
-                    DataShepard.next();
-                }
+                        $('.SuitBlocks').append(elem);
+                    }
+                }, function(data, status, headers, config) {
+                    createFirstElement();
+                });
             }
+            else if(scope.minId === 0) {
+                createFirstElement();
+            }
+
+            scope.next = {
+                submit: function($event) {
+                    $event.preventDefault();
+
+                    console.log(DataShepard.current());
+                    if(DataShepard.current() > 1) {
+                        scope.$broadcast('await-next', {
+                            awaiting: true
+                        });
+
+                        var promise = Test.saveTest(scope.currentTestId, scope.dataShepard.all());
+
+                        promise.then(function(data, status, headers, config) {
+                            scope.$broadcast('await-next', {
+                                awaiting: false
+                            });
+
+                            scope.$broadcast('destroy-directive', {});
+                            DataShepard.clear();
+
+                            createFirstElement();
+
+                        }, function(data, status, headers, config) {
+                            console.log(data, status);
+
+                            scope.$broadcast('await-next', {
+                                awaiting: false
+                            });
+                        });
+
+
+                    }
+                }
+            };
+
+            scope.previous = {
+                submit: function($event) {
+                    $event.preventDefault();
+                    scope.$broadcast('await-previous', {
+                        awaiting: true
+                    });
+                }
+            };
+
+            scope.finished = {
+                submit: function($event) {
+                    $event.preventDefault();
+
+                    scope.$broadcast('await-finish', {
+                        awaiting: true
+                    });
+                }
+            };
         }
     }
 });

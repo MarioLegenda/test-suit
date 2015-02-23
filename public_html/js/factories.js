@@ -203,18 +203,47 @@ angular.module('suite.factories', []).factory('$', function () {
 }).factory('TestControl', function($http) {
     return {
         urls: {
-            saveTestUrl: '/app_dev.php/create-test'
+            createTestUrl: '/app_dev.php/create-test'
         },
 
-        saveTest: function(data) {
+        createTest: function(data) {
             return $http({
                 method: 'POST',
-                url: this.urls.saveTestUrl,
+                url: this.urls.createTestUrl,
                 data: data
             });
         }
     };
-}).factory('DataShepard', function() {
+}).factory('Test', function($http) {
+
+    function Test() {
+        var urls = {
+            saveTestUrl: '/app_dev.php/save-test/',
+            getTestUrl: '/app_dev.php/get-test'
+        };
+
+        var cachedTest = null;
+
+        this.saveTest = function(id, data) {
+            return $http({
+                method: 'POST',
+                url: urls.saveTestUrl + id,
+                data: data
+            });
+        };
+
+        this.getTest = function(id) {
+            return $http({
+                method: 'POST',
+                url: urls.getTestUrl,
+                data: [id]
+            });
+        }
+    }
+
+    return new Test();
+
+}).factory('DataShepard', function($) {
     function DataShepard() {
         var counter = 0,
             heard = [];
@@ -223,29 +252,27 @@ angular.module('suite.factories', []).factory('$', function () {
             return counter;
         };
 
-        this.reverse = function() {
-            counter--;
-        };
-
-        this.exact = function() {
-            return counter - 1;
+        this.remove = function(id) {
+            heard.splice(id, 1);
         };
 
         this.next = function() {
             counter++;
         };
 
-        this.add = function(object) {
-            heard[heard.length] = object;
+        this.add = function(id, object) {
+            heard[id] = object;
             return this;
         };
 
-        this.get = function(index) {
-            if((index in list) === false) {
+        this.get = function(id) {
+            var val = heard[id];
+
+            if(typeof val === 'undefined') {
                 return null;
             }
 
-            return heard[index];
+            return val;
         };
 
         this.all = function() {
@@ -259,6 +286,48 @@ angular.module('suite.factories', []).factory('$', function () {
     }
 
     return new DataShepard();
+}).factory('Types', function() {
+    function Types() {
+        var metadata = {
+            answer: {
+                placeholders: {
+                    'plain-text-block': "Your answer goes here. Leave it blank beacuse this element is meant for the test solver...",
+                    'select-block': "Text for one select element goes here...",
+                    'checkbox-block': "Text for one checkbox element goes here...",
+                    'radio-block': "Text for one radio button goes here..."
+                }
+            },
+            question: {
+                placeholders: {
+                    'code-block': null,
+                    'plain-text-block': "Type your question here..."
+                }
+            }
+        };
+
+        this.createType = function(id, type, dataType, directiveType) {
+            var constructingType = {};
+
+            constructingType.data_type = dataType;
+            constructingType.block_type = type;
+            constructingType.element = 'textarea';
+            constructingType.block_id = id;
+            constructingType.placeholder = metadata[type].placeholders[directiveType];
+            constructingType.data = {
+                type: directiveType,
+                data: null
+            };
+
+            if(dataType === 'object') {
+                constructingType.data.selected = null;
+                constructingType.data.data = [];
+            }
+
+            return constructingType;
+        }
+    }
+
+    return new Types();
 }).factory('BlockType', function() {
     return {
         initObj: null,
@@ -266,21 +335,32 @@ angular.module('suite.factories', []).factory('$', function () {
             this.initObj = initObj;
         },
         create: function() {
-            var immutableTemp =  {
-                type: this.initObj.type,
-                block_type: this.initObj.block_type,
-                element: this.initObj.element,
-                block_id: this.initObj.block_id,
-                placeholder: this.initObj.placeholder,
-                data: {
-                    type: this.initObj.data.type,
-                    data: null
-                }
-            };
-
+            var temp = this.initObj;
             this.initObj = null;
 
-            return immutableTemp;
+            return temp;
         }
     }
+}).factory('DataMediator', function() {
+    function DataMediator() {
+        var mediateData = {};
+
+        this.addMediateData = function(dataKey, data) {
+            mediateData[dataKey] = data;
+        };
+
+        this.getMediateData = function(dataKey) {
+            if(mediateData.hasOwnProperty(dataKey)) {
+                return mediateData[dataKey];
+            }
+
+            return null;
+        };
+
+        this.clear = function() {
+            mediateData = {};
+        }
+    }
+
+    return new DataMediator();
 });

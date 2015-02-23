@@ -22,19 +22,25 @@ class Test
     private $test_id;
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    private $test_control_id;
+
+    /**
      * @ORM\Column(type="text", nullable=false)
      */
     private $test_serialized;
 
     /**
-     * @ORM\Column(type="smallint", nullable=false)
-     */
-    private $isFinished;
-
-    /**
      * @ORM\Column(type="datetime", nullable=false)
      */
     private $created;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\ToolsBundle\Entity\TestControl", cascade="persist")
+     * @ORM\JoinColumn(name="test_control_id", referencedColumnName="test_control_id")
+     **/
+    private $test_control;
 
     public function __construct() {
 
@@ -49,19 +55,11 @@ class Test
     }
 
     public function setTestSerialized($test) {
-        $this->test_serialized = $test;
+        $this->test_serialized = json_encode($test);
     }
 
     public function getTestSerialized() {
         return $this->test_serialized;
-    }
-
-    public function setIsFinished($isFinished) {
-        $this->isFinished = $isFinished;
-    }
-
-    public function getIsFinished() {
-        return $this->isFinished;
     }
 
     public function setCreated(\DateTime $datetime) {
@@ -70,5 +68,21 @@ class Test
 
     public function getCreated() {
         return $this->created;
+    }
+
+    public function setTestControl(TestControl $testControl) {
+        $this->test_control = $testControl;
+    }
+
+    public function getTestControl() {
+        return $this->test_control;
+    }
+
+    public function setTestControlId($id) {
+        $this->test_control_id = $id;
+    }
+
+    public function getTestControlId() {
+        return $this->test_control_id;
     }
 } 

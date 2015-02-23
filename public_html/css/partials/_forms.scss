@@ -62,7 +62,8 @@
     border-radius:3px;
 
     &:focus {
-      background-color: $blueLight;
+      color:white;
+      border:1px solid $blueLight;
     }
   }
 
@@ -166,6 +167,11 @@
     width:100%;
     float:right;
   }
+}
+
+.FormRowWrapper {
+  padding:10px;
+  border:1px solid white;
 }
 
 .FormSeparator {

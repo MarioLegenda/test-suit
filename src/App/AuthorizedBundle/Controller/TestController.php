@@ -50,6 +50,7 @@ class TestController extends ContainerAware
         $testControl->setTestName($formValues['test_name']);
         $testControl->setVisibility($formValues['test_solvers']);
         $testControl->setRemarks($formValues['remarks']);
+        $testControl->setIsFinished(0);
 
         $toValidate = array($testControl);
         $errors = ConvenienceValidator::init($toValidate, $this->container->get('validator'))->getErrors();
@@ -58,12 +59,6 @@ class TestController extends ContainerAware
             return BadAjaxResponse::init(null, $errors)->getResponse();
         }
 
-        $test = new Test();
-        $test->setCreated(new \DateTime());
-        $test->setTestSerialized(serialize(array()));
-        $test->setIsFinished(0);
-
-        $testControl->setTest($test);
         $testControl->setUser($this->container->get('security.context')->getToken()->getUser());
 
         try {
@@ -71,7 +66,7 @@ class TestController extends ContainerAware
             $em->persist($testControl);
             $em->flush();
         } catch(\Exception $e) {
-            return BadAjaxResponse::init('Something went wrong with creating a test. Please, refresh the page and try again')->getResponse();
+            return BadAjaxResponse::init($e->getMessage())->getResponse();
         }
 
         $testRepo = new TestRepository($doctrine);
@@ -80,7 +75,7 @@ class TestController extends ContainerAware
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        $redirectUrl = '/create-test/' . \URLify::filter($currentTest['test_name']) . '/' . $currentTest['test_id'];
+        $redirectUrl = '/create-test/' . \URLify::filter($currentTest['test_name']) . '/' . $currentTest['test_control_id'];
         $responseParameters->addParameter('redirectUrl', $redirectUrl);
         return GoodAjaxRequest::init($responseParameters)->getResponse();
     }

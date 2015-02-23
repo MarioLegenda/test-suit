@@ -27,11 +27,6 @@ class TestControl
     private $user_id;
 
     /**
-     * @ORM\Column(type="integer", nullable=false)
-     */
-    private $test_id;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message = "Test name has to be provided")
      * @Assert\NotNull(message = "Test name has to be provided")
@@ -51,6 +46,11 @@ class TestControl
     private $identifier;
 
     /**
+     * @ORM\Column(type="smallint", nullable=false)
+     */
+    private $isFinished;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $remarks = null;
@@ -60,12 +60,6 @@ class TestControl
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      **/
     private $user;
-
-    /**
-     *  @ORM\OneToOne(targetEntity="App\ToolsBundle\Entity\Test", cascade="persist")
-     *  @ORM\JoinColumn(name="test_id", referencedColumnName="test_id")
-     **/
-    private $test;
 
     public function __construct() {
         $this->visibility = json_encode(array('public'));
@@ -111,6 +105,14 @@ class TestControl
         return $this->identifier;
     }
 
+    public function setIsFinished($isFinished) {
+        $this->isFinished = $isFinished;
+    }
+
+    public function getIsFinished() {
+        return $this->isFinished;
+    }
+
     public function setRemarks($r) {
         $this->remarks = $r;
     }
@@ -125,22 +127,6 @@ class TestControl
 
     public function getUser() {
         return $this->user;
-    }
-
-    public function setTestId($testId) {
-        $this->test_id = $testId;
-    }
-
-    public function getTestId() {
-        return $this->test_id;
-    }
-
-    public function setTest(Test $test) {
-        $this->test = $test;
-    }
-
-    public function getTest() {
-        return $this->test;
     }
 
     /**

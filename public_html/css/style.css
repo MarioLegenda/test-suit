@@ -75,7 +75,8 @@ a {
     border: 1px solid white;
     border-radius: 3px; }
     .FormRow .BasicField:focus {
-      background-color: #2C84EE; }
+      color: white;
+      border: 1px solid #2C84EE; }
   .FormRow .BasicTextarea {
     resize: none;
     font-size: 1.2em;
@@ -144,6 +145,10 @@ a {
   .FormRow .ActionSubmitDirective {
     width: 100%;
     float: right; }
+
+.FormRowWrapper {
+  padding: 10px;
+  border: 1px solid white; }
 
 .FormSeparator {
   width: 90%;
@@ -733,30 +738,33 @@ body {
 .SuitBlocks {
   width: 800px;
   margin: 0 auto; }
-  .SuitBlocks:hover .BlockEvents {
-    -webkit-opacity: 1;
-    -moz-opacity: 1;
-    -ms-opacity: 1;
-    -o-opacity: 1;
-    opacity: 1; }
+  .SuitBlocks .Block {
+    width: 100%;
+    float: left;
+    margin-bottom: 50px; }
+    .SuitBlocks .Block:hover .BlockEvents {
+      -webkit-opacity: 1;
+      -moz-opacity: 1;
+      -ms-opacity: 1;
+      -o-opacity: 1;
+      opacity: 1; }
   .SuitBlocks .BlockEvents {
-    opacity: 0;
     width: 150px;
     position: absolute;
     top: 0;
-    left: -150px;
-    -webkit-transition: opacity 0.3s;
-    -moz-transition: opacity 0.3s;
-    -ms-transition: opacity 0.3s;
-    -o-transition: opacity 0.3s;
-    transition: opacity 0.3s; }
+    left: -150px; }
+    .SuitBlocks .BlockEvents .Event--title {
+      display: block;
+      color: white;
+      font-size: 1.2em;
+      padding: 5px 0 5px 0;
+      border-bottom: 1px dotted white; }
     .SuitBlocks .BlockEvents .Event {
       color: white;
       display: block;
       width: 100%;
-      padding: 5px;
+      padding: 5px 0 5px 0;
       font-size: 1.2em;
-      text-align: right;
       -webkit-transition: background-color 0.3s, color 0.3s;
       -moz-transition: background-color 0.3s, color 0.3s;
       -ms-transition: background-color 0.3s, color 0.3s;
@@ -768,5 +776,40 @@ body {
         color: white; }
   .SuitBlocks .QuestionTextarea {
     width: 100%; }
+  .SuitBlocks .CodeBlock .AceEditor {
+    height: 300px; }
+  .SuitBlocks .SelectBlock .WorkspaceSelectLabel {
+    width: 110px;
+    margin-left: 20px; }
+  .SuitBlocks .SelectBlock .WorkspaceRadioButton {
+    display: block;
+    width: 15px;
+    height: 15px;
+    float: left;
+    margin-top: 8px;
+    border: 1px solid white; }
+  .SuitBlocks .SelectBlock .AdjustPosition {
+    margin: 0 20px 10px 0; }
+
+.ActionArea {
+  width: 100%;
+  float: left;
+  margin-top: 100px;
+  padding: 15px;
+  border: 1px solid white; }
+  .ActionArea .ActionMoveLeft, .ActionArea .AwaitLeft {
+    float: left; }
+  .ActionArea .ActionMoveRight, .ActionArea .AwaitRight {
+    float: right; }
+  .ActionArea .ActionNextTest {
+    width: 50%;
+    float: right; }
+  .ActionArea .ActionPreviousTest {
+    width: 50%;
+    float: left; }
+  .ActionArea .ActionFinishTest {
+    width: 100%;
+    float: left;
+    margin-top: 50px; }
 
 /*# sourceMappingURL=style.css.map */

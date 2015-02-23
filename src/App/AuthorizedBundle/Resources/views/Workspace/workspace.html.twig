@@ -9,9 +9,47 @@
                         ng-model="block.data.data"
                         class="FormRow--field  BasicField  BasicTextarea  QuestionTextarea"
                         placeholder="{[{ block.placeholder }]}">
+                    {[{ block.data.data }]}
                 </textarea>
 
                 <div class="BlockEvents">
+                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
+                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="selectBlockSuit.html">
+        <div class="Block  SelectBlock">
+            <div class="FormRow  FormRowWrapper">
+
+                <div class="SelectOptions">
+                    <input type="text"
+                           placeholder="{[{ block.placeholder }]}"
+                           class="FormRow--field  BasicField  AdjustPosition"
+                           ng-repeat="data in block.data.data track by $index"
+                           ng-model='block.data.data[$index]'>
+                </div>
+
+                <div class="BlockEvents">
+                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
+                    <label ng-click="blockEvents.addSelectBox()" class="Event">Add box</label>
+                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="codeBlockSuite.html">
+        <div class="Block CodeBlock">
+            <div class="FormRow">
+                <div class="AceEditor">
+
+                </div>
+
+                <div class="BlockEvents">
+                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
                     <label ng-click="blockEvents.remove()" class="Event">Remove</label>
                 </div>
             </div>
@@ -26,17 +64,18 @@
                 <section class="Blocks  QuestionBlocks">
                     <h2 class="Blocks--title">Question blocks<span class="Block--icon  Question--icon"></span></h2>
 
-                    <p class="BlockType" ng-click="builder.buildQuestion('plain-text-box')"><span class="ContentCentering">Plain text block</span></p>
-                    <p class="BlockType"><span class="ContentCentering">Code block</span></p>
+                    <p class="BlockType" ng-click="builder.buildQuestion('plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType" ng-click="builder.buildQuestion('code-block')"><span class="ContentCentering">Code block</span></p>
                 </section>
 
                 <section class="Blocks  AnswerBlocks">
                     <h2 class="Blocks--title">Answer blocks<span class="Block--icon  Answer--icon"></span></h2>
 
-                    <p class="BlockType"><span class="ContentCentering">Plain text block</span></p>
-                    <p class="BlockType"><span class="ContentCentering">Select block</span></p>
-                    <p class="BlockType"><span class="ContentCentering">Checkbox block</span></p>
-                    <p class="BlockType"><span class="ContentCentering">Code block</span></p>
+                    <p class="BlockType" ng-click="builder.buildAnswer('plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType" ng-click="builder.buildAnswer('select-block')"><span class="ContentCentering">Select block</span></p>
+                    <p class="BlockType" ng-click="builder.buildAnswer('checkbox-block')"><span class="ContentCentering">Checkbox block</span></p>
+                    <p class="BlockType" ng-click="builder.buildAnswer('code-block')"><span class="ContentCentering">Code block</span></p>
+                    <p class="BlockType" ng-click="builder.buildAnswer('radio-block')"><span class="ContentCentering">Radio button block</span></p>
                 </section>
             </div>
 
@@ -44,8 +83,23 @@
                 <div class="SuitBlocks">
                 </div>
 
-                <div class="FormRow">
-                    <action-submit></action-submit>
+                <div class="ActionArea">
+                    <div class="FormRow">
+                        <div class="GlobalErrors" ng-show="blockError">
+                            <label class="GlobalError">There are no block to be saved</label>
+                        </div>
+                    </div>
+                    <div class="FormRow  ActionPreviousTest">
+                        <action-submit init-key="action-previous-test"></action-submit>
+                    </div>
+
+                    <div class="FormRow  ActionNextTest">
+                        <action-submit init-key="action-next-test"></action-submit>
+                    </div>
+
+                    <div class="FormRow  ActionFinishTest">
+                        <action-submit init-key="action-finish-test"></action-submit>
+                    </div>
                 </div>
             </form>
         </div>
@@ -56,7 +110,11 @@
             <h1 class="ContentMainTitle">{{ model.getProperty('test-name') }}</h1>
 
             <div class="BuilderContent">
-                <builder current_test_id="{{ model.getProperty('test-id') }}"></builder>
+                <builder
+                        current_test_id="{{ model.getProperty('test-id') }}"
+                        min_id="{{ model.getProperty('min') }}"
+                        max_id="{{ model.getProperty('max') }}">
+                </builder>
             </div>
         </div>
     </div>
