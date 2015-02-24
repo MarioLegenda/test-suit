@@ -25,11 +25,9 @@
     position:relative;
     z-index:100;
 
-    padding:5px;
-
     .UserInfo--mail {
       display:block;
-      width:190px;
+      width:235px;
       float:right;
 
       color:white;
@@ -37,26 +35,32 @@
       background-color: transparent;
       font-family: "Open Sans Condensed", sans-serif;
       border:none;
-      text-align: right;
-    }
+      text-align: center;
 
-    .UserInfo--userIcon {
-      display:block;
-      float:right;
-      width:$iconWidth;
-      height:$iconHeight;
+      padding:5px 5px 5px 5px;
 
-      @include background-image(url(../../images/icons/user-icon.png), no-repeat);
-      @include prefix(background-size, cover);
-    }
+      @include transition(background-color 0.3s, color 0.3s);
 
-    &:hover {
-      background-color: white;
-      color:$mainHoverColor;
+      .UserInfo--userIcon {
+        display:block;
+        float:right;
+        width:$iconWidth;
+        height:$iconHeight;
+
+        @include background-image(url(../../images/icons/user-icon.png), no-repeat);
+        @include prefix(background-size, cover);
+      }
+
+
+      &:hover {
+        background-color: $mainHoverColor;
+        color:white;
+      }
     }
 
     &:hover .UserInfo--mail {
-      color:$mainColor;
+      color:wbite;
+      cursor:pointer;
     }
   }
 }

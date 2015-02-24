@@ -338,8 +338,8 @@ body {
     .MainNavigation .MainNavigation__List .List--navigationLink {
       display: block;
       float: left;
-      width: 30px;
-      height: 30px;
+      width: 25px;
+      height: 25px;
       background: url(../images/icons/home-icon.png) no-repeat;
       -webkit-background-size: cover;
       -moz-background-size: cover;
@@ -350,115 +350,41 @@ body {
     width: 250px;
     float: right;
     position: relative;
-    z-index: 100;
-    padding: 5px; }
+    z-index: 100; }
     .MainNavigation .UserInfo .UserInfo--mail {
       display: block;
-      width: 190px;
+      width: 235px;
       float: right;
       color: white;
       font-size: 1.2em;
       background-color: transparent;
       font-family: "Open Sans Condensed", sans-serif;
       border: none;
-      text-align: right; }
-    .MainNavigation .UserInfo .UserInfo--userIcon {
-      display: block;
-      float: right;
-      width: 30px;
-      height: 30px;
-      background-image: url(../../images/icons/user-icon.png);
-      background-repeat: no-repeat;
-      -webkit-background-size: cover;
-      -moz-background-size: cover;
-      -ms-background-size: cover;
-      -o-background-size: cover;
-      background-size: cover; }
-    .MainNavigation .UserInfo:hover {
-      background-color: white;
-      color: #EC7063; }
+      text-align: center;
+      padding: 5px 5px 5px 5px;
+      -webkit-transition: background-color 0.3s, color 0.3s;
+      -moz-transition: background-color 0.3s, color 0.3s;
+      -ms-transition: background-color 0.3s, color 0.3s;
+      -o-transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.3s, color 0.3s; }
+      .MainNavigation .UserInfo .UserInfo--mail .UserInfo--userIcon {
+        display: block;
+        float: right;
+        width: 25px;
+        height: 25px;
+        background-image: url(../../images/icons/user-icon.png);
+        background-repeat: no-repeat;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -ms-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover; }
+      .MainNavigation .UserInfo .UserInfo--mail:hover {
+        background-color: #EC7063;
+        color: white; }
     .MainNavigation .UserInfo:hover .UserInfo--mail {
-      color: #303133; }
-
-.TestListPopup {
-  opacity: 0;
-  filter: alpha(opacity=0);
-  position: absolute;
-  top: 100%;
-  right: -350%;
-  z-index: -1;
-  width: 250%;
-  height: 600px;
-  padding: 5px;
-  background-color: white;
-  -webkit-transition: right 0.5s ease, opacity 0.5s ease;
-  -moz-transition: right 0.5s ease, opacity 0.5s ease;
-  -ms-transition: right 0.5s ease, opacity 0.5s ease;
-  -o-transition: right 0.5s ease, opacity 0.5s ease;
-  transition: right 0.5s ease, opacity 0.5s ease; }
-  .TestListPopup .PopupProfile {
-    width: 30%;
-    float: right;
-    background-color: #2C84EE;
-    padding: 5px;
-    -webkit-transition: background-color 0.3s ease-in-out;
-    -moz-transition: background-color 0.3s ease-in-out;
-    -ms-transition: background-color 0.3s ease-in-out;
-    -o-transition: background-color 0.3s ease-in-out;
-    transition: background-color 0.3s ease-in-out; }
-    .TestListPopup .PopupProfile .Profile--choiceLink {
-      width: 100%;
-      display: block;
-      color: white;
-      font-size: 1.2em;
-      padding: 10px; }
-      .TestListPopup .PopupProfile .Profile--choiceLink:hover {
-        background-color: #2C84EE; }
-    .TestListPopup .PopupProfile:hover {
-      background-color: #005AC1; }
-
-.Profile--choiceLink {
-  position: relative;
-  overflow: hidden; }
-  .Profile--choiceLink .PopupIcons {
-    display: block;
-    position: absolute;
-    top: 6px;
-    right: -35px;
-    width: 25px;
-    height: 25px;
-    -webkit-transition: right 0.3s ease-in-out;
-    -moz-transition: right 0.3s ease-in-out;
-    -ms-transition: right 0.3s ease-in-out;
-    -o-transition: right 0.3s ease-in-out;
-    transition: right 0.3s ease-in-out; }
-  .Profile--choiceLink .AddUserIcon {
-    background: url(../images/icons/add-user.png) no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -ms-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover; }
-  .Profile--choiceLink .LogoutIcon {
-    background: url(../images/icons/logout.png) no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -ms-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover; }
-  .Profile--choiceLink .EditProfileIcon {
-    background: url(../images/icons/edit-profile.png) no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -ms-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover; }
-  .Profile--choiceLink:hover .PopupIcons {
-    right: 10px; }
-
-.UserInfo:hover .TestListPopup {
-  opacity: 1;
-  right: 0; }
+      color: wbite;
+      cursor: pointer; }
 
 .Home .ContentMainTitle {
   margin: 75px 0 25px 0; }
@@ -562,6 +488,47 @@ body {
   -webkit-transform: scaleY(1);
   transform: scaleY(1); }
 
+.ManagmentMenu .CompiledMenu {
+  width: 100%;
+  float: left;
+  margin: 50px 0 50px 0; }
+  .ManagmentMenu .CompiledMenu .ContentSubTitle {
+    color: white; }
+.ManagmentMenu .MenuBlock {
+  width: 100%;
+  float: left;
+  margin-bottom: 15px; }
+  .ManagmentMenu .MenuBlock .MenuChoice {
+    width: 100px;
+    height: 110px;
+    float: left;
+    color: white;
+    border: 1px solid #6b6b6b;
+    margin-right: 15px;
+    -webkit-transition: background-color 0.3s, border 0.3s;
+    -moz-transition: background-color 0.3s, border 0.3s;
+    -ms-transition: background-color 0.3s, border 0.3s;
+    -o-transition: background-color 0.3s, border 0.3s;
+    transition: background-color 0.3s, border 0.3s; }
+    .ManagmentMenu .MenuBlock .MenuChoice:hover {
+      background-color: #EC7063;
+      border: 1px solid white;
+      cursor: pointer; }
+    .ManagmentMenu .MenuBlock .MenuChoice .MenuChoice--icon {
+      display: block;
+      width: 40px;
+      height: 40px;
+      margin: 5px auto;
+      margin-bottom: 15px; }
+    .ManagmentMenu .MenuBlock .MenuChoice .MenuChoice--text {
+      display: block;
+      width: 100%;
+      font-size: 1.2em;
+      text-align: center;
+      margin-top: 5px; }
+  .ManagmentMenu .MenuBlock .AwayLeft {
+    margin-left: 115px; }
+
 .CreateUser {
   color: white; }
 
@@ -621,9 +588,9 @@ body {
   float: left;
   padding: 10px; }
   .UserManagment--info .InfoSection {
-    width: 100%;
+    width: 40%;
     float: left;
-    margin: 10px 0 10px 0; }
+    margin: 10px 60px 20px 0; }
     .UserManagment--info .InfoSection .InfoSection--title {
       width: 100%;
       float: left;
@@ -634,7 +601,19 @@ body {
       width: 100%;
       float: left;
       padding: 10px;
+      letter-spacing: 0.03em;
+      word-spacing: 0.03em;
+      line-height: 1.6em;
+      font-size: 1.2em;
       color: white; }
+    .UserManagment--info .InfoSection .InfoSection--block {
+      width: 100%;
+      float: left;
+      font-size: 1.1em;
+      padding: 10px; }
+  .UserManagment--info .InfoSection--expand {
+    width: 100%;
+    margin: 10px 0 10px 0; }
 
 .TestCreation .ContentSubTitle {
   color: white; }

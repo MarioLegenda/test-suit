@@ -23,7 +23,7 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
     private $user_id;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message = "Username has to be provided")
      * @Assert\NotNull(message = "Username has to be provided")
      * @Assert\Email(message = "Username has to be a valid email")
@@ -56,14 +56,14 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
     private $passRepeat;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message = "Name has to be provided")
      * @Assert\NotNull(message = "Name has to be provided")
      */
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=false)
      * @Assert\NotBlank(message = "Lastname has to be provided")
      * @Assert\NotNull(message = "Lastname has to be provided")
      */
@@ -215,10 +215,33 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
     }
 
     public function jsonSerialize() {
-        return array(
+        $jsoned = array(
             'name' => $this->getName(),
             'lastname' => $this->getLastname(),
-            'username' => $this->getUsername()
+            'username' => $this->getUsername(),
+            'role_max' => false,
+            'role_middle' => false,
+            'role_min' => false
         );
+
+        $filler = function(array $toFill) use (&$jsoned) {
+            foreach($toFill as $check) {
+                if(array_key_exists($check, $jsoned)) {
+                    $jsoned[$check] = true;
+                }
+            }
+        };
+
+        if($this->isInRole('ROLE_USER_MANAGER')) {
+            $filler(array('role_max'));
+        }
+        else if($this->isInRole('ROLE_TEST_CREATOR')) {
+            $filler(array('role_middle'));
+        }
+        else if($this->isInRole('ROLE_TEST_SOLVER')) {
+            $filler(array('role_min'));
+        }
+
+        return $jsoned;
     }
 } 

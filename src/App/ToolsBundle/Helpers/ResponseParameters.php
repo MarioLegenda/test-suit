@@ -33,6 +33,6 @@ class ResponseParameters implements \JsonSerializable
     }
 
     public function jsonSerialize() {
-        return json_encode($this->getParameters());
+        return $this->getParameters();
     }
 } 

@@ -15,6 +15,10 @@ abstract class GenericModel
         $this->modelData[$key] = $value;
     }
 
+    public function hasModelData($key) {
+        return array_key_exists($key, $this->modelData);
+    }
+
     public function getModelData($key) {
         if(!array_key_exists($key, $this->modelData)) {
             return 'N/A';

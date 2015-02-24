@@ -274,6 +274,29 @@ angular.module('suite.directives', [])
 
         }
     }
+}).directive('userListing', function(User) {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'userListing.html',
+        controller: function($scope) {
+            $scope.users = [];
+            $scope.userInfo = {};
+
+            $scope.loading = {
+                loading: false,
+                loadingText: 'Loading user...',
+                loaded: false
+            };
+
+            var promise = User.getAllUsers();
+            promise.then(function(data, status, headers, config) {
+                $scope.users = data.data.users;
+            }, function(data, status, headers, config) {
+                console.log('Something bad happend', data, status);
+            });
+        }
+    }
 }).directive('expandSection', function($, User, $timeout) {
     return {
         restrict: 'A',
@@ -295,7 +318,7 @@ angular.module('suite.directives', [])
                                 border: '1px solid #2C84EE'
                             });
 
-                            clickedElem.find('.ExpandableClick').css({
+                            clickedElem.css({
                                 backgroundColor: '#2C84EE'
                             });
 
@@ -311,7 +334,7 @@ angular.module('suite.directives', [])
                                 border: '1px solid white'
                             });
 
-                            clickedElem.find('.ExpandableClick').css({
+                            clickedElem.css({
                                 backgroundColor: 'transparent'
                             });
 
@@ -322,10 +345,10 @@ angular.module('suite.directives', [])
 
             } () );
 
-            elem.click(function(event) {
+            elem.find('.ExpandableClick:first-child').click(function(event) {
                 event.preventDefault();
 
-                var localThis = $(this);
+                var clickedElem = $(this);
 
                 if( ! scope.userInfo.hasOwnProperty(userId)) {
                     scope.loading.loading = true;
@@ -336,23 +359,23 @@ angular.module('suite.directives', [])
 
                     promise.then(function(data, status, headers, config) {
                         var userInfo = data.data.user;
+                        console.log(userInfo);
                         scope.userInfo[userInfo.user_id] = userInfo;
 
                         scope.loading.loaded = !scope.loading.loaded;
                         scope.loading.loading = false;
 
                         $timeout(function() {
-                            animation.toggle(elem, localThis);
+                            animation.toggle(elem, clickedElem);
                         }, 100);
 
                     }, function(data, status, headers, config) {
-                        console.log(data, status);
-                        animation.toggle(elem, localThis);
+                        animation.toggle(elem, clickedElem);
                     });
                 }
                 else {
                     $timeout(function() {
-                        animation.toggle(elem, localThis);
+                        animation.toggle(elem, clickedElem);
                     }, 100);
                 }
 
@@ -375,9 +398,11 @@ angular.module('suite.directives', [])
 
             DataMediator.addMediateData('action-create-test', {
                 message: 'Please wait...',
-                userSpecificClasses: 'TempSubmitButton',
                 submitProp: 'test',
-                textValue: 'Create test'
+                userSpecificClasses: 'ActionMoveRight',
+                awaitClasses: 'AwaitRight',
+                textValue: 'Create test',
+                awaitEvent: 'await-create-user'
             });
 
             $scope.available_users = null;
@@ -414,7 +439,7 @@ angular.module('suite.directives', [])
             scope.test.submit = function($event) {
                 $event.preventDefault();
                 if (scope.theForm.isValidForm()) {
-                    scope.$broadcast('action-await', {
+                    scope.$broadcast('await-create-user', {
                         awaiting: true
                     });
 
@@ -446,7 +471,7 @@ angular.module('suite.directives', [])
                             url: '/app_dev.php' + data.data.redirectUrl
                         });
                     }, function (data, status, headers, config) {
-                        scope.$broadcast('action-await', {
+                        scope.$broadcast('await-create-user', {
                             awaiting: false,
                             finished: false
                         });
@@ -468,13 +493,15 @@ angular.module('suite.directives', [])
         replace: true,
         scope: true,
         templateUrl: 'createUserTemplate.html',
-        controller: function($scope, formHandler, User, $timeout) {
-            $timeout(function() {
-                $scope.$broadcast('action-initialization', {
-                    message: 'Please wait...',
-                    submitProp: 'user'
-                });
-            }, 200);
+        controller: function($scope, formHandler, User, $timeout, DataMediator) {
+            DataMediator.addMediateData('action-create-user', {
+                message: 'Please wait...',
+                submitProp: 'user',
+                userSpecificClasses: 'ActionMoveRight',
+                awaitClasses: 'AwaitRight',
+                textValue: 'Create user',
+                awaitEvent: 'await-create-test'
+            });
 
             $scope.globalErrors = {
                 errors: [],
@@ -520,21 +547,16 @@ angular.module('suite.directives', [])
 
                     $event.preventDefault();
                     if($scope.theForm.isValidForm()) {
-                        $scope.$broadcast('action-await', {
+                        $scope.$broadcast('await-create-test', {
                             awaiting: true
                         });
 
                         var promise = User.save($scope.user);
 
                         promise.then(function (data, status, headers, config) {
-                            $scope.$broadcast('action-finished', {
-                                awaiting: true,
-                                finished: true,
-                                redirect: true,
-                                url: '/app_dev.php/user-managment'
-                            });
+                            $scope.$emit('action-user-created', {});
                         }, function (data, status, headers, config) {
-                            $scope.$broadcast('action-await', {
+                            $scope.$broadcast('await-create-test', {
                                 awaiting: false,
                                 finished: false,
                                 redirect: false
@@ -584,20 +606,11 @@ angular.module('suite.directives', [])
                 awaitEvent: 'await-next'
             });
 
-            DataMediator.addMediateData('action-previous-test', {
-                message: 'Please wait...',
-                submitProp: 'previous',
-                userSpecificClasses: 'ActionMoveLeft',
-                awaitClasses: 'AwaitLeft',
-                textValue: 'Previous question',
-                awaitEvent: 'await-previous'
-            });
-
             DataMediator.addMediateData('action-finish-test', {
                 message: 'Please wait...',
                 submitProp: 'finished',
-                userSpecificClasses: 'BlockFinishButton',
-                awaitClasses: 'AwaitRight',
+                userSpecificClasses: 'ActionMoveLeft',
+                awaitClasses: 'AwaitLeft',
                 textValue: 'Finish test',
                 awaitEvent: 'await-finish'
             });
@@ -638,7 +651,6 @@ angular.module('suite.directives', [])
                 submit: function($event) {
                     $event.preventDefault();
 
-                    console.log(DataShepard.current());
                     if(DataShepard.current() > 1) {
                         scope.$broadcast('await-next', {
                             awaiting: true
@@ -687,6 +699,60 @@ angular.module('suite.directives', [])
                     });
                 }
             };
+        }
+    }
+}).directive('managmentMenu', function($) {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'managmentMenuTemplate.html',
+        controller: function($scope) {
+            $scope.menus = {
+                userMenu: false,
+                testMenu: false,
+
+                toggle: function(type) {
+                    if( ! this.hasOwnProperty(type)) {
+                        throw Error('ManagmentMenu: Wrong type ' + type);
+                    }
+
+                    this[type] = !this[type];
+                    var menus = ['userMenu', 'testMenu'];
+                    menus.splice(menus.indexOf(type), 1);
+
+                    for(var i = 0; i < menus.length; i++) {
+                        this[menus[i]] = false;
+                    }
+                }
+            };
+
+            $scope.managment = {
+                createUser: false,
+                listUsers: false,
+                createTest: false,
+
+                toggle: function(type) {
+                    if( ! this.hasOwnProperty(type)) {
+                        throw Error('ManagmentMenu: Wrong type ' + type);
+                    }
+
+                    this[type] = !this[type];
+                    var menus = ['createUser', 'listUsers', 'createTest'];
+                    menus.splice(menus.indexOf(type), 1);
+
+                    for(var i = 0; i < menus.length; i++) {
+                        this[menus[i]] = false;
+                    }
+                }
+            };
+
+            $scope.$on('action-user-created', function(event, data) {
+                $scope.managment.createUser = false;
+                $scope.managment.listUsers = true;
+            });
+        },
+        link: function(scope, elem, attrs) {
+
         }
     }
 });

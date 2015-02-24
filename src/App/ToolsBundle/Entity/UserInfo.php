@@ -27,17 +27,17 @@ class UserInfo extends GenericEntity
     private $user_id;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="string", length=1024, nullable=true)
      */
     private $fields = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="string", length=1024, nullable=true)
      */
     private $programming_languages = null;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="string", length=1024, nullable=true)
      */
     private $tools = null;
 
@@ -48,12 +48,12 @@ class UserInfo extends GenericEntity
     private $years_of_experience = null;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=1024, nullable=true)
      */
     private $future_plans = null;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=1024, nullable=true)
      */
     private $description;
 

@@ -1,0 +1,63 @@
+.ManagmentMenu {
+
+  .CompiledMenu {
+    width:100%;
+    float:left;
+
+    margin:50px 0 50px 0;
+
+    .ContentSubTitle {
+      color:white;
+    }
+  }
+
+  .MenuBlock {
+    width:100%;
+    float:left;
+
+    margin-bottom:15px;
+
+    .MenuChoice {
+      width:100px;
+      height:110px;
+      float:left;
+
+      color:white;
+      border:1px solid $contentHighlight;
+
+
+      margin-right:15px;
+
+      @include transition(background-color 0.3s, border 0.3s);
+
+      &:hover {
+        background-color: $mainHoverColor;
+        border:1px solid white;
+        cursor: pointer;
+      }
+
+      .MenuChoice--icon {
+        display:block;
+        width:40px;
+        height:40px;
+        margin:5px auto;
+        margin-bottom:15px;
+      }
+
+      .MenuChoice--text {
+        display:block;
+        width:100%;
+
+        font-size:1.2em;
+        text-align: center;
+
+        margin-top: 5px;
+      }
+    }
+
+    .AwayLeft {
+      margin-left:115px;
+    }
+
+  }
+}

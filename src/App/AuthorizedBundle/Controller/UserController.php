@@ -3,6 +3,7 @@
 namespace App\AuthorizedBundle\Controller;
 
 use App\AuthorizedBundle\Models\CreateUserModel;
+use App\AuthorizedBundle\Models\ManagmentModel;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Helpers\BadAjaxResponse;
@@ -36,6 +37,18 @@ class UserController extends ContainerAware
 
         $responseParameters->addParameter('model', $createUserModel);
         return $templating->renderResponse('AppAuthorizedBundle:User:createUser.html.twig', $responseParameters->getParameters());
+    }
+
+    public function managmentMenuAction() {
+        $templating = $this->container->get('templating');
+        $security = $this->container->get('security.context');
+
+        $managmentModel = new ManagmentModel($security);
+        $managmentModel->runModel();
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('model', $managmentModel);
+        return $templating->renderResponse('AppAuthorizedBundle:User:managmentMenu.html.twig', $responseParameters->getParameters());
     }
 
     /**
@@ -111,6 +124,7 @@ class UserController extends ContainerAware
     public function userInfoAction() {
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
+
         $id = (array)json_decode($request->getContent());
 
         if(empty($id) OR ! array_key_exists('id', $id)) {
@@ -118,7 +132,7 @@ class UserController extends ContainerAware
         }
 
         $userRepo = new UserRepository($doctrine);
-        $user = $userRepo->getUserById($id['id']);
+        $user = $userRepo->getUserInfoById($id['id']);
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('user', $user);

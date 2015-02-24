@@ -21,22 +21,6 @@ class TestController extends ContainerAware
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
      */
-    public function createTestTemplateAction() {
-        $templating = $this->container->get('templating');
-        $authorization = $this->container->get('security.authorization_checker');
-
-        $genericProfileModel = new HomeModel($authorization, $this->container->get('security.context')->getToken()->getUser());
-        $genericProfileModel->runModel();
-
-        $responseParameters = new ResponseParameters();
-
-        $responseParameters->addParameter('model', $genericProfileModel);
-        return $templating->renderResponse('AppAuthorizedBundle:Test:createTest.html.twig', $responseParameters->getParameters());
-    }
-
-    /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
-     */
     public function createTestAction() {
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');

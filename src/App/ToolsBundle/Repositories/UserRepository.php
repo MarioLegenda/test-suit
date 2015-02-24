@@ -16,14 +16,14 @@ class UserRepository extends Repository
     private $userInfo = null;
     private $roles = array();
 
-    public function getUserById($id) {
+    public function getUserInfoById($id) {
         $qb = $this->em->createQueryBuilder();
         $result = $qb->select('ui.user_id', 'ui.fields', 'ui.programming_languages', 'ui.tools', 'ui.years_of_experience', 'ui.future_plans', 'ui.description')
             ->from('AppToolsBundle:UserInfo', 'ui')
             ->where($qb->expr()->eq('ui.user_id', ':user_id'))
             ->setParameter(':user_id', $id)
             ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult();
 
         if(empty($result)) {
             return null;
@@ -50,17 +50,37 @@ class UserRepository extends Repository
 
     public function getAllUsers() {
         $qb = $this->em->createQueryBuilder();
-        $result = $qb->select('u.user_id', 'u.username', 'u.name', 'u.lastname', 'u.logged')
+        $result = $qb->select(array('u'))
             ->from('AppToolsBundle:User', 'u')
+            ->innerJoin('u.roles', 'r', $qb->expr()->eq('u.user_id', 'r.user_id'))
             ->orderBy('u.logged', 'DESC')
             ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult();
 
         if(empty($result)) {
             return null;
         }
 
-        return $result;
+        $users = array();
+        foreach($result as $user) {
+            $temp = array();
+
+            $temp['user_id'] = $user->getUserId();
+            $temp['username'] = $user->getUsername();
+            $temp['name'] = $user->getName();
+            $temp['lastname'] = $user->getLastname();
+            $temp['logged'] = $user->getLogged();
+
+            $roles = $user->getRoles();
+
+            foreach($roles as $role) {
+                $temp['role'] = strtolower(substr($role->getRole(), 5));
+            }
+
+            $users[] = $temp;
+        }
+
+        return $users;
     }
 
     public function getPaginatedUsers($offset, $limit) {

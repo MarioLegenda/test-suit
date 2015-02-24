@@ -67,11 +67,10 @@
   padding:10px;
 
   .InfoSection {
-    width:100%;
+    width:40%;
     float:left;
 
-    margin:10px 0 10px 0;
-
+    margin:10px 60px 20px 0;
 
     .InfoSection--title {
       width:100%;
@@ -88,7 +87,25 @@
       float:left;
       padding:10px;
 
+      letter-spacing: 0.03em;
+      word-spacing: 0.03em;
+      line-height: 1.6em;
+      font-size:1.2em;
       color:white;
     }
+
+    .InfoSection--block {
+      width:100%;
+      float:left;
+      font-size:1.1em;
+
+      padding:10px;
+    }
+  }
+
+  .InfoSection--expand {
+    width:100%;
+
+    margin:10px 0 10px 0;
   }
 }

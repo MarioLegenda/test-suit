@@ -1,0 +1,10 @@
+<script type="text/ng-template" id="actionSubmit.html">
+    <div class="ActionSubmitDirective">
+        <input type="submit" value="{[{ action.textValue }]}" class="FormRow--submitButton  BasicSubmitButton  {[{ action.userSpecificClasses }]}"
+               ng-click="action.submit($event)"
+               ng-disabled="(action.finished && action.awaiting) || action.awaiting"/>
+        <p class='Action  {[{ action.awaitClasses }]}'
+           ng-model='action.awaiting'
+           ng-show='(action.finished && action.awaiting) || action.awaiting'>{[{ action.message }]}</p>
+    </div>
+</script>

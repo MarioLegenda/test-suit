@@ -9,25 +9,16 @@
 
         <!-- CreateUserSubmitButton -->
         {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('css/font-awesome-4.3.0/css/font-awesome.min.css') }}">
             <link rel="stylesheet" href="{{ asset("css/style.css") }}">
         {% endblock %}
 
-        <script type="text/ng-template" id="globalError.html">
-            <div class="GlobalErrors" ng-model="globalErrors.errors" ng-repeat="error in globalErrors.errors" ng-show="globalErrors.show">
-                <label class="GlobalError">{[{ error }]}</label>
-            </div>
-        </script>
-
-        <script type="text/ng-template" id="actionSubmit.html">
-            <div class="ActionSubmitDirective">
-                <input type="submit" value="{[{ action.textValue }]}" class="FormRow--submitButton  BasicSubmitButton  {[{ action.userSpecificClasses }]}"
-                       ng-click="action.submit($event)"
-                        ng-disabled="(action.finished && action.awaiting) || action.awaiting"/>
-                <p class='Action  {[{ action.awaitClasses }]}'
-                   ng-model='action.awaiting'
-                   ng-show='(action.finished && action.awaiting) || action.awaiting'>{[{ action.message }]}</p>
-            </div>
-        </script>
+        {{ include('user-list.html.twig') }}
+        {{ include('global-errors.html.twig') }}
+        {{ include('submit-directive.html.twig') }}
+        {{ include('create-user.html.twig') }}
+        {{ include('managment-menu.html.twig') }}
+        {{ include('create-test.html.twig') }}
 
     </head>
     <body>
@@ -39,22 +30,7 @@
                     </ul>
 
                     <div class="UserInfo">
-                        <span class="UserInfo--userIcon"></span>
-                        <button class="UserInfo--mail">{{ model.getModelData('username') }}</button>
-
-                        <div class="TestListPopup">
-
-                            <div class="PopupProfile">
-                                {% if model.isInRole('ROLE_USER_MANAGER') %}
-                                    <a href="{{ path('app_authorized_createUserGet') }}" class="Profile--choiceLink">Create admin/user<span class="PopupIcons  AddUserIcon"></span></a>
-                                {% endif %}
-                                {% if model.isInRole('ROLE_USER_MANAGER') %}
-                                    <a href="{{ path('app_authorized_userManagment') }}" class="Profile--choiceLink">User managment<span class="PopupIcons  AddUserIcon"></span></a>
-                                {% endif %}
-                                <a href="" class="Profile--choiceLink">Edit profile<span class="PopupIcons  EditProfileIcon"></span></a>
-                                <a href="{{ path('logout') }}" class="Profile--choiceLink">Logout<span class="PopupIcons  LogoutIcon"></span></a>
-                            </div>
-                        </div>
+                        <label  class="UserInfo--mail">{{ model.getModelData('username') }}<span class="UserInfo--userIcon"></span></label>
                     </div>
                 </nav>
             </header>
