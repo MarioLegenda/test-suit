@@ -112,7 +112,7 @@ angular.module('suite.factories', []).factory('$', function () {
 }).factory('User', function($http) {
     return {
         urls: {
-            saveUrl: '/app_dev.php/save-user',
+            saveUrl: '/app_dev.php/user-managment/save-user',
             allUsersUrl: '/app_dev.php/user-managment/user-list',
             userInfo: '/app_dev.php/user-managment/user-info'
         },
@@ -200,34 +200,50 @@ angular.module('suite.factories', []).factory('$', function () {
     }
 
     return new List();
-}).factory('TestControl', function($http) {
-    return {
-        urls: {
-            createTestUrl: '/app_dev.php/create-test'
-        },
-
-        createTest: function(data) {
-            return $http({
-                method: 'POST',
-                url: this.urls.createTestUrl,
-                data: data
-            });
-        }
-    };
 }).factory('Test', function($http) {
 
     function Test() {
         var urls = {
-            saveTestUrl: '/app_dev.php/save-test/',
-            getTestUrl: '/app_dev.php/get-test'
+            createTestUrl: '/app_dev.php/test-managment/create-test',
+            saveTestUrl: '/app_dev.php/test-managment/save-test/',
+            getTestUrl: '/app_dev.php/test-managment/get-test',
+            getBasicTests: '/app_dev.php/test-managment/get-tests-basic',
+            getBasicTestById: '/app_dev.php/test-managment/get-test-basic',
+            deleteTest: '/app_dev.php/test-managment/delete-test',
+            modifyTest: '/app_dev.php/test-managment/modify-test'
         };
 
-        var cachedTest = null;
+        this.createTest =  function(data) {
+            return $http({
+                method: 'POST',
+                url: urls.createTestUrl,
+                data: data
+            });
+        };
 
         this.saveTest = function(id, data) {
+            console.log(data);
             return $http({
                 method: 'POST',
                 url: urls.saveTestUrl + id,
+                data: data
+            });
+        };
+
+        this.deleteTest = function(id) {
+            return $http({
+                method: 'POST',
+                url: urls.deleteTest,
+                data: {id: id}
+            });
+        };
+
+        this.modifyTest = function(data, type) {
+            return $http({
+                method: 'POST',
+                url: ( function() {
+                    return (type === 'create') ? urls.createTestUrl : urls.modifyTest
+                } () ),
                 data: data
             });
         };
@@ -239,6 +255,22 @@ angular.module('suite.factories', []).factory('$', function () {
                 data: [id],
                 cache: true
             });
+        };
+
+        this.getBasicTests = function() {
+            return $http({
+                method: 'POST',
+                url: urls.getBasicTests,
+                cache: true
+            });
+        };
+
+        this.getBasicTestById = function(id) {
+            return $http({
+                method: 'POST',
+                url: urls.getBasicTestById,
+                data: {id : id}
+            });
         }
     }
 
@@ -247,7 +279,16 @@ angular.module('suite.factories', []).factory('$', function () {
 }).factory('DataShepard', function($) {
     function DataShepard() {
         var counter = 0,
-            heard = [];
+            heard = [],
+            precompiled = false;
+
+        this.setPrecompiled = function() {
+            precompiled = true;
+        };
+
+        this.isPreCompiled = function() {
+            return precompiled;
+        };
 
         this.current = function() {
             return counter;
@@ -267,13 +308,14 @@ angular.module('suite.factories', []).factory('$', function () {
         };
 
         this.get = function(id) {
-            var val = heard[id];
-
-            if(typeof val === 'undefined') {
-                return null;
+            for(var i = 0; i < heard.length; i++) {
+                var block = heard[i];
+                if(block.blockId == id) {
+                    return heard[i];
+                }
             }
 
-            return val;
+            throw new Error('DataShepard: ' + id + ' was not found');
         };
 
         this.all = function() {
@@ -309,11 +351,12 @@ angular.module('suite.factories', []).factory('$', function () {
         this.createType = function(id, type, dataType, directiveType) {
             var constructingType = {};
 
-            constructingType.data_type = dataType;
-            constructingType.block_type = type;
+            constructingType.dataType = dataType;
+            constructingType.blockType = type;
             constructingType.element = 'textarea';
-            constructingType.block_id = id;
+            constructingType.blockId = id;
             constructingType.placeholder = metadata[type].placeholders[directiveType];
+            constructingType.directiveType = directiveType;
             constructingType.data = {
                 type: directiveType,
                 data: null
@@ -332,15 +375,16 @@ angular.module('suite.factories', []).factory('$', function () {
 }).factory('CompileCommander', function($compile) {
     function CompileCommander() {
         this.compile = function($scope) {
+
             switch($scope.directiveData.directiveType) {
                 case 'plain-text-block':
-                    return $compile("<plain-text-suit-block block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}'></plain-text-suit-block>")($scope.$new());
+                    return $compile("<plain-text-suit-block block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></plain-text-suit-block>")($scope.$new(false, $scope));
                 case 'code-block':
-                    return $compile("<code-block-suite block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}'></code-block-suite>")($scope.$new());
+                    return $compile("<code-block-suite block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></code-block-suite>")($scope.$new(false, $scope));
                 case 'select-block':
                 case 'checkbox-block':
                 case 'radio-block':
-                    return $compile("<generic-block-suit block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}'></generic-block-suit>")($scope.$new());
+                    return $compile("<generic-block-suit block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></generic-block-suit>")($scope.$new(false, $scope));
 
             }
         }

@@ -32,11 +32,6 @@ class Test
     private $test_serialized;
 
     /**
-     * @ORM\Column(type="datetime", nullable=false)
-     */
-    private $created;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\ToolsBundle\Entity\TestControl", cascade="persist")
      * @ORM\JoinColumn(name="test_control_id", referencedColumnName="test_control_id")
      **/
@@ -60,14 +55,6 @@ class Test
 
     public function getTestSerialized() {
         return $this->test_serialized;
-    }
-
-    public function setCreated(\DateTime $datetime) {
-        $this->created = $datetime;
-    }
-
-    public function getCreated() {
-        return $this->created;
     }
 
     public function setTestControl(TestControl $testControl) {

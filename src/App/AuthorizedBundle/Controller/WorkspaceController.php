@@ -50,7 +50,40 @@ class WorkspaceController extends ContainerAware
 
 
         $responseParameters->addParameter('model', $genericProfileModel);
-        return $templating->renderResponse('AppAuthorizedBundle:Workspace:workspace.html.twig', $responseParameters->getParameters());
+        return $templating->renderResponse('AppAuthorizedBundle:Workspace:workspace-builder.html.twig', $responseParameters->getParameters());
+    }
+
+    public function workspaceModifyTemplateAction($testName, $testId) {
+        $templating = $this->container->get('templating');
+        $authorization = $this->container->get('security.authorization_checker');
+        $doctrine = $this->container->get('doctrine');
+
+
+        $genericProfileModel = new WorkspaceModel(
+            $authorization,
+            $this->container->get('security.context')->getToken()->getUser()
+        );
+
+        $genericProfileModel->populateWithClojure(function($context) use($doctrine, $testId) {
+            $testRepo = new TestRepository($doctrine);
+
+            $testControl = $testRepo->getTestControlById($testId);
+            $testRange = $testRepo->getTestRange($testId);
+
+            $context->setProperty('test-name', $testControl->getTestName());
+            $context->setProperty('test-id', $testControl->getTestControlId());
+            $context->setProperty('min', $testRange['min']);
+            $context->setProperty('max', $testRange['max']);
+        });
+
+        $genericProfileModel->runModel();
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('model', $genericProfileModel);
+
+
+        $responseParameters->addParameter('model', $genericProfileModel);
+        return $templating->renderResponse('AppAuthorizedBundle:Workspace:workspace-modifier.html.twig', $responseParameters->getParameters());
     }
 
     /**
@@ -67,7 +100,6 @@ class WorkspaceController extends ContainerAware
         $testControl = $testRepo->getTestControlById($testControlId);
         $test = new Test();
         $test->setTestControl($testControl);
-        $test->setCreated(new \DateTime());
         $test->setTestSerialized($data);
 
         $em = $doctrine->getManager();
@@ -111,7 +143,7 @@ class WorkspaceController extends ContainerAware
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        $responseParameters->addParameter('test', $test->getTestSerialized());
+        $responseParameters->addParameter('test', json_decode($test->getTestSerialized()));
         return GoodAjaxRequest::init($responseParameters)->getResponse();
     }
 } 

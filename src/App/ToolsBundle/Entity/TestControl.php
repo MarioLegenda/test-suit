@@ -56,12 +56,18 @@ class TestControl
     private $remarks = null;
 
     /**
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    private $created;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\ToolsBundle\Entity\User", cascade="persist")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="user_id")
      **/
     private $user;
 
     public function __construct() {
+        $this->created = new \DateTime();
         $this->visibility = json_encode(array('public'));
     }
 
@@ -127,6 +133,14 @@ class TestControl
 
     public function getUser() {
         return $this->user;
+    }
+
+    public function setCreated(\DateTime $created) {
+        $this->created = $created;
+    }
+
+    public function getCreated() {
+        return $this->created->format('d.m.Y');
     }
 
     /**

@@ -205,6 +205,77 @@ body {
   -o-transform: translate(-50%, -50%);
   color: white; }
 
+.Expandable {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  float: left;
+  margin: 0 0 10px 0;
+  border: 1px solid white; }
+  .Expandable .Expandable--click {
+    width: 100%;
+    height: 46px;
+    float: left;
+    display: block;
+    padding: 15px;
+    -webkit-transition: background-color 0.3s;
+    -moz-transition: background-color 0.3s;
+    -ms-transition: background-color 0.3s;
+    -o-transition: background-color 0.3s;
+    transition: background-color 0.3s; }
+    .Expandable .Expandable--click .Expandable--item {
+      display: block;
+      float: left;
+      color: white; }
+    .Expandable .Expandable--click:hover {
+      cursor: pointer !important;
+      background-color: #2C84EE !important; }
+
+.Expandable--info {
+  position: absolute;
+  top: 46px;
+  left: 0;
+  width: 100%;
+  float: left;
+  padding: 10px; }
+  .Expandable--info .InfoSection {
+    width: 40%;
+    float: left;
+    margin: 10px 60px 20px 0; }
+    .Expandable--info .InfoSection .InfoSection--title {
+      width: 100%;
+      float: left;
+      padding: 5px 0 5px 0;
+      color: white;
+      border-bottom: 1px solid white; }
+    .Expandable--info .InfoSection .InfoSection--text {
+      width: 100%;
+      float: left;
+      padding: 10px;
+      letter-spacing: 0.03em;
+      word-spacing: 0.03em;
+      line-height: 1.6em;
+      font-size: 1.2em;
+      color: white; }
+    .Expandable--info .InfoSection .InfoSection--highlightOk {
+      color: #5de253; }
+    .Expandable--info .InfoSection .InfoSection--highlightNotOk {
+      color: #EC7063; }
+    .Expandable--info .InfoSection .InfoSection--block {
+      width: 100%;
+      float: left;
+      font-size: 1.1em;
+      padding: 10px; }
+    .Expandable--info .InfoSection .InfoSection--rowAligned {
+      width: auto;
+      display: inline-block;
+      float: left;
+      margin-right: 10px; }
+  .Expandable--info .InfoSection--expand {
+    width: 100%;
+    margin: 10px 0 10px 0; }
+
 .Container {
   width: 1200px;
   margin: 0 auto; }
@@ -549,80 +620,20 @@ body {
 
 .UserManagmentMain {
   padding: 50px 0 0 0; }
-  .UserManagmentMain .UserExpandable {
-    position: relative;
-    overflow: hidden;
-    display: block;
-    width: 100%;
-    float: left;
-    margin: 0 0 10px 0;
-    border: 1px solid white; }
-  .UserManagmentMain .ExpandableClick {
-    width: 100%;
-    height: 46px;
-    float: left;
-    display: block;
-    padding: 15px;
-    -webkit-transition: background-color 0.2s;
-    -moz-transition: background-color 0.2s;
-    -ms-transition: background-color 0.2s;
-    -o-transition: background-color 0.2s;
-    transition: background-color 0.2s; }
-    .UserManagmentMain .ExpandableClick .Expandable {
-      display: block;
-      float: left;
-      color: white; }
-    .UserManagmentMain .ExpandableClick .Expandable--name {
-      margin: 0 5px 0 0; }
-    .UserManagmentMain .ExpandableClick .Expandable--username {
-      float: right; }
-    .UserManagmentMain .ExpandableClick:hover {
-      cursor: pointer !important;
-      background-color: #2C84EE !important; }
+  .UserManagmentMain .Expandable--click .Expandable--name {
+    margin: 0 5px 0 0; }
+  .UserManagmentMain .Expandable--click .Expandable--username {
+    float: right; }
 
-.UserManagment--info {
-  position: absolute;
-  top: 46px;
-  left: 0;
-  width: 100%;
-  float: left;
-  padding: 10px; }
-  .UserManagment--info .InfoSection {
-    width: 40%;
-    float: left;
-    margin: 10px 60px 20px 0; }
-    .UserManagment--info .InfoSection .InfoSection--title {
-      width: 100%;
-      float: left;
-      padding: 5px 0 5px 0;
-      color: white;
-      border-bottom: 1px solid white; }
-    .UserManagment--info .InfoSection .InfoSection--text {
-      width: 100%;
-      float: left;
-      padding: 10px;
-      letter-spacing: 0.03em;
-      word-spacing: 0.03em;
-      line-height: 1.6em;
-      font-size: 1.2em;
-      color: white; }
-    .UserManagment--info .InfoSection .InfoSection--block {
-      width: 100%;
-      float: left;
-      font-size: 1.1em;
-      padding: 10px; }
-  .UserManagment--info .InfoSection--expand {
-    width: 100%;
-    margin: 10px 0 10px 0; }
-
-.TestCreation .ContentSubTitle {
+.ContentSubTitle {
   color: white; }
-.TestCreation .TestRestrictions .UserTable {
+
+.TestRestrictions .UserTable {
   background-color: #303133;
   color: white;
   width: 300px;
   height: 300px; }
-  .TestCreation .TestRestrictions .UserTable .ListTable--label {
+  .TestRestrictions .UserTable .ListTable--label {
     width: 100%;
     float: left;
     padding: 10px;
@@ -632,16 +643,51 @@ body {
     -ms-transition: background-color 0.3s;
     -o-transition: background-color 0.3s;
     transition: background-color 0.3s; }
-    .TestCreation .TestRestrictions .UserTable .ListTable--label:hover {
+    .TestRestrictions .UserTable .ListTable--label:hover {
       background-color: #2C84EE; }
-.TestCreation .TestRestrictions .UserListTable {
+.TestRestrictions .UserListTable {
   float: left;
   margin-right: 20px;
   border: 1px solid white; }
-.TestCreation .TestRestrictions .UserAllowedTable {
+.TestRestrictions .UserAllowedTable {
   width: 40%;
   float: left;
   border: 1px solid white; }
+
+.TestListManagment {
+  padding: 50px 0 0 0; }
+  .TestListManagment .Expandable--click .Expandable--testName {
+    margin: 0 5px 0 0; }
+  .TestListManagment .Expandable--click .Expandable--created {
+    float: right; }
+  .TestListManagment .InfoSection--finished {
+    color: #5de253; }
+  .TestListManagment .InfoSection--notFinished {
+    color: #EC7063; }
+  .TestListManagment .ModificationActions {
+    width: 100%;
+    float: left;
+    border-top: 1px solid white; }
+    .TestListManagment .ModificationActions .ModifyAction--action {
+      width: 150px;
+      float: left;
+      padding: 10px;
+      color: white;
+      text-align: center;
+      font-size: 1.2em;
+      -webkit-transition: background-color 0.3s;
+      -moz-transition: background-color 0.3s;
+      -ms-transition: background-color 0.3s;
+      -o-transition: background-color 0.3s;
+      transition: background-color 0.3s; }
+    .TestListManagment .ModificationActions .ModifyAction--modify:hover {
+      background-color: #2C84EE; }
+    .TestListManagment .ModificationActions .ModifyAction--change:hover {
+      background-color: #2C84EE; }
+    .TestListManagment .ModificationActions .ModifyAction--continue:hover {
+      background-color: #2C84EE; }
+    .TestListManagment .ModificationActions .ModifyAction--delete:hover {
+      background-color: #EC7063; }
 
 .MainContent {
   padding: 50px 0 0 0; }

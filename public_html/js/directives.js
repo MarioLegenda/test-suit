@@ -1,10 +1,57 @@
 "use strict";
 
-String.prototype.cFirstUpper = function() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-};
+var suitApp = angular.module("suite.app", ['suite.directives', 'suite.factories']).config(['$interpolateProvider', function($interpolateProvider) {
+    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+}]);
+
+suitApp.controller('suit.workspaceBuilder', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.builder = {
+        recompile: true
+    };
+
+    $scope.$on('action-recompile', function(event, data) {
+        $scope.builderrecompile = false;
+
+        $timeout(function() {
+            $scope.builder.recompile = true;
+        }, 500);
+    });
+}]);
+
 
 angular.module('suite.directives', [])
+    .directive('workspaceBuilder', function($timeout) {
+        return {
+            restrict: 'A',
+            controller: function($scope) {
+            },
+            link: function($scope, elem, attrs) {
+                $scope.currentTestId = attrs.currentTestId;
+                $scope.minId = attrs.minId;
+                $scope.maxId = attrs.maxId;
+
+                $scope.$on('action-recompile', function(event, data) {
+                    $scope.builder.recompile = false;
+
+                    $timeout(function() {
+                        $scope.builder.recompile = true;
+                    }, 500);
+                });
+
+                $scope.$on('action-next-recompile', function(event, data) {
+
+                });
+
+                $scope.$on('action-previous-recompile', function(event, data) {
+
+                });
+
+                $scope.builder = {
+                    recompile: true
+                };
+            }
+        }
+    })
     .directive('plainTextSuitBlock', function(DataShepard, Types, $timeout) {
     return {
         restrict: 'E',
@@ -13,23 +60,32 @@ angular.module('suite.directives', [])
             blockId: '@blockId',
             dataType: '@blockDataType',
             blockType: '@blockType',
-            directiveType: '@blockDirectiveType'
+            directiveType: '@blockDirectiveType',
+            dataShepard: '=shepard'
         },
         templateUrl: 'plainTextSuite.html',
         controller: function($scope) {
-            $scope.block = Types.createType(
-                $scope.blockId,
-                $scope.dataType,
-                $scope.blockType,
-                $scope.directiveType
-            );
+            console.log('ulazak');
+            if($scope.dataShepard.isPreCompiled() === true) {
+                var block = $scope.dataShepard.get($scope.blockId);
+                console.log(block);
+                $scope.block = block;
+            }
+            else {
+                $scope.block = Types.createType(
+                    $scope.blockId,
+                    $scope.dataType,
+                    $scope.blockType,
+                    $scope.directiveType
+                );
 
-            DataShepard.add($scope.block.block_id, $scope.block);
+                $scope.dataShepard.add($scope.block.blockId, $scope.block);
+            }
         },
         link: function(scope, elem, attrs) {
             scope.blockEvents = {
                 remove: function() {
-                    DataShepard.remove(scope.block.block_id);
+                    scope.dataShepard.remove(scope.block.blockId);
                     scope.$destroy();
                     elem.remove();
                 }
@@ -37,7 +93,7 @@ angular.module('suite.directives', [])
 
             scope.$on("destroy-directive", function(event, data) {
                 $timeout(function() {
-                    DataShepard.remove(scope.block.block_id);
+                    scope.dataShepard.remove(scope.block.blockId);
                     scope.$destroy();
                     elem.remove();
                 }, 500);
@@ -52,19 +108,25 @@ angular.module('suite.directives', [])
             blockId: '@blockId',
             dataType: '@blockDataType',
             blockType: '@blockType',
-            directiveType: '@blockDirectiveType'
+            directiveType: '@blockDirectiveType',
+            dataShepard: '=shepard'
         },
         templateUrl: 'codeBlockSuite.html',
         controller: function($scope) {
-            console.log($scope.blockId, $scope.dataType, $scope.blockType, $scope.directiveType);
-            $scope.block = Types.createType(
-                $scope.blockId,
-                $scope.dataType,
-                $scope.blockType,
-                $scope.directiveType
-            );
+            if($scope.dataShepard.isPreCompiled() === true) {
+                var block = $scope.dataShepard.get($scope.blockId);
+                $scope.block = block;
+            }
+            else {
+                $scope.block = Types.createType(
+                    $scope.blockId,
+                    $scope.dataType,
+                    $scope.blockType,
+                    $scope.directiveType
+                );
 
-            DataShepard.add($scope.block.block_id, $scope.block);
+                $scope.dataShepard.add($scope.block.blockId, $scope.block);
+            }
         },
         link: function(scope, elem, attrs) {
 
@@ -85,12 +147,12 @@ angular.module('suite.directives', [])
                 return scope.code;
             }, function(newVal, oldVal, scope) {
                 scope.block.data.data = newVal;
-                DataShepard.add(scope.block.block_id, scope.block);
+                scope.dataShepard.add(scope.block.blockId, scope.block);
             });
 
             scope.blockEvents = {
                 remove: function() {
-                    DataShepard.remove(scope.block.block_id);
+                    scope.dataShepard.remove(scope.block.blockId);
                     scope.$destroy();
                     elem.remove();
                 }
@@ -98,7 +160,7 @@ angular.module('suite.directives', [])
 
             scope.$on("destroy-directive",function(event, data) {
                 $timeout(function() {
-                    DataShepard.remove(scope.block.block_id);
+                    scope.dataShepard.remove(scope.block.blockId);
                     scope.$destroy();
                     elem.remove();
                 }, 500);
@@ -112,26 +174,33 @@ angular.module('suite.directives', [])
             blockId: '@blockId',
             dataType: '@blockDataType',
             blockType: '@blockType',
-            directiveType: '@blockDirectiveType'
+            directiveType: '@blockDirectiveType',
+            dataShepard: '=shepard'
         },
         templateUrl: 'selectBlockSuit.html',
         controller: function($scope) {
-            $scope.block = Types.createType(
-                $scope.blockId,
-                $scope.dataType,
-                $scope.blockType,
-                $scope.directiveType
-            );
+            if($scope.dataShepard.isPreCompiled() === true) {
+                var block = $scope.dataShepard.get($scope.blockId);
+                $scope.block = block;
+            }
+            else {
+                $scope.block = Types.createType(
+                    $scope.blockId,
+                    $scope.dataType,
+                    $scope.blockType,
+                    $scope.directiveType
+                );
 
-            DataShepard.add($scope.block.block_id, $scope.block)
+                $scope.dataShepard.add($scope.block.blockId, $scope.block);
+            }
 
-            $scope.block.data.data[$scope.block.data.data.length] = '';
+            console.log($scope.block);
         },
         link: function(scope, elem, attrs) {
 
             scope.blockEvents = {
                 remove: function() {
-                    DataShepard.remove(scope.block.block_id);
+                    scope.dataShepard.remove(scope.block.blockId);
                     scope.$destroy();
                     elem.remove();
                 },
@@ -142,7 +211,7 @@ angular.module('suite.directives', [])
 
             scope.$on("destroy-directive",function(event, data) {
                 $timeout(function() {
-                    DataShepard.remove(scope.block.block_id);
+                    scope.dataShepard.remove(scope.block.blockId);
                     scope.$destroy();
                     elem.remove();
                 }, 500);
@@ -282,12 +351,15 @@ angular.module('suite.directives', [])
         controller: function($scope) {
             $scope.users = [];
             $scope.userInfo = {};
+            $scope.type = 'user';
 
             $scope.loading = {
                 loading: false,
                 loadingText: 'Loading user...',
                 loaded: false
             };
+
+            $scope.factoryType = 'user';
 
             var promise = User.getAllUsers();
             promise.then(function(data, status, headers, config) {
@@ -297,18 +369,21 @@ angular.module('suite.directives', [])
             });
         }
     }
-}).directive('expandSection', function($, User, $timeout) {
+}).directive('expandSection', function($, User, Test, $timeout) {
     return {
         restrict: 'A',
+        scope: {
+            factoryType: '@type',
+            savingObject: '=savingObject',
+            expandingId: '@id'
+        },
         link : function(scope, elem, attrs) {
-            var userId = attrs.userId;
 
             var animation = ( function () {
-
                 var show = false;
                 return {
                     toggle: function(elem, clickedElem) {
-                        var h = elem.find('.UserManagment--info').outerHeight() + 50;
+                        var h = elem.find('.Expandable--info').outerHeight() + 50;
                         if(show === false) {
                             elem.animate({
                                 height: h + 'px'
@@ -345,33 +420,39 @@ angular.module('suite.directives', [])
 
             } () );
 
-            elem.find('.ExpandableClick:first-child').click(function(event) {
+            elem.find('.Expandable--click').click(function(event) {
                 event.preventDefault();
 
                 var clickedElem = $(this);
 
-                if( ! scope.userInfo.hasOwnProperty(userId)) {
-                    scope.loading.loading = true;
+                if( ! scope.savingObject.hasOwnProperty(scope.expandingId)) {
 
-                    var promise = User.getUsersById({
-                        id: userId
-                    }, true);
+                    var promise = null;
+                    if(scope.factoryType === 'user') {
+                        promise = User.getUsersById({
+                            id: scope.expandingId
+                        }, true);
+                    }
+                    if(scope.factoryType === 'test') {
+                        promise = Test.getBasicTests();
+                    }
 
-                    promise.then(function(data, status, headers, config) {
-                        var userInfo = data.data.user;
-                        console.log(userInfo);
-                        scope.userInfo[userInfo.user_id] = userInfo;
+                    if(promise !== null) {
+                        promise.then(function(data, status, headers, config) {
+                            var dataReturned = data.data.user;
+                            scope.savingObject[dataReturned.user_id] = dataReturned;
 
-                        scope.loading.loaded = !scope.loading.loaded;
-                        scope.loading.loading = false;
+                            $timeout(function() {
+                                animation.toggle(elem, clickedElem);
+                            }, 100);
 
-                        $timeout(function() {
+                        }, function(data, status, headers, config) {
                             animation.toggle(elem, clickedElem);
-                        }, 100);
-
-                    }, function(data, status, headers, config) {
+                        });
+                    }
+                    else {
                         animation.toggle(elem, clickedElem);
-                    });
+                    }
                 }
                 else {
                     $timeout(function() {
@@ -383,13 +464,15 @@ angular.module('suite.directives', [])
             });
         }
     }
-}).directive('testNaming', function(TestControl, DataMediator) {
+}).directive('testCreation', function(Test, DataMediator, $timeout) {
     return {
         restrict: 'E',
         replace: true,
+        scope: {},
         templateUrl: 'createTest.html',
         controller: function($scope, formHandler, $timeout, List, User) {
             $scope.theForm = formHandler.init($scope, 'CreateTestForm');
+
 
             $scope.globalErrors = {
                 errors: [],
@@ -401,18 +484,21 @@ angular.module('suite.directives', [])
                 submitProp: 'test',
                 userSpecificClasses: 'ActionMoveRight',
                 awaitClasses: 'AwaitRight',
-                textValue: 'Create test',
+                textValue: 'Create/modify test',
                 awaitEvent: 'await-create-user'
             });
 
             $scope.available_users = null;
 
             $scope.test = {
+                test_control_id: null,
                 test_name: '',
                 current_permission: 'public',
                 permission_items: ['public', 'restricted'],
                 allowed_users: ['public'],
-                remarks: ''
+                remarks: '',
+                preloaded: false,
+                test_mutation: 'create'
             };
 
             $scope.managment = {
@@ -434,6 +520,29 @@ angular.module('suite.directives', [])
                     });
                 }
             });
+
+            $scope.$on('action-preload-test', function(event, data) {
+                $timeout(function() {
+                    var promise = Test.getBasicTestById(data.testId);
+
+                    promise.then(function(data, status, headers, config) {
+                        $scope.test.preloaded = true;
+                        $scope.test.test_mutation = 'modify';
+                        var test = data.data.test;
+
+                        $scope.test.test_name = test.test_name;
+                        $scope.test.test_control_id = test.test_control_id;
+                        if( test.visibility[0] !== 'public') {
+                            $scope.test.current_permission = 'restricted';
+                        }
+
+                        $scope.test.remarks = test.remarks;
+
+                    }, function(data, status, headers, config) {
+                        console.log('Something bad happend', data, status);
+                    });
+                }, 100);
+            });
         },
         link: function(scope, elem, attrs) {
             scope.test.submit = function($event) {
@@ -443,33 +552,41 @@ angular.module('suite.directives', [])
                         awaiting: true
                     });
 
-                    var promise = TestControl.createTest({
+                    var promise = Test.modifyTest({
+                        test_control_id: scope.test.test_control_id,
                         test_name: scope.test.test_name,
                         test_solvers: ( function() {
                             if(scope.test.allowed_users.length === 1 && scope.test.allowed_users[0] === 'public') {
                                 return scope.test.allowed_users;
                             }
+                            else if(scope.test.allowed_users.length === 0) {
+                                return ['public']
+                            }
 
                             var idsArray = [];
                             for(var i = 0; i < scope.test.allowed_users.length; i++) {
-                                var idObject = {};
-                                idObject.user_id = scope.test.allowed_users[i].user_id;
-
-                                idsArray[idsArray.length] = idObject;
+                                idsArray[idsArray.length] = scope.test.allowed_users[i].username;
                             }
 
                             return idsArray;
                         } () ),
                         remarks: scope.test.remarks
-                    });
+                    }, scope.test.test_mutation);
 
                     promise.then(function (data, status, headers, config) {
-                        scope.$broadcast('action-finished', {
-                            awaiting: true,
-                            finished: true,
-                            redirect: true,
-                            url: '/app_dev.php' + data.data.redirectUrl
-                        });
+                        if(scope.test.preloaded === true) {
+                            scope.$broadcast('action-finished', {
+                                awaiting: false
+                            });
+                        }
+                        else {
+                            scope.$broadcast('action-finished', {
+                                awaiting: true,
+                                finished: true,
+                                redirect: true,
+                                url: '/app_dev.php' + data.data.redirectUrl
+                            });
+                        }
                     }, function (data, status, headers, config) {
                         scope.$broadcast('await-create-user', {
                             awaiting: false,
@@ -575,6 +692,94 @@ angular.module('suite.directives', [])
 
         }
     }
+}).directive('builderModifier', function($, $compile, DataShepard, DataMediator, Test, CompileCommander, $timeout) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            currentTestId: '@currentTestId',
+            minId: '@minId',
+            maxId: '@maxId'
+        },
+        templateUrl: 'workspace.html',
+        controller: function($scope) {
+            $scope.minId = parseInt($scope.minId);
+            $scope.maxId = parseInt($scope.maxId);
+            $scope.dataShepard = DataShepard;
+
+            DataMediator.addMediateData('action-next-test', {
+                message: 'Please wait...',
+                submitProp: 'next',
+                userSpecificClasses: 'ActionMoveRight',
+                awaitClasses: 'AwaitRight',
+                textValue: 'Next/save question',
+                awaitEvent: 'await-next'
+            });
+
+            DataMediator.addMediateData('action-previous-test', {
+                message: 'Please wait...',
+                submitProp: 'previous',
+                userSpecificClasses: 'ActionMoveLeft',
+                awaitClasses: 'AwaitLeft',
+                textValue: 'Previous question',
+                awaitEvent: 'await-previous'
+            });
+        },
+        link: function($scope, elem, attrs) {
+            var promise = Test.getTest($scope.minId);
+
+            $scope.directiveData = {
+                blockId: null,
+                dataType: null,
+                type: null,
+                directiveType: null
+            };
+
+            promise.then(function(data, status, headers, config) {
+                var test = data.data.test,
+                    elements = [];
+                $scope.dataShepard.setPrecompiled();
+                for(var i = 0; i < test.length; i++) {
+                    var t = test[i];
+                    $scope.dataShepard.add(i, t);
+                }
+
+                var trueTest = $scope.dataShepard.all();
+                for(i = 0; i < trueTest.length; i++) {
+                    var newScope = $scope.$new();
+                    t = trueTest[i];
+                    newScope.directiveData = {
+                        blockId: t.blockId,
+                        dataType: t.dataType,
+                        type: t.type,
+                        directiveType: t.directiveType
+                    };
+
+                    var jqEl = null;
+                    switch(newScope.directiveData.directiveType) {
+                        case 'plain-text-block':
+                            jqEl = $("<plain-text-suit-block block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></plain-text-suit-block>");
+                            break;
+                        case 'code-block':
+                            jqEl = $("<code-block-suite block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></code-block-suite>");
+                            break;
+                        case 'select-block':
+                        case 'checkbox-block':
+                        case 'radio-block':
+                            jqEl = $("<generic-block-suit block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></generic-block-suit>");
+                            break;
+
+                    }
+
+                    elem.find('.SuitBlocks').append(jqEl);
+                    $compile(jqEl)(newScope);
+                }
+
+            }, function(data, status, headers, config) {
+
+            });
+        }
+    }
 }).directive('builder', function($, $compile, DataShepard, DataMediator, Test, CompileCommander) {
     return {
         restrict: 'E',
@@ -591,10 +796,10 @@ angular.module('suite.directives', [])
             $scope.dataShepard = DataShepard;
 
             $scope.directiveData = {
-                block_id: null,
-                data_type: null,
+                blockId: null,
+                dataType: null,
                 type: null,
-                directive_type: null
+                directiveType: null
             };
 
             DataMediator.addMediateData('action-next-test', {
@@ -651,7 +856,7 @@ angular.module('suite.directives', [])
                 submit: function($event) {
                     $event.preventDefault();
 
-                    if(DataShepard.current() > 1) {
+                    if(scope.dataShepard.current() > 1) {
                         scope.$broadcast('await-next', {
                             awaiting: true
                         });
@@ -664,9 +869,9 @@ angular.module('suite.directives', [])
                             });
 
                             scope.$broadcast('destroy-directive', {});
-                            DataShepard.clear();
+                            scope.dataShepard.clear();
 
-                            createFirstElement();
+                            scope.$emit('action-recompile', {});
 
                         }, function(data, status, headers, config) {
                             console.log(data, status);
@@ -701,7 +906,7 @@ angular.module('suite.directives', [])
             };
         }
     }
-}).directive('managmentMenu', function($) {
+}).directive('managmentMenu', function($, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -730,6 +935,7 @@ angular.module('suite.directives', [])
                 createUser: false,
                 listUsers: false,
                 createTest: false,
+                testList: false,
 
                 toggle: function(type) {
                     if( ! this.hasOwnProperty(type)) {
@@ -737,7 +943,7 @@ angular.module('suite.directives', [])
                     }
 
                     this[type] = !this[type];
-                    var menus = ['createUser', 'listUsers', 'createTest'];
+                    var menus = ['createUser', 'listUsers', 'createTest', 'testList'];
                     menus.splice(menus.indexOf(type), 1);
 
                     for(var i = 0; i < menus.length; i++) {
@@ -746,6 +952,13 @@ angular.module('suite.directives', [])
                 }
             };
 
+            $scope.$on('action-test-metadata-change', function(event, data) {
+                $scope.managment.toggle('createTest');
+                $timeout(function() {
+                    $scope.$broadcast('action-preload-test', data);
+                }, 1000);
+            });
+
             $scope.$on('action-user-created', function(event, data) {
                 $scope.managment.createUser = false;
                 $scope.managment.listUsers = true;
@@ -753,6 +966,52 @@ angular.module('suite.directives', [])
         },
         link: function(scope, elem, attrs) {
 
+        }
+    }
+}).directive('testList', function(Test) {
+    return {
+        restrict: 'E',
+        scope: true,
+        replace: true,
+        templateUrl: 'testList.html',
+        controller: function($scope) {
+            $scope.test = {
+                modify: false,
+                testInfo: {},
+                tests: [],
+
+                deleteTest: function($event, id) {
+                    $event.preventDefault();
+
+                    var promise = Test.deleteTest(id);
+
+                    promise.then(function(data, status, headers, config) {
+                        $scope.test.tests = data.data.tests;
+                    }, function(data, status, headers, config) {
+                        console.log('Something bad happend', data, status);
+                    });
+                },
+                continueTest: function(url) {
+                    window.location.replace('/app_dev.php' + url);
+                },
+                changeMetadata: function(testId) {
+                    $scope.$emit('action-test-metadata-change', {'testId': testId});
+                },
+                modifyTest: function(url) {
+                    window.location.replace('/app_dev.php' + url);
+                }
+            };
+
+            $scope.factoryType = 'test';
+
+            var promise = Test.getBasicTests();
+            promise.then(function(data, status, headers, config) {
+                $scope.test.tests = data.data.tests;
+            }, function(data, status, headers, config) {
+                console.log('Something bad happend', data, status);
+            });
+        },
+        link: function(scope, elem, attrs) {
         }
     }
 });

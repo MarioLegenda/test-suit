@@ -1,45 +1,41 @@
-.TestCreation {
+.ContentSubTitle {
+  color: white;
+}
 
-  .ContentSubTitle {
-    color:white;
-  }
+.TestRestrictions {
 
-  .TestRestrictions {
+  .UserTable {
+    background-color: $mainColor;
+    color: white;
+    width: 300px;
+    height: 300px;
 
-    .UserTable {
-      background-color: $mainColor;
-      color:white;
-      width:300px;
-      height:300px;
+    .ListTable--label {
+      width: 100%;
+      float: left;
+      padding: 10px;
+      cursor: pointer;
 
+      @include transition(background-color 0.3s);
 
-      .ListTable--label {
-        width:100%;
-        float:left;
-        padding:10px;
-        cursor: pointer;
-
-        @include transition(background-color 0.3s);
-
-        &:hover {
-          background-color: $blueLight;
-        }
+      &:hover {
+        background-color: $blueLight;
       }
     }
+  }
 
-    .UserListTable {
-      float:left;
+  .UserListTable {
+    float: left;
 
-      margin-right:20px;
+    margin-right: 20px;
 
-      border:1px solid white;
-    }
+    border: 1px solid white;
+  }
 
-    .UserAllowedTable {
-      width:40%;
-      float:left;
+  .UserAllowedTable {
+    width: 40%;
+    float: left;
 
-      border:1px solid white;
-    }
+    border: 1px solid white;
   }
 }

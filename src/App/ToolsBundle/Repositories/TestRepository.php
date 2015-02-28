@@ -3,6 +3,7 @@
 namespace App\ToolsBundle\Repositories;
 
 use Doctrine\ORM\Query;
+use URLify;
 
 class TestRepository extends Repository
 {
@@ -60,12 +61,102 @@ class TestRepository extends Repository
             ->where($qb->expr()->eq('t.test_id', ':test_id'))
             ->setParameter(':test_id', $id)
             ->getQuery()
-            ->getSingleResult();
+            ->getResult();
+
+        if(empty($result) OR $result === null) {
+            return null;
+        }
+
+        return $result[0];
+    }
+
+    public function getBasicTestInformation($userId) {
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select(array('t'))
+            ->from('AppToolsBundle:TestControl', 't')
+            ->where($qb->expr()->eq('t.user_id', ':user_id'))
+            ->orderBy('t.created', 'DESC')
+            ->setParameter(':user_id', $userId)
+            ->getQuery()
+            ->getResult();
 
         if(empty($result)) {
             return null;
         }
 
-        return $result;
+        $tests = array();
+        foreach($result as $res) {
+            $temp = array();
+
+            $temp['test_id'] = $res->getTestControlId();
+            $temp['test_name'] = $res->getTestName();
+            $temp['visibility'] = $res->getVisibility();
+            $temp['user']['username'] = $res->getUser()->getUsername();
+            $temp['url'] = '/test-managment/create-test/' . URLify::filter($res->getTestName()). '/' . $res->getTestControlId();
+            $temp['modify_url'] = '/test-managment/modify-test/' . URLify::filter($res->getTestName()). '/' . $res->getTestControlId();
+            $temp['user']['name'] = $res->getUser()->getName();
+            $temp['user']['lastname'] = $res->getUser()->getLastname();
+            $temp['finished'] = $res->getIsFinished();
+            $temp['remarks'] = $res->getRemarks();
+            $temp['created'] = $res->getCreated();
+
+            $tests[] = $temp;
+        }
+
+        return $tests;
+    }
+
+    public function getBasicTestInformationById($testId) {
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select(array('t'))
+            ->from('AppToolsBundle:TestControl', 't')
+            ->where($qb->expr()->eq('t.test_control_id', ':test_control_id'))
+            ->setParameter(':test_control_id', $testId)
+            ->getQuery()
+            ->getResult();
+
+        if(empty($result) OR $result === null) {
+            return null;
+        }
+
+        $test = $result[0];
+
+        $testArray = array();
+        $testArray['test_control_id'] = $test->getTestControlId();
+        $testArray['test_name'] = $test->getTestName();
+        $testArray['remarks'] = $test->getRemarks();
+        $testArray['visibility'] = $test->getVisibility();
+
+        return $testArray;
+    }
+
+    public function deleteTestById($id) {
+        $testControl = $this->doctrine->getRepository('AppToolsBundle:TestControl')->find($id);
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select(array('t'))
+            ->from('AppToolsBundle:Test', 't')
+            ->where($qb->expr()->eq('t.test_control_id', ':test_control_id'))
+            ->setParameter(':test_control_id', $id)
+            ->getQuery()
+            ->getResult();
+
+        foreach($result as $test) {
+            $this->em->remove($test);
+        }
+
+        $this->em->remove($testControl);
+
+        $this->em->flush();
+
+    }
+
+    public function updateTestById($id, array $testArray) {
+        $testControl = $this->em->getRepository('AppToolsBundle:TestControl')->find($id);
+
+        $testControl->setTestName($testArray['test_name']);
+        $testControl->setVisibility($testArray['test_solvers']);
+        $testControl->setRemarks($testArray['remarks']);
+
+        $this->em->flush();
     }
 } 

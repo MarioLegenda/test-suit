@@ -13,7 +13,7 @@
                 </textarea>
 
                 <div class="BlockEvents">
-                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
+                    <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
                     <label ng-click="blockEvents.remove()" class="Event">Remove</label>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="BlockEvents">
-                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
+                    <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
                     <label ng-click="blockEvents.addSelectBox()" class="Event">Add box</label>
                     <label ng-click="blockEvents.remove()" class="Event">Remove</label>
                 </div>
@@ -95,7 +95,7 @@
                     </div>
 
                     <div class="FormRow  ActionPreviousTest">
-                        <action-submit init-key="action-finish-test"></action-submit>
+                        <action-submit init-key="action-previous-test"></action-submit>
                     </div>
                 </div>
             </form>
@@ -106,12 +106,16 @@
         <div class="Container  WorkspaceTemplate">
             <h1 class="ContentMainTitle">{{ model.getProperty('test-name') }}</h1>
 
-            <div class="BuilderContent">
-                <builder
-                        current_test_id="{{ model.getProperty('test-id') }}"
-                        min_id="{{ model.getProperty('min') }}"
-                        max_id="{{ model.getProperty('max') }}">
-                </builder>
+            <div class="BuilderContent" workspace-builder
+                 current-test-id="{{ model.getProperty('test-id') }}"
+                 min-id="{{ model.getProperty('min') }}"
+                 max-id="{{ model.getProperty('max') }}">
+
+                <builder-modifier ng-if="builder.recompile"
+                         current-test-id="{[{ currentTestId }]}"
+                         min-id="{[{ minId }]}"
+                         max-id="{[{ maxId }]}">
+                </builder-modifier>
             </div>
         </div>
     </div>

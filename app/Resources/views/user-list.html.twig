@@ -1,14 +1,14 @@
 <script type="text/ng-template" id="userListing.html">
     <div class="MainContent  ContentCentered  OverflowContainer  UserManagmentMain">
         <h2 class="ContentSubTitle">Users</h2>
-        <section class="UserExpandable" ng-repeat="user in users" expand-section user-id="{[{ user.user_id }]}">
-            <a href="" class="ExpandableClick" ng-click="managment.expandAction($event, user.user_id)">
-                <span class="Expandable  Expandable--name">{[{ user.name }]}</span>
-                <span class="Expandable  Expandable--lastname">{[{ user.lastname }]}</span>
-                <span class="Expandable  Expandable--username">{[{ user.username }]}</span>
+        <section class="Expandable" ng-repeat="user in users" expand-section type="{[{ factoryType }]}" id="{[{ user.user_id }]}" saving-object="userInfo">
+            <a href="" class="Expandable--click">
+                <span class="Expandable--item  Expandable--name">{[{ user.name }]}</span>
+                <span class="Expandable--item  Expandable--lastname">{[{ user.lastname }]}</span>
+                <span class="Expandable--item  Expandable--username">{[{ user.username }]}</span>
             </a>
 
-            <div class="UserManagment--info">
+            <div class="Expandable--info  UserManagment--info">
                 <div class="InfoSection">
                     <h2 class="InfoSection--title">Fields</h2>
                     <p class="InfoSection--text">{[{ userInfo[user.user_id].fields }]}</p>

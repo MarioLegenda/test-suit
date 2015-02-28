@@ -1,0 +1,103 @@
+.Expandable {
+  position:relative;
+  overflow:hidden;
+  display:block;
+  width:100%;
+
+  float:left;
+
+  margin:0 0 10px 0;
+
+  border:1px solid white;
+
+  .Expandable--click {
+    width:100%;
+    height:46px;
+    float:left;
+    display:block;
+
+    padding:15px;
+
+    @include transition(background-color 0.3s);
+
+    .Expandable--item {
+      display:block;
+      float:left;
+      color:white;
+    }
+
+    &:hover {
+      cursor:pointer !important;
+      background-color: $blueLight !important;
+    }
+  }
+}
+
+.Expandable--info {
+  position:absolute;
+  top:46px; left:0;
+
+  width:100%;
+  float:left;
+
+  padding:10px;
+
+  .InfoSection {
+    width:40%;
+    float:left;
+
+    margin:10px 60px 20px 0;
+
+    .InfoSection--title {
+      width:100%;
+      float:left;
+
+      padding:5px 0 5px 0;
+
+      color:white;
+      border-bottom:1px solid white;
+    }
+
+    .InfoSection--text {
+      width:100%;
+      float:left;
+      padding:10px;
+
+      letter-spacing: 0.03em;
+      word-spacing: 0.03em;
+      line-height: 1.6em;
+      font-size:1.2em;
+      color:white;
+    }
+
+    .InfoSection--highlightOk {
+      color:$greenLight;
+    }
+
+    .InfoSection--highlightNotOk {
+      color:$mainHoverColor
+    }
+
+    .InfoSection--block {
+      width:100%;
+      float:left;
+      font-size:1.1em;
+
+      padding:10px;
+    }
+
+    .InfoSection--rowAligned {
+      width:auto;
+      display:inline-block;
+      float:left;
+
+      margin-right:10px;
+    }
+  }
+
+  .InfoSection--expand {
+    width:100%;
+
+    margin:10px 0 10px 0;
+  }
+}

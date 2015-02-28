@@ -222,4 +222,31 @@ class UserRepository extends Repository
         $this->userInfo = null;
         $this->roles = null;
     }
+
+    public function modifyUser($id, array $userArray) {
+        $user = $this->em->getRepository('AppToolsBundle:User')->find($id);
+        $encodedPassword = $this->security->encodePassword($user, $userArray['userPassword']);
+
+        $user->setName($userArray['name']);
+        $user->setLastname($userArray['lastname']);
+        $user->setUsername($userArray['username']);
+        $user->setPassword($userArray['userPassword']);
+
+        $qb = $this->em->createQueryBuilder();
+        $userInfo = $qb->select(array('ui'))
+            ->from('AppToolsBundle:UserInfo', 'ui')
+            ->where($qb->expr()->eq('ui.user_id', ':user_id'))
+            ->setParameter(':user_id', $id)
+            ->getQuery()
+            ->getResult();
+
+        if(empty($userInfo) OR $userInfo === null) {
+            return null;
+        }
+
+        $user->setUserInfo($userInfo);
+        $userInfo->setUser($user);
+
+
+    }
 } 

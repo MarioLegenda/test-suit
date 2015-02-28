@@ -4,24 +4,11 @@ app_authorized_home:
     methods: [GET]
 
 # ajax
-app_authorized_createUserGet:
-    path: /create-user
-    defaults: { _controller: AppAuthorizedBundle:User:userTemplate }
-    methods: [GET]
-
-# ajax
 app_authorized_saveUser:
-    path: /save-user
+    path: /user-managment/save-user
     defaults: { _controller: AppAuthorizedBundle:User:saveUser }
     methods: [POST]
 
-# scheduled for removal
-app_authorized_userManagment:
-    path: /user-managment
-    defaults: { _controller: AppAuthorizedBundle:User:userManagmentTemplate }
-    methods: [GET]
-
-# scheduled for removal
 app_authorized_allUsers:
     path: /user-managment/user-list
     defaults: { _controller: AppAuthorizedBundle:User:userListing }
@@ -33,26 +20,38 @@ app_authorized_userInfo:
     defaults: { _controller: AppAuthorizedBundle:User:userInfo }
     methods: [POST]
 
-app_authorized_createTestTemplate:
-    path: /create-test
-    defaults: { _controller: AppAuthorizedBundle:Test:createTestTemplate }
-    methods: [GET]
-
 # ajax
 app_authorized_createTest:
-    path: /create-test
+    path: /test-managment/create-test
     defaults: { _controller: AppAuthorizedBundle:Test:createTest }
     methods: [POST]
 
+app_authorized_deleteTest:
+    path: /test-managment/delete-test
+    defaults: { _controller: AppAuthorizedBundle:Test:deleteTest }
+    methods: [POST]
+
+app_authorized_modifyTest:
+    path: /test-managment/modify-test
+    defaults: { _controller: AppAuthorizedBundle:Test:modifyTest }
+    methods: [POST]
+
 app_authorized_workspaceTemplate:
-    path: /create-test/{testName}/{testId}
+    path: /test-managment/create-test/{testName}/{testId}
     defaults: { _controller: AppAuthorizedBundle:Workspace:workspaceTemplate }
     methods: [GET]
     requirements:
         testId: \d+
 
+app_authorized_workspaceModifyTemplate:
+    path: /test-managment/modify-test/{testName}/{testId}
+    defaults: { _controller: AppAuthorizedBundle:Workspace:workspaceModifyTemplate }
+    methods: [GET]
+    requirements:
+        testId: \d+
+
 app_authorized_saveTest:
-    path: /save-test/{testControlId}
+    path: /test-managment/save-test/{testControlId}
     defaults: { _controller: AppAuthorizedBundle:Workspace:saveTest }
     methods: [POST]
     requirements:
@@ -60,6 +59,17 @@ app_authorized_saveTest:
 
 
 app_authorized_getTest:
-    path: /get-test
+    path: /test-managment/get-test
     defaults: { _controller: AppAuthorizedBundle:Workspace:getTest }
     methods: [POST]
+
+app_authorized_getTestsBasic:
+    path: /test-managment/get-tests-basic
+    defaults: { _controller: AppAuthorizedBundle:Test:getTestsBasic }
+    methods: [POST]
+
+app_authorized_getTestBasic:
+    path: /test-managment/get-test-basic
+    defaults: { _controller: AppAuthorizedBundle:Test:getTestBasic }
+    methods: [POST]
+

@@ -21,7 +21,7 @@
             <p class="MenuChoice  AwayLeft"><span class="MenuChoice--icon  fa fa-mortar-board fa-3x"></span><span class="MenuChoice--text">Assigned tests</span></p>
             {% if model.isInRole('ROLE_USER_MANAGER') or model.isInRole('ROLE_TEST_CREATOR') %}
                 <p ng-click="managment.toggle('createTest')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-file-o fa-3x"></span><span class="MenuChoice--text">Create test</span></p>
-                <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-edit fa-3x"></span><span class="MenuChoice--text">Modify test</span></p>
+                <p ng-click="managment.toggle('testList')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-edit fa-3x"></span><span class="MenuChoice--text">Modify test</span></p>
                 <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-info fa-3x"></span><span class="MenuChoice--text">Test info</span></p>
                 <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-history fa-3x"></span><span class="MenuChoice--text">Test history</span></p>
             {% endif %}
@@ -30,7 +30,8 @@
         <div class="CompiledMenu">
             <create-user ng-if="managment.createUser"></create-user>
             <user-listing ng-if="managment.listUsers"></user-listing>
-            <test-naming ng-if="managment.createTest"></test-naming>
+            <test-creation ng-if="managment.createTest"></test-creation>
+            <test-list ng-if="managment.testList"></test-list>
         </div>
     </div>
 
