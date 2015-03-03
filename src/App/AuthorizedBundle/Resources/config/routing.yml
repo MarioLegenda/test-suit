@@ -57,6 +57,11 @@ app_authorized_saveTest:
     requirements:
         testControlId: \d+
 
+app_authorized_updateTest:
+    path: /test-managment/update-test
+    defaults: { _controller: AppAuthorizedBundle:Workspace:updateTest }
+    methods: [POST]
+
 
 app_authorized_getTest:
     path: /test-managment/get-test

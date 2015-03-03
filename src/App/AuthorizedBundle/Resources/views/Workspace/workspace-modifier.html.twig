@@ -2,6 +2,40 @@
 
 {% block content %}
 
+    <script type="text/ng-template" id="plainTextSuiteAnswer.html">
+
+        <div class="Block  PlainTextBlock">
+            <div class="FormRow">
+                <p class="AnswerPreparation">
+                    Test solvers answer goes here
+                </p>
+
+                <div class="BlockEvents">
+                    <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
+                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
+                </div>
+            </div>
+        </div>
+
+    </script>
+
+    <script type="text/ng-template" id="codeSuiteAnswer.html">
+
+        <div class="Block  PlainTextBlock">
+            <div class="FormRow">
+                <p class="AnswerPreparation">
+                    Test solvers code goes here
+                </p>
+
+                <div class="BlockEvents">
+                    <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
+                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
+                </div>
+            </div>
+        </div>
+
+    </script>
+
     <script type="text/ng-template" id="plainTextSuite.html">
         <div class="Block  PlainTextBlock">
             <div class="FormRow">
@@ -71,10 +105,10 @@
                 <section class="Blocks  AnswerBlocks">
                     <h2 class="Blocks--title">Answer blocks<span class="Block--icon  Answer--icon"></span></h2>
 
-                    <p class="BlockType" ng-click="builder.build('answer', 'text', 'plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'text', 'plain-text-answer-block')"><span class="ContentCentering">Plain text block</span></p>
                     <p class="BlockType" ng-click="builder.build('answer', 'object', 'select-block')"><span class="ContentCentering">Select block</span></p>
                     <p class="BlockType" ng-click="builder.build('answer', 'object', 'checkbox-block')"><span class="ContentCentering">Checkbox block</span></p>
-                    <p class="BlockType" ng-click="builder.build('answer', 'test', 'code-block')"><span class="ContentCentering">Code block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'test', 'code-answer-block')"><span class="ContentCentering">Code block</span></p>
                     <p class="BlockType" ng-click="builder.build('answer', 'object', 'radio-block')"><span class="ContentCentering">Radio button block</span></p>
                 </section>
             </div>
@@ -112,7 +146,7 @@
                  max-id="{{ model.getProperty('max') }}">
 
                 <builder-modifier ng-if="builder.recompile"
-                         current-test-id="{[{ currentTestId }]}"
+                         current-test-id="{[{ testId }]}"
                          min-id="{[{ minId }]}"
                          max-id="{[{ maxId }]}">
                 </builder-modifier>

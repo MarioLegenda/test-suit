@@ -1,46 +1,6 @@
 {% extends '::layout.html.twig' %}
 
 {% block content %}
-
-    <script type="text/ng-template" id="plainTextSuite.html">
-        <div class="Block  PlainTextBlock">
-            <div class="FormRow">
-                <textarea
-                        ng-model="block.data.data"
-                        class="FormRow--field  BasicField  BasicTextarea  QuestionTextarea"
-                        placeholder="{[{ block.placeholder }]}">
-                    {[{ block.data.data }]}
-                </textarea>
-
-                <div class="BlockEvents">
-                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
-                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
-                </div>
-            </div>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="selectBlockSuit.html">
-        <div class="Block  SelectBlock">
-            <div class="FormRow  FormRowWrapper">
-
-                <div class="SelectOptions">
-                    <input type="text"
-                           placeholder="{[{ block.placeholder }]}"
-                           class="FormRow--field  BasicField  AdjustPosition"
-                           ng-repeat="data in block.data.data track by $index"
-                           ng-model='block.data.data[$index]'>
-                </div>
-
-                <div class="BlockEvents">
-                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
-                    <label ng-click="blockEvents.addSelectBox()" class="Event">Add box</label>
-                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
-                </div>
-            </div>
-        </div>
-    </script>
-
     <script type="text/ng-template" id="codeBlockSuite.html">
         <div class="Block CodeBlock">
             <div class="FormRow">
@@ -49,7 +9,7 @@
                 </div>
 
                 <div class="BlockEvents">
-                    <label class="Event--title">{[{ block.block_type + ' block' }]}</label>
+                    <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
                     <label ng-click="blockEvents.remove()" class="Event">Remove</label>
                 </div>
             </div>
@@ -71,10 +31,10 @@
                 <section class="Blocks  AnswerBlocks">
                     <h2 class="Blocks--title">Answer blocks<span class="Block--icon  Answer--icon"></span></h2>
 
-                    <p class="BlockType" ng-click="builder.build('answer', 'text', 'plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'text', 'plain-text-answer-block')"><span class="ContentCentering">Plain text block</span></p>
                     <p class="BlockType" ng-click="builder.build('answer', 'object', 'select-block')"><span class="ContentCentering">Select block</span></p>
                     <p class="BlockType" ng-click="builder.build('answer', 'object', 'checkbox-block')"><span class="ContentCentering">Checkbox block</span></p>
-                    <p class="BlockType" ng-click="builder.build('answer', 'test', 'code-block')"><span class="ContentCentering">Code block</span></p>
+                    <p class="BlockType" ng-click="builder.build('answer', 'test', 'code-answer-block')"><span class="ContentCentering">Code block</span></p>
                     <p class="BlockType" ng-click="builder.build('answer', 'object', 'radio-block')"><span class="ContentCentering">Radio button block</span></p>
                 </section>
             </div>

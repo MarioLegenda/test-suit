@@ -1,0 +1,20 @@
+<script type="text/ng-template" id="selectBlockSuit.html">
+    <div class="Block  SelectBlock">
+        <div class="FormRow  FormRowWrapper">
+
+            <div class="SelectOptions">
+                <input type="text"
+                       placeholder="{[{ block.placeholder }]}"
+                       class="FormRow--field  BasicField  AdjustPosition"
+                       ng-repeat="data in block.data.data track by $index"
+                       ng-model='block.data.data[$index]'>
+            </div>
+
+            <div class="BlockEvents">
+                <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
+                <label ng-click="blockEvents.addSelectBox()" class="Event">Add box</label>
+                <label ng-click="blockEvents.remove()" class="Event">Remove</label>
+            </div>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,17 @@
+<script type="text/ng-template" id="plainTextSuite.html">
+    <div class="Block  PlainTextBlock">
+        <div class="FormRow">
+            <textarea
+                    ng-model="block.data.data"
+                    class="FormRow--field  BasicField  BasicTextarea  QuestionTextarea"
+                    placeholder="{[{ block.placeholder }]}">
+                {[{ block.data.data }]}
+            </textarea>
+
+            <div class="BlockEvents">
+                <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
+                <label ng-click="blockEvents.remove()" class="Event">Remove</label>
+            </div>
+        </div>
+    </div>
+</script>

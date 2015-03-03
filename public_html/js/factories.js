@@ -210,7 +210,8 @@ angular.module('suite.factories', []).factory('$', function () {
             getBasicTests: '/app_dev.php/test-managment/get-tests-basic',
             getBasicTestById: '/app_dev.php/test-managment/get-test-basic',
             deleteTest: '/app_dev.php/test-managment/delete-test',
-            modifyTest: '/app_dev.php/test-managment/modify-test'
+            modifyTest: '/app_dev.php/test-managment/modify-test',
+            updateTest: '/app_dev.php/test-managment/update-test'
         };
 
         this.createTest =  function(data) {
@@ -222,7 +223,6 @@ angular.module('suite.factories', []).factory('$', function () {
         };
 
         this.saveTest = function(id, data) {
-            console.log(data);
             return $http({
                 method: 'POST',
                 url: urls.saveTestUrl + id,
@@ -245,6 +245,18 @@ angular.module('suite.factories', []).factory('$', function () {
                     return (type === 'create') ? urls.createTestUrl : urls.modifyTest
                 } () ),
                 data: data
+            });
+        };
+
+        this.updateTest = function(id, data) {
+            return $http({
+                method: 'POST',
+                url: urls.updateTest,
+                data: {
+                    id: id,
+                    test: data
+                },
+                cache: true
             });
         };
 
@@ -290,12 +302,30 @@ angular.module('suite.factories', []).factory('$', function () {
             return precompiled;
         };
 
+        this.syncCurrentId = function() {
+            var highest = 0;
+            for(var i = 0; i < heard.length; i++) {
+                var blockId = parseInt(heard[i].blockId);
+                if(blockId > highest) {
+                    highest = blockId;
+                }
+            }
+
+            counter = ++highest;
+        };
+
         this.current = function() {
             return counter;
         };
 
         this.remove = function(id) {
-            heard.splice(id, 1);
+            for(var i = 0; i < heard.length; i++) {
+                var block = heard[i];
+                if(block.blockId == id) {
+                    heard.splice(i, 1);
+                    break;
+                }
+            }
         };
 
         this.next = function() {
@@ -319,7 +349,17 @@ angular.module('suite.factories', []).factory('$', function () {
         };
 
         this.all = function() {
-            return heard;
+            var tempHeard = [];
+
+            console.log(heard);
+            for(var i = 0; i < heard.length; i++) {
+                if(typeof heard[i] !== 'undefined') {
+                    tempHeard.push(heard[i]);
+                }
+            }
+
+            console.log(tempHeard);
+            return tempHeard;
         };
 
         this.clear = function() {
@@ -375,16 +415,19 @@ angular.module('suite.factories', []).factory('$', function () {
 }).factory('CompileCommander', function($compile) {
     function CompileCommander() {
         this.compile = function($scope) {
-
             switch($scope.directiveData.directiveType) {
+                case 'code-answer-block':
+                    return $("<code-suit-answer-block non-compiled='{[{ directiveData.nonCompiled }]}' block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></code-suit-answer-block>");
+                case 'plain-text-answer-block':
+                    return $("<plain-text-suit-answer-block non-compiled='{[{ directiveData.nonCompiled }]}'  block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></plain-text-suit-answer-block>");
                 case 'plain-text-block':
-                    return $compile("<plain-text-suit-block block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></plain-text-suit-block>")($scope.$new(false, $scope));
+                    return $("<plain-text-suit-block non-compiled='{[{ directiveData.nonCompiled }]}'  block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></plain-text-suit-block>");
                 case 'code-block':
-                    return $compile("<code-block-suite block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></code-block-suite>")($scope.$new(false, $scope));
+                    return $("<code-block-suite non-compiled='{[{ directiveData.nonCompiled }]}'  block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></code-block-suite>");
                 case 'select-block':
                 case 'checkbox-block':
                 case 'radio-block':
-                    return $compile("<generic-block-suit block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></generic-block-suit>")($scope.$new(false, $scope));
+                    return $("<generic-block-suit non-compiled='{[{ directiveData.nonCompiled }]}'  block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></generic-block-suit>");
 
             }
         }

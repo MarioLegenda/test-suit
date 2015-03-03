@@ -3,8 +3,8 @@
     <div class="MainContent  ContentCentered  ManagmentMenu">
 
         <div class="MenuBlock">
-            <p ng-click="menus.toggle('userMenu')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-user fa-3x"></span><span class="MenuChoice--text">User managment</span></p>
-            <p ng-click="menus.toggle('testMenu')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-code fa-3x"></span><span class="MenuChoice--text">Test managment</span></p>
+            <p ng-click="menus.toggle($event, 'userMenu')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-user fa-3x"></span><span class="MenuChoice--text">User managment</span></p>
+            <p ng-click="menus.toggle($event, 'testMenu')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-code fa-3x"></span><span class="MenuChoice--text">Test managment</span></p>
             <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-question fa-3x"></span><span class="MenuChoice--text">Help</span></p>
             <a href="{{ path('logout') }}" class="MenuChoice"><span class="MenuChoice--icon  fa fa-power-off fa-3x"></span><span class="MenuChoice--text">Logout</span></a>
         </div>
@@ -12,16 +12,16 @@
         <div ng-if="menus.userMenu" class="MenuBlock">
             <p class="MenuChoice  AwayLeft"><span class="MenuChoice--icon  fa fa-user fa-3x"></span><span class="MenuChoice--text">Edit profile</span></p>
             {% if model.isInRole('ROLE_USER_MANAGER') %}
-                <p ng-click="managment.toggle('createUser')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-user-plus fa-3x"></span><span class="MenuChoice--text">Create user</span></p>
-                <p ng-click="managment.toggle('listUsers')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-list fa-3x"></span><span class="MenuChoice--text">View users</span></p>
+                <p ng-click="managment.toggle($event, 'createUser')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-user-plus fa-3x"></span><span class="MenuChoice--text">Create user</span></p>
+                <p ng-click="managment.toggle($event, 'listUsers')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-list fa-3x"></span><span class="MenuChoice--text">View users</span></p>
             {% endif %}
         </div>
 
         <div ng-if="menus.testMenu" class="MenuBlock">
             <p class="MenuChoice  AwayLeft"><span class="MenuChoice--icon  fa fa-mortar-board fa-3x"></span><span class="MenuChoice--text">Assigned tests</span></p>
             {% if model.isInRole('ROLE_USER_MANAGER') or model.isInRole('ROLE_TEST_CREATOR') %}
-                <p ng-click="managment.toggle('createTest')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-file-o fa-3x"></span><span class="MenuChoice--text">Create test</span></p>
-                <p ng-click="managment.toggle('testList')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-edit fa-3x"></span><span class="MenuChoice--text">Modify test</span></p>
+                <p ng-click="managment.toggle($event, 'createTest')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-file-o fa-3x"></span><span class="MenuChoice--text">Create test</span></p>
+                <p ng-click="managment.toggle($event, 'testList')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-edit fa-3x"></span><span class="MenuChoice--text">Manage tests</span></p>
                 <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-info fa-3x"></span><span class="MenuChoice--text">Test info</span></p>
                 <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-history fa-3x"></span><span class="MenuChoice--text">Test history</span></p>
             {% endif %}

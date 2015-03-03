@@ -159,4 +159,12 @@ class TestRepository extends Repository
 
         $this->em->flush();
     }
+
+    public function modifyTestById($id, $serializedTest) {
+        $test = $this->em->getRepository('AppToolsBundle:Test')->find($id);
+
+        $test->setTestSerialized($serializedTest);
+
+        $this->em->flush();
+    }
 } 

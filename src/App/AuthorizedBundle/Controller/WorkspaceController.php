@@ -53,6 +53,9 @@ class WorkspaceController extends ContainerAware
         return $templating->renderResponse('AppAuthorizedBundle:Workspace:workspace-builder.html.twig', $responseParameters->getParameters());
     }
 
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     */
     public function workspaceModifyTemplateAction($testName, $testId) {
         $templating = $this->container->get('templating');
         $authorization = $this->container->get('security.authorization_checker');
@@ -84,6 +87,10 @@ class WorkspaceController extends ContainerAware
 
         $responseParameters->addParameter('model', $genericProfileModel);
         return $templating->renderResponse('AppAuthorizedBundle:Workspace:workspace-modifier.html.twig', $responseParameters->getParameters());
+    }
+
+    public function workspaceDataAction() {
+
     }
 
     /**
@@ -144,6 +151,30 @@ class WorkspaceController extends ContainerAware
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
         $responseParameters->addParameter('test', json_decode($test->getTestSerialized()));
+        return GoodAjaxRequest::init($responseParameters)->getResponse();
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     */
+    public function updateTestAction() {
+        $doctrine = $this->container->get('doctrine');
+        $request = $this->container->get('request');
+
+        $contents = (array)json_decode($request->getContent(), true);
+        $id = $contents['id'];
+        $content = $contents['test'];
+
+        $testRepo = new TestRepository($doctrine);
+
+        try {
+            $testRepo->modifyTestById($id, $content);
+        } catch(\Exception $e) {
+            return BadAjaxResponse::init('Something went wrong. Please, refresh the page and try again')->getResponse();
+        }
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('success', true);
         return GoodAjaxRequest::init($responseParameters)->getResponse();
     }
 } 
