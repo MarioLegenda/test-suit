@@ -56,41 +56,26 @@ class WorkspaceController extends ContainerAware
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
      */
-    public function workspaceModifyTemplateAction($testName, $testId) {
-        $templating = $this->container->get('templating');
-        $authorization = $this->container->get('security.authorization_checker');
+    public function workspaceDataAction() {
+        $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
 
+        $contents = (array)json_decode($request->getContent(), true);
+        $testId = $contents['id'];
 
-        $genericProfileModel = new WorkspaceModel(
-            $authorization,
-            $this->container->get('security.context')->getToken()->getUser()
-        );
-
-        $genericProfileModel->populateWithClojure(function($context) use($doctrine, $testId) {
-            $testRepo = new TestRepository($doctrine);
-
-            $testControl = $testRepo->getTestControlById($testId);
-            $testRange = $testRepo->getTestRange($testId);
-
-            $context->setProperty('test-name', $testControl->getTestName());
-            $context->setProperty('test-id', $testControl->getTestControlId());
-            $context->setProperty('min', $testRange['min']);
-            $context->setProperty('max', $testRange['max']);
-        });
-
-        $genericProfileModel->runModel();
+        $testRepo = new TestRepository($doctrine);
+        $testControl = $testRepo->getTestControlById($testId);
+        $testRange = $testRepo->getTestRange($testId);
 
         $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('model', $genericProfileModel);
+        $responseParameters->addParameter('test', array(
+            'test_name' => $testControl->getTestName(),
+            'min' => $testRange['min'],
+            'max' => $testRange['max']
+        ));
+        $responseParameters->addParameter('success', true);
 
-
-        $responseParameters->addParameter('model', $genericProfileModel);
-        return $templating->renderResponse('AppAuthorizedBundle:Workspace:workspace-modifier.html.twig', $responseParameters->getParameters());
-    }
-
-    public function workspaceDataAction() {
-
+        return GoodAjaxRequest::init($responseParameters)->getResponse();
     }
 
     /**
@@ -128,7 +113,23 @@ class WorkspaceController extends ContainerAware
      * @Security("has_role('ROLE_TEST_CREATOR')")
      */
     public function finishTestAction() {
+        $doctrine = $this->container->get('doctrine');
+        $request = $this->container->get('request');
 
+        $contents = (array)json_decode($request->getContent(), true);
+        $id = $contents['id'];
+
+        $testRepo = new TestRepository($doctrine);
+
+        try {
+            $testRepo->finishTest($id);
+        } catch(\Exception $e) {
+            return BadAjaxResponse::init($e->getMessage())->getResponse();
+        }
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('success', true);
+        return GoodAjaxRequest::init($responseParameters)->getResponse();
     }
 
     /**
@@ -139,18 +140,20 @@ class WorkspaceController extends ContainerAware
         $request = $this->container->get('request');
 
         $contents = (array)json_decode($request->getContent(), true);
-        $id = $contents[0];
+        $testId = $contents['test_id'];
+        $testControlId = (array_key_exists('test_control_id', $contents)) ? $contents['test_control_id'] : null;
 
         $testRepo = new TestRepository($doctrine);
-        $test = $testRepo->getTestById($id);
+        $test = $testRepo->getTestById($testId, $testControlId);
 
         if($test === null) {
-            return BadAjaxResponse::init('')->getResponse();
+            return BadAjaxResponse::init('Test is null')->getResponse();
         }
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        $responseParameters->addParameter('test', json_decode($test->getTestSerialized()));
+        $responseParameters->addParameter('test', json_decode($test['test']->getTestSerialized()));
+        $responseParameters->addParameter('range', $test['range']);
         return GoodAjaxRequest::init($responseParameters)->getResponse();
     }
 
@@ -171,6 +174,26 @@ class WorkspaceController extends ContainerAware
             $testRepo->modifyTestById($id, $content);
         } catch(\Exception $e) {
             return BadAjaxResponse::init('Something went wrong. Please, refresh the page and try again')->getResponse();
+        }
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('success', true);
+        return GoodAjaxRequest::init($responseParameters)->getResponse();
+    }
+
+    public function deleteQuestionAction() {
+        $doctrine = $this->container->get('doctrine');
+        $request = $this->container->get('request');
+
+        $contents = (array)json_decode($request->getContent(), true);
+        $id = $contents['id'];
+
+        $testRepo = new TestRepository($doctrine);
+
+        try {
+            $testRepo->deleteQuestionById($id);
+        } catch(\Exception $e) {
+            return BadAjaxResponse::init($e->getMessage())->getResponse();
         }
 
         $responseParameters = new ResponseParameters();

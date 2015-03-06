@@ -43,12 +43,12 @@ app_authorized_workspaceTemplate:
     requirements:
         testId: \d+
 
-app_authorized_workspaceModifyTemplate:
-    path: /test-managment/modify-test/{testName}/{testId}
-    defaults: { _controller: AppAuthorizedBundle:Workspace:workspaceModifyTemplate }
-    methods: [GET]
+app_authorized_saveTest:
+    path: /test-managment/save-test/{testControlId}
+    defaults: { _controller: AppAuthorizedBundle:Workspace:saveTest }
+    methods: [POST]
     requirements:
-        testId: \d+
+        testControlId: \d+
 
 app_authorized_saveTest:
     path: /test-managment/save-test/{testControlId}
@@ -57,9 +57,19 @@ app_authorized_saveTest:
     requirements:
         testControlId: \d+
 
+app_authorized_finishTest:
+    path: /test-managment/finish-test
+    defaults: { _controller: AppAuthorizedBundle:Workspace:finishTest }
+    methods: [POST]
+
 app_authorized_updateTest:
     path: /test-managment/update-test
     defaults: { _controller: AppAuthorizedBundle:Workspace:updateTest }
+    methods: [POST]
+
+app_authorized_deleteQuestion:
+    path: /test-managment/delete-question
+    defaults: { _controller: AppAuthorizedBundle:Workspace:deleteQuestion }
     methods: [POST]
 
 
@@ -76,5 +86,10 @@ app_authorized_getTestsBasic:
 app_authorized_getTestBasic:
     path: /test-managment/get-test-basic
     defaults: { _controller: AppAuthorizedBundle:Test:getTestBasic }
+    methods: [POST]
+
+app_authorized_workspaceData:
+    path: /test-managment/workspace-data
+    defaults: { _controller: AppAuthorizedBundle:Workspace:workspaceData }
     methods: [POST]
 

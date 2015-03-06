@@ -703,7 +703,6 @@ body {
   .Builder .BuilderMenu {
     width: 100%;
     float: left;
-    padding-bottom: 50px;
     margin-bottom: 100px;
     border-bottom: 1px dotted white; }
   .Builder .Blocks {
@@ -757,6 +756,37 @@ body {
         margin-top: 10px;
         font-size: 1.2em;
         text-align: center; }
+  .Builder .ChoiceBlock {
+    width: 100%;
+    float: left;
+    margin: 100px 0 10px 0; }
+    .Builder .ChoiceBlock .TestNumber {
+      display: block;
+      padding: 8px;
+      float: left;
+      font-size: 1.8em;
+      color: #EC7063;
+      margin-right: 25px; }
+    .Builder .ChoiceBlock .Choice--button {
+      width: 200px;
+      float: left;
+      padding: 10px;
+      border: 1px solid white;
+      background-color: transparent;
+      font-family: "Open Sans Condensed", sans-serif;
+      font-size: 1.2em;
+      color: white;
+      -webkit-transition: background-color 0.3s;
+      -moz-transition: background-color 0.3s;
+      -ms-transition: background-color 0.3s;
+      -o-transition: background-color 0.3s;
+      transition: background-color 0.3s; }
+      .Builder .ChoiceBlock .Choice--button:hover {
+        cursor: pointer;
+        background-color: #2C84EE; }
+    .Builder .ChoiceBlock .Delete:hover:hover {
+      cursor: pointer;
+      background-color: #EC7063; }
   .Builder .BuildMenu--title {
     color: white; }
 

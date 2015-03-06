@@ -210,8 +210,11 @@ angular.module('suite.factories', []).factory('$', function () {
             getBasicTests: '/app_dev.php/test-managment/get-tests-basic',
             getBasicTestById: '/app_dev.php/test-managment/get-test-basic',
             deleteTest: '/app_dev.php/test-managment/delete-test',
+            deleteQuestion: '/app_dev.php/test-managment/delete-question',
             modifyTest: '/app_dev.php/test-managment/modify-test',
-            updateTest: '/app_dev.php/test-managment/update-test'
+            updateTest: '/app_dev.php/test-managment/update-test',
+            finishTest: '/app_dev.php/test-managment/finish-test',
+            workspaceData: '/app_dev.php/test-managment/workspace-data'
         };
 
         this.createTest =  function(data) {
@@ -260,11 +263,38 @@ angular.module('suite.factories', []).factory('$', function () {
             });
         };
 
-        this.getTest = function(id) {
+        this.deleteQuestion = function(id) {
+            return $http({
+                method: 'POST',
+                url: urls.deleteQuestion,
+                data: {id: id}
+            });
+        };
+
+        this.finishTest = function(id) {
+            return $http({
+                method: 'POST',
+                url: urls.finishTest,
+                data: {id: id},
+                cache: true
+            });
+        };
+
+        this.getTest = function(id, testControlId) {
             return $http({
                 method: 'POST',
                 url: urls.getTestUrl,
-                data: [id],
+                data: ( function() {
+                    return (testControlId === null) ? {test_id: id} : {test_id: id, test_control_id: testControlId};
+                } () )
+            });
+        };
+
+        this.workspaceData = function(id) {
+            return $http({
+                method: 'POST',
+                url: urls.workspaceData,
+                data: {id: id},
                 cache: true
             });
         };
@@ -333,8 +363,18 @@ angular.module('suite.factories', []).factory('$', function () {
         };
 
         this.add = function(id, object) {
-            heard[id] = object;
+            heard[heard.length] = object;
             return this;
+        };
+
+        this.update = function(id, object) {
+            for(var i = 0; i < heard.length; i++) {
+                var block = heard[i];
+                if(block.blockId == id) {
+                    heard[i] = object;
+                    break;
+                }
+            }
         };
 
         this.get = function(id) {
@@ -350,25 +390,87 @@ angular.module('suite.factories', []).factory('$', function () {
 
         this.all = function() {
             var tempHeard = [];
-
-            console.log(heard);
             for(var i = 0; i < heard.length; i++) {
                 if(typeof heard[i] !== 'undefined') {
                     tempHeard.push(heard[i]);
                 }
             }
 
-            console.log(tempHeard);
             return tempHeard;
         };
 
-        this.clear = function() {
-            counter = 0;
-            heard = [];
+        this.arangeBlockIds = function() {
+            for(var i = 0; i < heard.length; i++) {
+                heard[i].blockId = i;
+            }
         };
+
+        this.clearHeard = function() {
+            heard = [];
+            return this;
+        };
+
+        this.clearCounter = function() {
+            counter = 0;
+            return this;
+        };
+
+        this.instance = function() {
+            return new DataShepard();
+        }
     }
 
     return new DataShepard();
+}).factory('RangeIterator', function(){
+    return {
+        initIterator: function(arr) {
+            return ( function(arr) {
+                function RangeIterator(arr) {
+                    var range = arr,
+                        counter = 0;
+
+                    this.currentCounter = function() {
+                        return counter + 1;
+                    };
+
+                    this.lastCounter = function() {
+                        return range.length + 1;
+                    };
+
+                    this.current = function() {
+                        return range[counter];
+                    };
+
+                    this.next = function() {
+                        counter++;
+
+                        if(typeof range[counter] === 'undefined') {
+                            counter = 0;
+                            return range[counter];
+                        }
+
+                        return range[counter];
+                    };
+
+                    this.previous = function() {
+                        counter--;
+                        if(counter < 0) {
+                            counter = range.length - 1;
+                        }
+
+                        if(typeof range[counter] === 'undefined') {
+                            counter = 0;
+                            return range[counter];
+                        }
+
+                        return range[counter];
+                    };
+                }
+
+                return new RangeIterator(arr);
+            } (arr) )
+        }
+    }
 }).factory('Types', function() {
     function Types() {
         var metadata = {

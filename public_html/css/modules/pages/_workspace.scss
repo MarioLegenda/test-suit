@@ -22,8 +22,6 @@
   .BuilderMenu {
     width:100%;
     float:left;
-
-    padding-bottom:50px;
     margin-bottom:100px;
 
     border-bottom:1px dotted white;
@@ -86,6 +84,50 @@
 
         font-size:1.2em;
         text-align: center;
+      }
+    }
+  }
+
+  .ChoiceBlock {
+    width:100%;
+    float:left;
+
+    margin:100px 0 10px 0;
+
+    .TestNumber {
+      display:block;
+      padding:8px;
+      float:left;
+
+      font-size:1.8em;
+      color:$mainHoverColor;
+
+      margin-right:25px;
+    }
+
+    .Choice--button {
+      width:200px;
+      float:left;
+      padding:10px;
+
+      border:1px solid white;
+      background-color: transparent;
+      font-family: "Open Sans Condensed", sans-serif;
+      font-size:1.2em;
+      color:white;
+
+      @include transition(background-color 0.3s);
+
+      &:hover {
+        cursor:pointer;
+        background-color: $blueLight;
+      }
+    }
+
+    .Delete:hover {
+      &:hover {
+        cursor:pointer;
+        background-color: $mainHoverColor;
       }
     }
   }

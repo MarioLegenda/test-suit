@@ -23,7 +23,7 @@
 
             <div class="FormError  BasicError  CreateUserError"
                  ng-show="test.current_permission == 'restricted' && theForm.notEmpty(test.allowed_users)">
-                <p>If restriction is not public, at least one user has to be provided</p>
+                <p>If restriction is not public, and no users are provided, restriction is automaticlly going to be public</p>
             </div>
 
             <div class="TestRestrictions" ng-show="test.current_permission == 'restricted'">

@@ -1,67 +1,6 @@
 {% extends '::layout.html.twig' %}
 
 {% block content %}
-    <script type="text/ng-template" id="codeBlockSuite.html">
-        <div class="Block CodeBlock">
-            <div class="FormRow">
-                <div class="AceEditor">
-
-                </div>
-
-                <div class="BlockEvents">
-                    <label class="Event--title">{[{ block.blockType + ' block' }]}</label>
-                    <label ng-click="blockEvents.remove()" class="Event">Remove</label>
-                </div>
-            </div>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="workspace.html">
-        <div class="Builder">
-            <div class="BuilderMenu">
-                <h1 class="BuildMenu--title  ContentSubTitle">Blocks menu<span class="BuilderMenu--icon"></span></h1>
-
-                <section class="Blocks  QuestionBlocks">
-                    <h2 class="Blocks--title">Question blocks<span class="Block--icon  Question--icon"></span></h2>
-
-                    <p class="BlockType" ng-click="builder.build('question', 'text', 'plain-text-block')"><span class="ContentCentering">Plain text block</span></p>
-                    <p class="BlockType" ng-click="builder.build('question', 'text', 'code-block')"><span class="ContentCentering">Code block</span></p>
-                </section>
-
-                <section class="Blocks  AnswerBlocks">
-                    <h2 class="Blocks--title">Answer blocks<span class="Block--icon  Answer--icon"></span></h2>
-
-                    <p class="BlockType" ng-click="builder.build('answer', 'text', 'plain-text-answer-block')"><span class="ContentCentering">Plain text block</span></p>
-                    <p class="BlockType" ng-click="builder.build('answer', 'object', 'select-block')"><span class="ContentCentering">Select block</span></p>
-                    <p class="BlockType" ng-click="builder.build('answer', 'object', 'checkbox-block')"><span class="ContentCentering">Checkbox block</span></p>
-                    <p class="BlockType" ng-click="builder.build('answer', 'test', 'code-answer-block')"><span class="ContentCentering">Code block</span></p>
-                    <p class="BlockType" ng-click="builder.build('answer', 'object', 'radio-block')"><span class="ContentCentering">Radio button block</span></p>
-                </section>
-            </div>
-
-            <form action="" method="POST" name="suitForm">
-                <div class="SuitBlocks">
-                </div>
-
-                <div class="ActionArea">
-                    <div class="FormRow">
-                        <div class="GlobalErrors" ng-show="blockError">
-                            <label class="GlobalError">There are no block to be saved</label>
-                        </div>
-                    </div>
-
-                    <div class="FormRow  ActionNextTest">
-                        <action-submit init-key="action-next-test"></action-submit>
-                    </div>
-
-                    <div class="FormRow  ActionPreviousTest">
-                        <action-submit init-key="action-finish-test"></action-submit>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </script>
-
     <div class="ContentElement">
         <div class="Container  WorkspaceTemplate">
             <h1 class="ContentMainTitle">{{ model.getProperty('test-name') }}</h1>

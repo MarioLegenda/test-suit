@@ -54,12 +54,12 @@ class TestRepository extends Repository
         return $range;
     }
 
-    public function getTestById($id) {
+    public function getTestById($testId, $testControlId) {
         $qb = $this->em->createQueryBuilder();
         $result = $qb->select(array('t'))
             ->from('AppToolsBundle:Test', 't')
             ->where($qb->expr()->eq('t.test_id', ':test_id'))
-            ->setParameter(':test_id', $id)
+            ->setParameter(':test_id', $testId)
             ->getQuery()
             ->getResult();
 
@@ -67,7 +67,30 @@ class TestRepository extends Repository
             return null;
         }
 
-        return $result[0];
+        if($testControlId === null) {
+            return array(
+                'test' => $result[0],
+                'range' => array()
+            );
+        }
+
+        $qb = $this->em->createQueryBuilder();
+        $range = $qb->select('t.test_id')
+            ->from('AppToolsBundle:Test', 't')
+            ->where($qb->expr()->eq('t.test_control_id', ':test_control_id'))
+            ->setParameter(':test_control_id', $testControlId)
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        $trueRange = array();
+        foreach($range as $r) {
+            $trueRange[] = $r['test_id'];
+        }
+
+        return array(
+            'test' => $result[0],
+            'range' => $trueRange
+        );
     }
 
     public function getBasicTestInformation($userId) {
@@ -160,10 +183,24 @@ class TestRepository extends Repository
         $this->em->flush();
     }
 
+    public function deleteQuestionById($id) {
+        $test = $this->em->getRepository('AppToolsBundle:Test')->find($id);
+        $this->em->remove($test);
+        $this->em->flush();
+    }
+
     public function modifyTestById($id, $serializedTest) {
         $test = $this->em->getRepository('AppToolsBundle:Test')->find($id);
 
         $test->setTestSerialized($serializedTest);
+
+        $this->em->flush();
+    }
+
+    public function finishTest($id) {
+        $testControl = $this->em->getRepository('AppToolsBundle:TestControl')->find($id);
+
+        $testControl->setIsFinished(1);
 
         $this->em->flush();
     }

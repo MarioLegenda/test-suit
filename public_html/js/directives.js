@@ -4,75 +4,8 @@ var suitApp = angular.module("suite.app", ['suite.directives', 'suite.factories'
     $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
 }]);
 
-suitApp.controller('suit.workspaceBuilder', ['$scope', '$timeout', function($scope, $timeout) {
-    $scope.builder = {
-        recompile: true
-    };
-
-    $scope.$on('action-recompile', function(event, data) {
-        $scope.builderrecompile = false;
-
-        $timeout(function() {
-            $scope.builder.recompile = true;
-        }, 500);
-    });
-}]);
-
 
 angular.module('suite.directives', [])
-    .directive('workspaceBuilder', function($timeout) {
-        return {
-            restrict: 'A',
-            controller: function($scope) {
-            },
-            link: function($scope, elem, attrs) {
-                $scope.currentTestId = attrs.currentTestId;
-                $scope.testId = attrs.minId;
-                $scope.minId = attrs.minId;
-                $scope.maxId = attrs.maxId;
-
-                $scope.$on('action-recompile', function(event, data) {
-                    $scope.builder.recompile = false;
-
-                    $timeout(function() {
-                        $scope.builder.recompile = true;
-                    }, 500);
-                });
-
-                $scope.$on('action-next-recompile', function(event, data) {
-                    $scope.builder.recompile = false;
-
-                    $scope.testId++;
-
-                    if($scope.testId > $scope.maxId) {
-                        $scope.testId = $scope.minId;
-                    }
-
-                    $timeout(function() {
-                        $scope.builder.recompile = true;
-                    }, 500);
-                });
-
-                $scope.$on('action-previous-recompile', function(event, data) {
-                    $scope.builder.recompile = false;
-
-                    $scope.testId--;
-
-                    if($scope.testId < $scope.minId) {
-                        $scope.testId = $scope.maxId;
-                    }
-
-                    $timeout(function() {
-                        $scope.builder.recompile = true;
-                    }, 500);
-                });
-
-                $scope.builder = {
-                    recompile: true
-                };
-            }
-        }
-    })
     .directive('plainTextSuitAnswerBlock', function(DataShepard, Types, $timeout) {
         return {
             restrict: 'E',
@@ -232,7 +165,6 @@ angular.module('suite.directives', [])
             scope.blockEvents = {
                 remove: function() {
                     scope.dataShepard.remove(scope.block.blockId);
-                    console.log(scope.dataShepard.all());
                     scope.$destroy();
                     elem.remove();
                 }
@@ -305,7 +237,7 @@ angular.module('suite.directives', [])
                 return scope.code;
             }, function(newVal, oldVal, scope) {
                 scope.block.data.data = newVal;
-                scope.dataShepard.add(scope.block.blockId, scope.block);
+                scope.dataShepard.update(scope.block.blockId, scope.block);
             });
 
             scope.blockEvents = {
@@ -456,6 +388,7 @@ angular.module('suite.directives', [])
         },
         templateUrl: 'actionSubmit.html',
         controller: function($scope, $window, DataMediator) {
+
             var initData = DataMediator.getMediateData($scope.initKey);
 
             if(initData === null) {
@@ -656,7 +589,7 @@ angular.module('suite.directives', [])
                 userSpecificClasses: 'ActionMoveRight',
                 awaitClasses: 'AwaitRight',
                 textValue: 'Create/modify test',
-                awaitEvent: 'await-create-user'
+                awaitEvent: 'await-create-test'
             });
 
             $scope.available_users = null;
@@ -719,8 +652,9 @@ angular.module('suite.directives', [])
             scope.test.submit = function($event) {
                 $event.preventDefault();
                 if (scope.theForm.isValidForm()) {
-                    scope.$broadcast('await-create-user', {
-                        awaiting: true
+                    scope.$broadcast('await-create-test', {
+                        awaiting: true,
+                        message: 'Please wait...'
                     });
 
                     var promise = Test.modifyTest({
@@ -746,17 +680,19 @@ angular.module('suite.directives', [])
 
                     promise.then(function (data, status, headers, config) {
                         if(scope.test.preloaded === true) {
-                            scope.$broadcast('action-finished', {
-                                awaiting: false
+                            scope.$broadcast('await-create-test', {
+                                awaiting: true,
+                                message: 'Modified'
                             });
+
+                            $timeout(function() {
+                                scope.$broadcast('await-create-test', {
+                                    awaiting: false
+                                });
+                            }, 2000)
                         }
                         else {
-                            scope.$broadcast('action-finished', {
-                                awaiting: true,
-                                finished: true,
-                                redirect: true,
-                                url: '/app_dev.php' + data.data.redirectUrl
-                            });
+                            scope.$emit('action-create-test', {});
                         }
                     }, function (data, status, headers, config) {
                         scope.$broadcast('await-create-user', {
@@ -863,21 +799,217 @@ angular.module('suite.directives', [])
 
         }
     }
-}).directive('builderModifier', function($, $compile, DataShepard, DataMediator, Test, CompileCommander, $timeout) {
+}).directive('workspace', function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: 'workspace.html',
+            scope: {
+                testControlId: '@testControlId'
+            },
+            controller: function ($scope) {
+            },
+            link: function ($scope, elem, attrs) {
+
+            }
+        }
+}).directive('workspaceBuilder', function($timeout, Test, DataShepard, RangeIterator) {
+        return {
+            restrict: 'A',
+            replace: true,
+            controller: function($scope) {
+            },
+            link: function($scope, elem, attrs) {
+                $scope.currentTestId = parseInt(attrs.currentTestId);
+                $scope.dataShepard = DataShepard;
+
+                $scope.controller = {
+                    minId: null,
+                    maxId: null,
+                    testId: null,
+                    currentTest: function(type) {
+                        if(this.minId === null || this.maxId === null) {
+                            return null;
+                        }
+
+                        if(type === 'creator') {
+                            return this.maxId - this.minId;
+                        }
+                        else if(type === 'modifier') {
+                            return this.maxId - this.testId;
+                        }
+
+                        throw new Error('workspaceBuilder: Type ' + type + ' is incorrect');
+                    },
+                    rangeIterator: null
+                };
+
+                var workspacePromise = Test.workspaceData($scope.currentTestId);
+
+                workspacePromise.then(function(data, status, headers, config) {
+                    $scope.controller = {
+                        minId: parseInt(data.data.test.min),
+                        maxId: parseInt(data.data.test.max),
+                        testId: parseInt(data.data.test.min)
+                    };
+
+                    var testPromise = Test.getTest($scope.controller.testId, $scope.currentTestId);
+
+                    testPromise.then(function(data, status, headers, config) {
+                        var test = data.data.test;
+                        $scope.dataShepard.syncCurrentId();
+                        $scope.controller.rangeIterator = RangeIterator.initIterator(data.data.range);
+
+                        $scope.builder = {
+                            builderCreator: true,
+                            builderModifier: false
+                        };
+
+                    }, function(data, status, headers, config) {
+                        $scope.builder = {
+                            builderCreator: true,
+                            builderModifier: false
+                        };
+                    });
+                });
+
+                $scope.$on('action-builder-change', function (event, eventData) {
+                    var menus = ['builderCreator', 'builderModifier'];
+
+                    for (var i = 0; i < menus.length; i++) {
+                        $scope.builder[menus[i]] = false;
+                    }
+
+                    var workspacePromise = Test.workspaceData($scope.currentTestId);
+
+                    workspacePromise.then(function(data, status, headers, config) {
+                        $scope.controller = {
+                            minId: parseInt(data.data.test.min),
+                            maxId: parseInt(data.data.test.max),
+                            testId: parseInt(data.data.test.min)
+                        };
+
+                        var testPromise = Test.getTest($scope.controller.testId, $scope.currentTestId);
+
+                        testPromise.then(function(data, status, headers, config) {
+                            var test = data.data.test;
+                            $scope.dataShepard.syncCurrentId();
+                            $scope.dataShepard.clearHeard();
+                            $scope.controller.rangeIterator = RangeIterator.initIterator(data.data.range);
+
+                            var change = eventData.change;
+
+                            $timeout(function () {
+                                $scope.builder[change] = !$scope.builder[change];
+                            }, 500);
+
+                        }, function(data, status, headers, config) {
+                            $scope.builder = {
+                                builderCreator: true,
+                                builderModifier: false
+                            };
+                        });
+                    }, function(data, status, headers, config) {
+                        console.log(data, status);
+                    });
+                });
+
+                $scope.$on('action-next-recompile', function(event, eventData) {
+                    var change = eventData.change;
+
+                    var menus = ['builderCreator', 'builderModifier'];
+
+                    for (var i = 0; i < menus.length; i++) {
+                        $scope.builder[menus[i]] = false;
+                    }
+
+                    $scope.controller.testId = $scope.controller.rangeIterator.next();
+
+                    $timeout(function () {
+                        $scope.builder[change] = !$scope.builder[change];
+                    }, 200);
+                });
+
+                $scope.$on('action-previous-recompile', function(event, eventData) {
+                    var change = eventData.change;
+
+                    var menus = ['builderCreator', 'builderModifier'];
+
+                    for (var i = 0; i < menus.length; i++) {
+                        $scope.builder[menus[i]] = false;
+                    }
+
+                    $scope.controller.testId = $scope.controller.rangeIterator.previous();
+
+                    $timeout(function () {
+                        $scope.builder[change] = !$scope.builder[change];
+                    }, 200);
+                });
+
+                $scope.$on('action-builder-delete', function(event, eventData) {
+                    var change = eventData.change,
+                        id = eventData.id;
+
+                    var deletePromise = Test.deleteQuestion(id);
+
+                    deletePromise.then(function(data, status, headers, config) {
+                        var workspacePromise = Test.workspaceData($scope.currentTestId);
+
+                        workspacePromise.then(function(data, status, headers, config) {
+                            $scope.controller = {
+                                minId: parseInt(data.data.test.min),
+                                maxId: parseInt(data.data.test.max),
+                                testId: parseInt(data.data.test.min)
+                            };
+
+                            var testPromise = Test.getTest($scope.controller.testId, $scope.currentTestId);
+
+                            testPromise.then(function(data, status, headers, config) {
+                                var test = data.data.test;
+                                $scope.dataShepard.syncCurrentId();
+                                $scope.dataShepard.clearHeard();
+                                $scope.controller.rangeIterator = RangeIterator.initIterator(data.data.range);
+
+                                var menus = ['builderCreator', 'builderModifier'];
+
+                                for (var i = 0; i < menus.length; i++) {
+                                    $scope.builder[menus[i]] = false;
+                                }
+
+                                $scope.controller.testId = $scope.controller.minId;
+
+                                $timeout(function () {
+                                    $scope.builder[change] = !$scope.builder[change];
+                                }, 200);
+
+                            }, function(data, status, headers, config) {
+                                $scope.builder = {
+                                    builderCreator: true,
+                                    builderModifier: false
+                                };
+                            });
+                        }, function(data, status, headers, config) {
+                            console.log(data, status);
+                        });
+                    }, function(data, status, headers, config) {
+
+                    });
+                });
+            }
+        }
+    })
+.directive('builderModifier', function($, $compile, DataMediator, Test, CompileCommander, $timeout) {
     return {
         restrict: 'E',
         replace: true,
         scope: {
             currentTestId: '@currentTestId',
-            minId: '@minId',
-            maxId: '@maxId'
+            dataShepard: '=shepard',
+            rangeIterator: '=rangeIterator'
         },
-        templateUrl: 'workspace.html',
+        templateUrl: 'builderModifier.html',
         controller: function($scope) {
-            $scope.minId = parseInt($scope.minId);
-            $scope.currentTestId = parseInt($scope.currentTestId);
-            $scope.maxId = parseInt($scope.maxId);
-            $scope.dataShepard = DataShepard;
+            window.scrollTo(0, 550);
 
             DataMediator.addMediateData('action-next-test', {
                 message: 'Please wait...',
@@ -913,30 +1045,39 @@ angular.module('suite.directives', [])
                     $compile(el)(newScope);
 
                     $scope.dataShepard.next();
+                },
+                builderChange: function($event, builder) {
+                    $scope.$emit('action-builder-change', {
+                        change: builder
+                    });
+                },
+                builderDelete: function($event, builder) {
+                    $scope.$emit('action-builder-delete', {
+                        id: $scope.currentTestId,
+                        change: builder
+                    })
                 }
             };
         },
         link: function($scope, elem, attrs) {
-            var promise = Test.getTest($scope.currentTestId);
+            $('.ChoiceBlock').find('.Modify').css({
+                'background-color': '#2C84EE'
+            });
 
-            $scope.directiveData = {
-                blockId: null,
-                dataType: null,
-                type: null,
-                directiveType: null
-            };
+            var testPromise = Test.getTest($scope.currentTestId, null);
 
-            promise.then(function(data, status, headers, config) {
+            testPromise.then(function(data, status, headers, config) {
                 var test = data.data.test,
                     elements = [];
                 $scope.dataShepard.setPrecompiled();
+                $scope.dataShepard.clearHeard().clearCounter();
                 for(var i = 0; i < test.length; i++) {
                     var t = test[i];
                     $scope.dataShepard.add(i, t);
                 }
-
                 $scope.dataShepard.syncCurrentId();
 
+                //console.log($scope.dataShepard.current(), $scope.dataShepard.all());
                 var trueTest = $scope.dataShepard.all();
                 for(i = 0; i < trueTest.length; i++) {
                     var newScope = $scope.$new();
@@ -959,6 +1100,14 @@ angular.module('suite.directives', [])
 
             });
 
+
+            $scope.directiveData = {
+                blockId: null,
+                dataType: null,
+                type: null,
+                directiveType: null
+            };
+
             $scope.next = {
                 submit: function($event) {
                     $event.preventDefault();
@@ -967,6 +1116,7 @@ angular.module('suite.directives', [])
                         awaiting: true
                     });
 
+                    $scope.dataShepard.arangeBlockIds();
                     var promise = Test.updateTest($scope.currentTestId, $scope.dataShepard.all());
 
                     promise.then(function (data, status, headers, config) {
@@ -975,12 +1125,13 @@ angular.module('suite.directives', [])
                         });
 
                         $scope.$broadcast('destroy-directive', {});
-                        $scope.dataShepard.clear();
+                        $scope.dataShepard.clearHeard().clearCounter();
 
-                        $scope.$emit('action-next-recompile', {});
+                        $scope.$emit('action-next-recompile', {
+                            change: 'builderModifier'
+                        });
 
                     }, function (data, status, headers, config) {
-                        console.log(data, status);
 
                         $scope.$broadcast('await-next', {
                             awaiting: false
@@ -992,25 +1143,25 @@ angular.module('suite.directives', [])
             $scope.previous = {
                 submit: function($event) {
                     $event.preventDefault();
-                    $scope.$emit('action-previous-recompile', {});
+                    $scope.$emit('action-previous-recompile', {
+                        change: 'builderModifier'
+                    });
                 }
             };
         }
     }
-}).directive('builder', function($, $compile, DataShepard, DataMediator, Test, CompileCommander) {
+}).directive('builderCreator', function($, $compile, DataMediator, Test, CompileCommander) {
     return {
         restrict: 'E',
         replace: true,
         scope: {
             currentTestId: '@currentTestId',
-            minId: '@minId',
-            maxId: '@maxId'
+            dataShepard: '=shepard',
+            rangeIterator: '=rangeIterator'
         },
-        templateUrl: 'workspace.html',
+        templateUrl: 'builderCreator.html',
         controller: function($scope) {
-            $scope.minId = parseInt($scope.minId);
-            $scope.maxId = parseInt($scope.maxId);
-            $scope.dataShepard = DataShepard;
+            window.scrollTo(0, 550);
 
             $scope.directiveData = {
                 blockId: null,
@@ -1024,7 +1175,7 @@ angular.module('suite.directives', [])
                 submitProp: 'next',
                 userSpecificClasses: 'ActionMoveRight',
                 awaitClasses: 'AwaitRight',
-                textValue: 'Next question',
+                textValue: 'Next/save question',
                 awaitEvent: 'await-next'
             });
 
@@ -1044,7 +1195,8 @@ angular.module('suite.directives', [])
                         blockId: $scope.dataShepard.current(),
                         dataType: dataType,
                         type: type,
-                        directiveType: directiveType
+                        directiveType: directiveType,
+                        nonCompiled: true
                     };
 
                     var el = CompileCommander.compile(newScope);
@@ -1052,10 +1204,19 @@ angular.module('suite.directives', [])
                     $compile(el)(newScope);
 
                     $scope.dataShepard.next();
+                },
+                builderChange: function($event, builder) {
+                    $scope.$emit('action-builder-change', {
+                        change: builder
+                    });
                 }
             };
         },
         link: function(scope, $elem, $attrs) {
+
+            $('.ChoiceBlock').find('.Create').css({
+                'background-color': '#2C84EE'
+            });
 
             var createFirstElement = function() {
                 var newScope = scope.$new();
@@ -1063,7 +1224,8 @@ angular.module('suite.directives', [])
                     blockId: scope.dataShepard.current(),
                     dataType: 'question',
                     type: 'text',
-                    directiveType: 'plain-text-block'
+                    directiveType: 'plain-text-block',
+                    nonCompiled: true
                 };
 
                 var el = CompileCommander.compile(newScope);
@@ -1078,41 +1240,31 @@ angular.module('suite.directives', [])
                 submit: function($event) {
                     $event.preventDefault();
 
-                    if(scope.dataShepard.current() > 1) {
-                        scope.$broadcast('await-next', {
-                            awaiting: true
-                        });
-
-                        var promise = Test.saveTest(scope.currentTestId, scope.dataShepard.all());
-
-                        promise.then(function(data, status, headers, config) {
-                            scope.$broadcast('await-next', {
-                                awaiting: false
-                            });
-
-                            scope.$broadcast('destroy-directive', {});
-                            scope.dataShepard.clear();
-
-                            scope.$emit('action-recompile', {});
-
-                        }, function(data, status, headers, config) {
-                            console.log(data, status);
-
-                            scope.$broadcast('await-next', {
-                                awaiting: false
-                            });
-                        });
-
-
-                    }
-                }
-            };
-
-            scope.previous = {
-                submit: function($event) {
-                    $event.preventDefault();
-                    scope.$broadcast('await-previous', {
+                    scope.$broadcast('await-next', {
                         awaiting: true
+                    });
+
+                    scope.dataShepard.arangeBlockIds();
+                    var promise = Test.saveTest(scope.currentTestId, scope.dataShepard.all());
+
+                    promise.then(function (data, status, headers, config) {
+                        scope.$broadcast('await-next', {
+                            awaiting: false
+                        });
+
+                        scope.$broadcast('destroy-directive', {});
+                        scope.dataShepard.clearHeard().clearCounter();
+
+                        scope.$emit('action-builder-change', {
+                            change: 'builderCreator'
+                        });
+
+                    }, function (data, status, headers, config) {
+                        console.log(data, status);
+
+                        scope.$broadcast('await-next', {
+                            awaiting: false
+                        });
                     });
                 }
             };
@@ -1124,6 +1276,13 @@ angular.module('suite.directives', [])
                     scope.$broadcast('await-finish', {
                         awaiting: true
                     });
+
+                    var finishPromise = Test.finishTest(scope.currentTestId);
+                    finishPromise.then(function(data, status, headers, config) {
+                        scope.$emit('action-test-finished', {});
+                    }, function(data, status, headers, config) {
+                        console.log(data, status);
+                    });
                 }
             };
         }
@@ -1134,20 +1293,11 @@ angular.module('suite.directives', [])
         replace: true,
         templateUrl: 'managmentMenuTemplate.html',
         controller: function($scope) {
-            $scope.$on('action-test-metadata-change', function(event, data) {
-                $scope.managment.toggle('createTest');
-                $timeout(function() {
-                    $scope.$broadcast('action-preload-test', data);
-                }, 1000);
-            });
+            $scope.importance = {
+                testControlId: null
+            };
 
-            $scope.$on('action-user-created', function(event, data) {
-                $scope.managment.createUser = false;
-                $scope.managment.listUsers = true;
-            });
-        },
-        link: function(scope, elem, attrs) {
-            scope.menus = {
+           $scope.menus = {
                 userMenu: false,
                 testMenu: false,
 
@@ -1166,11 +1316,12 @@ angular.module('suite.directives', [])
                 }
             };
 
-            scope.managment = {
+            $scope.managment = {
                 createUser: false,
                 listUsers: false,
                 createTest: false,
                 testList: false,
+                workspace: false,
 
                 toggle: function($event, type) {
                     if( ! this.hasOwnProperty(type)) {
@@ -1178,7 +1329,7 @@ angular.module('suite.directives', [])
                     }
 
                     this[type] = !this[type];
-                    var menus = ['createUser', 'listUsers', 'createTest', 'testList'];
+                    var menus = ['createUser', 'listUsers', 'createTest', 'testList', 'workspace'];
                     menus.splice(menus.indexOf(type), 1);
 
                     for(var i = 0; i < menus.length; i++) {
@@ -1186,6 +1337,37 @@ angular.module('suite.directives', [])
                     }
                 }
             };
+
+            $scope.$on('action-test-metadata-change', function(event, data) {
+                $scope.managment.toggle({}, 'createTest');
+                $timeout(function() {
+                    $scope.$broadcast('action-preload-test', data);
+                }, 1000);
+            });
+
+            $scope.$on('action-user-created', function(event, data) {
+                $scope.managment.createUser = false;
+                $scope.managment.listUsers = true;
+            });
+
+            $scope.$on('action-workspace', function(event, data) {
+                $scope.importance.testControlId = data.testId;
+                $scope.managment.testList = false;
+                $scope.managment.workspace = true;
+            });
+
+            $scope.$on('action-test-finished', function($event, data) {
+                $scope.managment.workspace = false;
+                $scope.managment.testList = true;
+            });
+
+            $scope.$on('action-create-test', function($event, data) {
+                $scope.managment.createTest = false;
+                $scope.managment.testList = true;
+            });
+        },
+        link: function(scope, elem, attrs) {
+
         }
     }
 }).directive('testList', function(Test) {
@@ -1211,14 +1393,11 @@ angular.module('suite.directives', [])
                         console.log('Something bad happend', data, status);
                     });
                 },
-                continueTest: function(url) {
-                    window.location.replace('/app_dev.php' + url);
-                },
                 changeMetadata: function(testId) {
                     $scope.$emit('action-test-metadata-change', {'testId': testId});
                 },
-                modifyTest: function(url) {
-                    window.location.replace('/app_dev.php' + url);
+                workspace: function(testId) {
+                    $scope.$emit('action-workspace', {testId: testId});
                 }
             };
 

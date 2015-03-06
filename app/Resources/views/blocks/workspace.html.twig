@@ -1,0 +1,22 @@
+<script type="text/ng-template" id="workspace.html">
+    <div class="WorkspaceTemplate">
+        <h1 class="ContentMainTitle">Test name</h1>
+
+        <div class="BuilderContent" workspace-builder current-test-id="{[{ testControlId }]}">
+
+            <builder-creator
+                    ng-if="builder.builderCreator"
+                    shepard="dataShepard"
+                    current-test-id="{[{ currentTestId }]}"
+                    range-iterator="controller.rangeIterator">
+            </builder-creator>
+
+            <builder-modifier
+                    ng-if="builder.builderModifier"
+                    shepard="dataShepard"
+                    current-test-id="{[{ controller.testId }]}"
+                    range-iterator="controller.rangeIterator">
+            </builder-modifier>
+        </div>
+    </div>
+</script>

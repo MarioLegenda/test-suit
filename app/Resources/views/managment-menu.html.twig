@@ -23,7 +23,6 @@
                 <p ng-click="managment.toggle($event, 'createTest')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-file-o fa-3x"></span><span class="MenuChoice--text">Create test</span></p>
                 <p ng-click="managment.toggle($event, 'testList')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-edit fa-3x"></span><span class="MenuChoice--text">Manage tests</span></p>
                 <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-info fa-3x"></span><span class="MenuChoice--text">Test info</span></p>
-                <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-history fa-3x"></span><span class="MenuChoice--text">Test history</span></p>
             {% endif %}
         </div>
 
@@ -32,6 +31,7 @@
             <user-listing ng-if="managment.listUsers"></user-listing>
             <test-creation ng-if="managment.createTest"></test-creation>
             <test-list ng-if="managment.testList"></test-list>
+            <workspace ng-if="managment.workspace" test-control-id="{[{ importance.testControlId }]}"></workspace>
         </div>
     </div>
 
