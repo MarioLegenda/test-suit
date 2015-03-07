@@ -20,42 +20,6 @@ class WorkspaceController extends ContainerAware
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
      */
-    public function workspaceTemplateAction($testName, $testId) {
-        $templating = $this->container->get('templating');
-        $authorization = $this->container->get('security.authorization_checker');
-        $doctrine = $this->container->get('doctrine');
-
-
-        $genericProfileModel = new WorkspaceModel(
-            $authorization,
-            $this->container->get('security.context')->getToken()->getUser()
-        );
-
-        $genericProfileModel->populateWithClojure(function($context) use($doctrine, $testId) {
-            $testRepo = new TestRepository($doctrine);
-
-            $testControl = $testRepo->getTestControlById($testId);
-            $testRange = $testRepo->getTestRange($testId);
-
-            $context->setProperty('test-name', $testControl->getTestName());
-            $context->setProperty('test-id', $testControl->getTestControlId());
-            $context->setProperty('min', $testRange['min']);
-            $context->setProperty('max', $testRange['max']);
-        });
-
-        $genericProfileModel->runModel();
-
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('model', $genericProfileModel);
-
-
-        $responseParameters->addParameter('model', $genericProfileModel);
-        return $templating->renderResponse('AppAuthorizedBundle:Workspace:workspace-builder.html.twig', $responseParameters->getParameters());
-    }
-
-    /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
-     */
     public function workspaceDataAction() {
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
@@ -147,7 +111,9 @@ class WorkspaceController extends ContainerAware
         $test = $testRepo->getTestById($testId, $testControlId);
 
         if($test === null) {
-            return BadAjaxResponse::init('Test is null')->getResponse();
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('success', true);
+            return GoodAjaxRequest::init($responseParameters)->getResponse(205);
         }
 
         $responseParameters = new ResponseParameters();
@@ -181,6 +147,9 @@ class WorkspaceController extends ContainerAware
         return GoodAjaxRequest::init($responseParameters)->getResponse();
     }
 
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     */
     public function deleteQuestionAction() {
         $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');

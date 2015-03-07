@@ -22,9 +22,9 @@ class GoodAjaxRequest
         $this->responseParameters = $params;
     }
 
-    public function getResponse() {
+    public function getResponse($status = 200) {
         $response = new Response(json_encode($this->responseParameters));
-        $response->setStatusCode(200, "OK");
+        $response->setStatusCode($status, "OK");
 
         $this->responseParameters = null;
         return $response;

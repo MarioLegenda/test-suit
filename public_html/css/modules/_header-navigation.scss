@@ -50,17 +50,6 @@
         @include background-image(url(../../images/icons/user-icon.png), no-repeat);
         @include prefix(background-size, cover);
       }
-
-
-      &:hover {
-        background-color: $mainHoverColor;
-        color:white;
-      }
-    }
-
-    &:hover .UserInfo--mail {
-      color:wbite;
-      cursor:pointer;
     }
   }
 }

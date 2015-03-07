@@ -450,12 +450,6 @@ body {
         -ms-background-size: cover;
         -o-background-size: cover;
         background-size: cover; }
-      .MainNavigation .UserInfo .UserInfo--mail:hover {
-        background-color: #EC7063;
-        color: white; }
-    .MainNavigation .UserInfo:hover .UserInfo--mail {
-      color: wbite;
-      cursor: pointer; }
 
 .Home .ContentMainTitle {
   margin: 75px 0 25px 0; }

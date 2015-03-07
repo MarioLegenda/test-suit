@@ -3,7 +3,6 @@ app_authorized_home:
     defaults: { _controller: AppAuthorizedBundle:Home:home }
     methods: [GET]
 
-# ajax
 app_authorized_saveUser:
     path: /user-managment/save-user
     defaults: { _controller: AppAuthorizedBundle:User:saveUser }
@@ -35,13 +34,6 @@ app_authorized_modifyTest:
     path: /test-managment/modify-test
     defaults: { _controller: AppAuthorizedBundle:Test:modifyTest }
     methods: [POST]
-
-app_authorized_workspaceTemplate:
-    path: /test-managment/create-test/{testName}/{testId}
-    defaults: { _controller: AppAuthorizedBundle:Workspace:workspaceTemplate }
-    methods: [GET]
-    requirements:
-        testId: \d+
 
 app_authorized_saveTest:
     path: /test-managment/save-test/{testControlId}
