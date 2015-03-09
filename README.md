@@ -10,11 +10,17 @@ After cloning, open command line tool of your choosing and navigate to the direc
 
 Open file parameters.yml in /app/config/parameters.yml and write your database_user and database_password
 
+
+
+
 **Create the database**
 
 Execute command `php app/console doctrine:database:create`
 
-*Create the tables*
+
+
+
+**Create the tables**
 
 Execute command `php app/console doctrine:schema:update --force`
 
