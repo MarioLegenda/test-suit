@@ -2,14 +2,12 @@
 
 namespace App\AuthorizedBundle\Controller;
 
-use App\AuthorizedBundle\Models\WorkspaceModel;
 use App\ToolsBundle\Helpers\ResponseParameters;
-use App\ToolsBundle\Helpers\Exceptions\JsonFormatterException;
 use App\ToolsBundle\Helpers\BadAjaxResponse;
 use App\ToolsBundle\Helpers\GoodAjaxRequest;
-use App\ToolsBundle\Helpers\TestJsonFormatter;
 use App\ToolsBundle\Repositories\TestRepository;
 use App\ToolsBundle\Entity\Test;
+use App\ToolsBundle\Helpers\AdaptedResponse;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -39,7 +37,9 @@ class WorkspaceController extends ContainerAware
         ));
         $responseParameters->addParameter('success', true);
 
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -64,13 +64,21 @@ class WorkspaceController extends ContainerAware
             $em->persist($test);
             $em->flush();
         } catch(\Exception $e) {
-            return BadAjaxResponse::init('Something went wrong. Please, refresh the page and try again')->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array("Something went wrong. Please, refresh the page and try again"));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -88,12 +96,20 @@ class WorkspaceController extends ContainerAware
         try {
             $testRepo->finishTest($id);
         } catch(\Exception $e) {
-            return BadAjaxResponse::init($e->getMessage())->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -111,16 +127,21 @@ class WorkspaceController extends ContainerAware
         $test = $testRepo->getTestById($testId, $testControlId);
 
         if($test === null) {
-            $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('success', true);
-            return GoodAjaxRequest::init($responseParameters)->getResponse(205);
+            $content = new ResponseParameters();
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(205, "No content");
         }
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
         $responseParameters->addParameter('test', json_decode($test['test']->getTestSerialized()));
         $responseParameters->addParameter('range', $test['range']);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -139,12 +160,20 @@ class WorkspaceController extends ContainerAware
         try {
             $testRepo->modifyTestById($id, $content);
         } catch(\Exception $e) {
-            return BadAjaxResponse::init('Something went wrong. Please, refresh the page and try again')->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -162,11 +191,19 @@ class WorkspaceController extends ContainerAware
         try {
             $testRepo->deleteQuestionById($id);
         } catch(\Exception $e) {
-            return BadAjaxResponse::init($e->getMessage())->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 } 

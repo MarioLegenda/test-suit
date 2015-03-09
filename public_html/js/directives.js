@@ -1,8 +1,16 @@
 "use strict";
 
-angular.module("suite.app", ['suit.directives.actions', 'suit.directives.blocks', 'suit.directives.components', 'suite.factories']).config(['$interpolateProvider', function($interpolateProvider) {
-    $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
-}]);
+angular.module("suite.app", [
+    'suit.directives.actions',
+    'suit.directives.blocks',
+    'suit.directives.components',
+    'suit.factories'])
+    .config([
+        '$interpolateProvider',
+        '$provide',
+        function ($interpolateProvider, $provide) {
+            $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+        }]);
 
 
 angular.module('suit.directives.actions', [])
@@ -134,7 +142,7 @@ angular.module('suit.directives.actions', [])
 
                             var idsArray = [];
                             for(var i = 0; i < scope.test.allowed_users.length; i++) {
-                                idsArray[idsArray.length] = scope.test.allowed_users[i].username;
+                                idsArray[idsArray.length] = scope.test.allowed_users[i].user_id;
                             }
 
                             return idsArray;
@@ -143,6 +151,21 @@ angular.module('suit.directives.actions', [])
                     }, scope.test.test_mutation);
 
                     promise.then(function (data, status, headers, config) {
+                        if(data.status === 205) {
+                            scope.$broadcast('await-create-user', {
+                                awaiting: false,
+                                finished: false
+                            });
+
+                            scope.$broadcast('action-error', {
+                                show: true,
+                                errors: data.data['errors']
+                            });
+
+                            window.scrollTo(0, 0);
+                            return;
+                        }
+
                         if(scope.test.preloaded === true) {
                             scope.$broadcast('await-create-test', {
                                 awaiting: true,
@@ -158,18 +181,6 @@ angular.module('suit.directives.actions', [])
                         else {
                             scope.$emit('action-create-test', {});
                         }
-                    }, function (data, status, headers, config) {
-                        scope.$broadcast('await-create-user', {
-                            awaiting: false,
-                            finished: false
-                        });
-
-                        scope.$broadcast('action-error', {
-                            show: true,
-                            errors: data.data['errors']
-                        });
-
-                        window.scrollTo(0, 0);
                     });
                 }
             }
@@ -188,7 +199,7 @@ angular.module('suit.directives.actions', [])
                 userSpecificClasses: 'ActionMoveRight',
                 awaitClasses: 'AwaitRight',
                 textValue: 'Create user',
-                awaitEvent: 'await-create-test'
+                awaitEvent: 'await-create-user'
             });
 
             $scope.globalErrors = {
@@ -235,7 +246,7 @@ angular.module('suit.directives.actions', [])
 
                     $event.preventDefault();
                     if($scope.theForm.isValidForm()) {
-                        $scope.$broadcast('await-create-test', {
+                        $scope.$broadcast('await-create-user', {
                             awaiting: true
                         });
 
@@ -244,7 +255,7 @@ angular.module('suit.directives.actions', [])
                         promise.then(function (data, status, headers, config) {
                             $scope.$emit('action-user-created', {});
                         }, function (data, status, headers, config) {
-                            $scope.$broadcast('await-create-test', {
+                            $scope.$broadcast('await-create-user', {
                                 awaiting: false,
                                 finished: false,
                                 redirect: false
@@ -252,7 +263,8 @@ angular.module('suit.directives.actions', [])
 
                             $scope.globalErrors.show = true;
 
-                            $scope.globalErrors.errors = data.data['errors'];
+                            $scope.globalErrors.errors = data.data.errors.errors;
+                            console.log($scope.globalErrors);
                             window.scrollTo(0, 0);
                         });
                     }
@@ -431,6 +443,17 @@ angular.module('suit.directives.actions', [])
                             var testPromise = Test.getTest($scope.controller.testId, $scope.currentTestId);
 
                             testPromise.then(function(data, status, headers, config) {
+                                if(data.status === 205) {
+                                    $scope.controller.rangeIterator = RangeIterator.initIterator([]);
+                                    $scope.builder.builderModifier = false;
+
+                                    $timeout(function() {
+                                        $scope.builder.builderCreator = true;
+                                    }, 500);
+
+                                    return;
+                                }
+
                                 var test = data.data.test;
                                 $scope.dataShepard.syncCurrentId();
                                 $scope.dataShepard.clearHeard();
@@ -457,8 +480,6 @@ angular.module('suit.directives.actions', [])
                         }, function(data, status, headers, config) {
                             console.log(data, status);
                         });
-                    }, function(data, status, headers, config) {
-
                     });
                 });
             }

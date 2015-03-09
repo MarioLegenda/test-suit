@@ -22,6 +22,7 @@
         </div>
 
         <div class="FormPosition  InstallForm" ng-controller="inst.InstallFormCtrl">
+            {{ include('submit-directive.html.twig') }}
             <form name="insForm" action="" method="POST" novalidate="novalidate">
 
                 <div class="FormRow">
@@ -63,7 +64,7 @@
 
                     <input type="password" name="password" class="FormRow--field  BasicField  InstallField" ng-model="administrator.userPassword" ng-minlength="8" required>
 
-                    <div class="FormError  BasicError" ng-show="theForm.notExists('password') || theForm.notMinLength('password')">
+                    <div class="FormError  BasicError  InstallError" ng-show="theForm.notExists('password') || theForm.notMinLength('password')">
                         <p>Password has to have at least 8 characters</p>
                     </div>
                 </div>
@@ -72,22 +73,14 @@
                     <label class="FormRow--label  BasicLabel  InstallLabel" for="pass_repeat">Confirm password</label>
                     <input type="password" class="FormRow--field  BasicField  InstallField" name="pass_repeat" ng-model="administrator.userPassRepeat" ng-minlength="8" required>
 
-                    <div class="FormError  BasicError"
+                    <div class="FormError  BasicError InstallError"
                          ng-show="theForm.notExists('pass_repeat') || theForm.notEquals('password', 'pass_repeat')">
                         <p>Given passwords have to match</p>
                     </div>
                 </div>
 
                 <div class="FormRow">
-                    <input type="submit" value="Sign up" class="FormRow--SubmitButton  BasicSubmitButton  InstallSubmit"
-                           ng-click="install.submit($event)"
-                           ng-model="process.installed"
-                           ng-show="process.installed == false && process.installing == false"/>
-
-                    <process-ui-installing installing="{[{ process.installing }]}"
-                                           installed="{[{ process.installed }]}"></process-ui-installing>
-                    <process-ui-installed installing="{[{ process.installing }]}" installed="{[{ process.installed }]}"
-                                          countdown="10"></process-ui-installed>
+                    <action-submit init-key="action-install"></action-submit>
                 </div>
 
             </form>

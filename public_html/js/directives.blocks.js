@@ -226,12 +226,8 @@ angular.module('suit.directives.blocks', [])
                 editor.setOption('firstLineNumber', 1);
                 editor.setValue(scope.block.data.data);
 
-                scope.code = editor.getValue();
-                scope.$watch(function() {
-                    scope.code = editor.getValue();
-                    return scope.code;
-                }, function(newVal, oldVal, scope) {
-                    scope.block.data.data = newVal;
+                editor.on('change', function(e) {
+                    scope.block.data.data = editor.getValue();
                     scope.dataShepard.update(scope.block.blockId, scope.block);
                 });
 

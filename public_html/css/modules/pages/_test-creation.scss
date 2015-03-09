@@ -26,6 +26,7 @@
 
   .UserListTable {
     float: left;
+    overflow:auto;
 
     margin-right: 20px;
 
@@ -35,6 +36,7 @@
   .UserAllowedTable {
     width: 40%;
     float: left;
+    overflow:auto;
 
     border: 1px solid white;
   }

@@ -28,16 +28,28 @@ class UserInfo extends GenericEntity
 
     /**
      * @ORM\Column(type="string", length=1024, nullable=true)
+     * @Assert\Length(
+     *      max = 1024,
+     *      maxMessage = "'Fields' field can contain a maximum of 1024 characters",
+     * )
      */
     private $fields = null;
 
     /**
      * @ORM\Column(type="string", length=1024, nullable=true)
+     * @Assert\Length(
+     *      max = 1024,
+     *      maxMessage = "'Programming languages' field can contain a maximum of 1024 characters",
+     * )
      */
     private $programming_languages = null;
 
     /**
      * @ORM\Column(type="string", length=1024, nullable=true)
+     * @Assert\Length(
+     *      max = 1024,
+     *      maxMessage = "'Tools' field can contain a maximum of 1024 characters",
+     * )
      */
     private $tools = null;
 
@@ -49,11 +61,19 @@ class UserInfo extends GenericEntity
 
     /**
      * @ORM\Column(type="string", length=1024, nullable=true)
+     * @Assert\Length(
+     *      max = 1024,
+     *      maxMessage = "'Future plans' field can contain a maximum of 1024 characters",
+     * )
      */
     private $future_plans = null;
 
     /**
      * @ORM\Column(type="string", length=1024, nullable=true)
+     * @Assert\Length(
+     *      max = 1024,
+     *      maxMessage = "'Description' field can contain a maximum of 1024 characters",
+     * )
      */
     private $description;
 

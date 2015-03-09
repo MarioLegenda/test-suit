@@ -83,6 +83,27 @@ class UserRepository extends Repository
         return $users;
     }
 
+    public function getUsernamesById(array $userIds) {
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select('u.username')
+            ->from('AppToolsBundle:User', 'u')
+            ->andWhere('u.user_id IN (:ids)')
+            ->setParameter(':ids', $userIds)
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        if(empty($result) OR $result === null) {
+            return null;
+        }
+
+        $numIndexed = array();
+        for($i = 0; $i < count($result); $i++) {
+            $numIndexed[] = $result[$i]['username'];
+        }
+
+        return $numIndexed;
+    }
+
     public function getPaginatedUsers($offset, $limit) {
         $qb = $this->em->createQueryBuilder();
         $result = $qb->select('u.user_id', 'u.username', 'u.name', 'u.lastname', 'u.logged')

@@ -47,7 +47,7 @@
         width:$iconWidth;
         height:$iconHeight;
 
-        @include background-image(url(../../images/icons/user-icon.png), no-repeat);
+        @include background-image(url(../images/icons/user-icon.png), no-repeat);
         @include prefix(background-size, cover);
       }
     }

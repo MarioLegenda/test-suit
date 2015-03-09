@@ -1,38 +1,7 @@
 "use strict";
 
 angular.module('suit.directives.components', [])
-    .directive('processUiInstalling', function($window, $timeout) {
-        return {
-            restrict: 'EA',
-            replace: true,
-            template: "<p class='Process  Process--installing' ng-model='process.installing' ng-show='!process.installed && process.installing'>Please wait...</p>",
-            link: function(scope, elem, attrs) {
-                scope.$watch(function() { return scope.process.installed }, function(oldValue, newValue, scope) {
-                    if(scope.process.installed === true && scope.process.redirectAfter === true) {
-                        $timeout(function() {
-                            $window.location.replace(scope.process.url);
-                        }, 1000);
-                    }
-                });
-            }
-        }
-    }).directive('processUiInstalled', function($timeout, $window) {
-        return {
-            restrict: 'EA',
-            replace: true,
-            template: "<p class='Process  Process--installed' ng-show='process.installed'>" +
-            "Registration complete. You will be redirected to login page</p>",
-            link: function(scope, elem, attrs) {
-                scope.$watch(function() { return scope.process.installed }, function(oldValue, newValue, scope) {
-                    if(scope.process.installed === true) {
-                        $timeout(function() {
-                            $window.location.replace(scope.process.url);
-                        }, 2000);
-                    }
-                });
-            }
-        }
-    }).directive('actionGlobalError', function() {
+    .directive('actionGlobalError', function() {
         return {
             restrict: 'E',
             replace: true,
@@ -107,6 +76,7 @@ angular.module('suit.directives.components', [])
 
                     if($scope.action.awaiting === true && $scope.action.finished === true) {
                         if($scope.action.redirect === true) {
+                            console.log($scope.action.url);
                             if(({}).toString.call($scope.action.url).match(/\s([a-zA-Z]+)/)[1].toLowerCase() !== 'string') {
                                 throw new Error('If provided, url il actionSubmit directive has to be a url string')
                             }
@@ -187,19 +157,15 @@ angular.module('suit.directives.components', [])
 
                     var promise = null;
                     if(scope.factoryType === 'user') {
-                        promise = User.getUsersById({
-                            id: scope.expandingId
-                        }, true);
+                        promise = User.getUsersById(scope.expandingId);
                     }
                     if(scope.factoryType === 'test') {
-                        promise = Test.getBasicTests();
                     }
 
                     if(promise !== null) {
                         promise.then(function(data, status, headers, config) {
                             var dataReturned = data.data.user;
                             scope.savingObject[dataReturned.user_id] = dataReturned;
-
                             $timeout(function() {
                                 animation.toggle(elem, clickedElem);
                             }, 100);

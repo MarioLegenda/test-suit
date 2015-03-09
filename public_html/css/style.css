@@ -289,7 +289,7 @@ body {
   background-color: #303133; }
 
 .InstallBody {
-  background: url(../../images/install-background.jpg) no-repeat;
+  background: url(../images/install-background.jpg) no-repeat;
   background-size: cover;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -303,19 +303,16 @@ body {
 
 .Content {
   position: relative;
-  height: 650px;
+  width: 1280px;
+  height: 600px;
   overflow: hidden;
+  margin: 0 auto;
   margin-top: 50px; }
 
 .InstallInformation {
-  width: 600px;
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%); }
+  width: 800px;
+  left: 260px;
+  position: absolute; }
   .InstallInformation .InstallInformation--paragraph {
     width: 100%;
     margin: 0 0 15px 0;
@@ -380,25 +377,27 @@ body {
     border: 1px solid #EC7063; }
 
 .FormPosition {
-  width: 600px;
+  width: 800px;
   position: absolute;
-  top: 50%;
-  left: 50%; }
+  top: 0;
+  left: 0; }
   .FormPosition .InstallSubmit {
-    margin: 15px 120px 0 0; }
+    margin: 15px 160px 0 0; }
 
 .InstallForm {
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  left: 130%; }
+  left: 1280px; }
+  .InstallForm .ActionMoveRight {
+    margin-right: 160px; }
+  .InstallForm .ActionDecision {
+    width: 100%;
+    float: left;
+    text-align: left; }
+  .InstallForm .InstallError {
+    left: 650px; }
 
 .LoginForm {
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%); }
+  width: 800px;
+  margin: 150px 00 0 240px; }
 
 .MainNavigation {
   z-index: 100; }
@@ -443,7 +442,7 @@ body {
         float: right;
         width: 25px;
         height: 25px;
-        background-image: url(../../images/icons/user-icon.png);
+        background-image: url(../images/icons/user-icon.png);
         background-repeat: no-repeat;
         -webkit-background-size: cover;
         -moz-background-size: cover;
@@ -641,11 +640,13 @@ body {
       background-color: #2C84EE; }
 .TestRestrictions .UserListTable {
   float: left;
+  overflow: auto;
   margin-right: 20px;
   border: 1px solid white; }
 .TestRestrictions .UserAllowedTable {
   width: 40%;
   float: left;
+  overflow: auto;
   border: 1px solid white; }
 
 .TestListManagment {

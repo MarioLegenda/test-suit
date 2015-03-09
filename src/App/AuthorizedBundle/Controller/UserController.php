@@ -2,13 +2,12 @@
 
 namespace App\AuthorizedBundle\Controller;
 
+
 use App\AuthorizedBundle\Models\CreateUserModel;
-use App\AuthorizedBundle\Models\ManagmentModel;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Entity\UserInfo;
-use App\ToolsBundle\Helpers\BadAjaxResponse;
+use App\ToolsBundle\Helpers\AdaptedResponse;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
-use App\ToolsBundle\Helpers\GoodAjaxRequest;
 use App\ToolsBundle\Helpers\ResponseParameters;
 
 
@@ -24,54 +23,6 @@ class UserController extends ContainerAware
     /**
      * @Security("has_role('ROLE_USER_MANAGER')")
      */
-    public function userTemplateAction() {
-        $templating = $this->container->get('templating');
-        $security = $this->container->get('security.context');
-
-
-        $responseParameters = new ResponseParameters();
-
-        $createUserModel = new CreateUserModel($security);
-        $createUserModel->runModel();
-
-
-        $responseParameters->addParameter('model', $createUserModel);
-        return $templating->renderResponse('AppAuthorizedBundle:User:createUser.html.twig', $responseParameters->getParameters());
-    }
-
-    public function managmentMenuAction() {
-        $templating = $this->container->get('templating');
-        $security = $this->container->get('security.context');
-
-        $managmentModel = new ManagmentModel($security);
-        $managmentModel->runModel();
-
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('model', $managmentModel);
-        return $templating->renderResponse('AppAuthorizedBundle:User:managmentMenu.html.twig', $responseParameters->getParameters());
-    }
-
-    /**
-     * @Security("has_role('ROLE_USER_MANAGER')")
-     */
-    public function userManagmentTemplateAction() {
-        $templating = $this->container->get('templating');
-        $security = $this->container->get('security.context');
-
-
-        $responseParameters = new ResponseParameters();
-
-        $createUserModel = new CreateUserModel($security);
-        $createUserModel->runModel();
-
-
-        $responseParameters->addParameter('model', $createUserModel);
-        return $templating->renderResponse('AppAuthorizedBundle:User:userManagment.html.twig', $responseParameters->getParameters());
-    }
-
-    /**
-     * @Security("has_role('ROLE_USER_MANAGER')")
-     */
     public function userFilterAction() {
 
     }
@@ -81,7 +32,6 @@ class UserController extends ContainerAware
      */
     public function userListingAction() {
         $doctrine = $this->container->get('doctrine');
-        $em = $this->container->get('doctrine')->getManager();
 
         $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
         $users = $userRepo->getAllUsers();
@@ -90,11 +40,16 @@ class UserController extends ContainerAware
         if($users !== null) {
             $responseParameters->addParameter('users', $users);
 
-            return GoodAjaxRequest::init($responseParameters)->getResponse();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(200, "OK");
         }
 
         $responseParameters->addParameter('users', array());
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -111,11 +66,16 @@ class UserController extends ContainerAware
         if($users !== null) {
             $responseParameters->addParameter('users', $users);
 
-            return GoodAjaxRequest::init($responseParameters)->getResponse();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(200, "OK");
         }
 
         $responseParameters->addParameter('users', array());
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -125,18 +85,28 @@ class UserController extends ContainerAware
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
 
-        $id = (array)json_decode($request->getContent());
+        $content = (array)json_decode($request->getContent());
 
-        if(empty($id) OR ! array_key_exists('id', $id)) {
-            return BadAjaxResponse::init('Invalid request from client')->getResponse();
+        if( ! array_key_exists('id', $content) OR empty($content['id'])) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array("Invalid request from the client"));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
+        $id = $content['id'];
+
         $userRepo = new UserRepository($doctrine);
-        $user = $userRepo->getUserInfoById($id['id']);
+        $user = $userRepo->getUserInfoById($id);
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('user', $user);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -147,6 +117,17 @@ class UserController extends ContainerAware
         $doctrine = $this->container->get('doctrine');
 
         $formValues = (array)json_decode($request->getContent());
+
+        $userModel = new CreateUserModel($formValues);
+        if( ! $userModel->areValidKeys() ) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array("Some form values are invalid. Refresh the current page and try again"));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
+
         $permissionArrayfied = (array)$formValues['userPermissions'];
         $formValues['userPermissions'] = $permissionArrayfied;
 
@@ -158,30 +139,53 @@ class UserController extends ContainerAware
         $user->setPassRepeat($formValues['userPassRepeat']);
 
         $userInfo = new UserInfo();
+        $userInfo->setFields($formValues['fields']);
+        $userInfo->setProgrammingLanguages($formValues['programming_languages']);
+        $userInfo->setTools($formValues['tools']);
         $userInfo->setYearsOfExperience($formValues['years_of_experience']);
+        $userInfo->setFuturePlans($formValues['future_plans']);
+        $userInfo->setDescription($formValues['description']);
         $toValidate = array($user, $userInfo);
         $errors = ConvenienceValidator::init($toValidate, $this->container->get('validator'))->getErrors();
 
         if($errors !== null) {
-            return BadAjaxResponse::init(null, $errors)->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $errors);
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
         $result = $userRepo->getUserByUsername($user->getUsername());
 
         if($result !== null) {
-            return BadAjaxResponse::init("User with these credentials already exists.")->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array("User with these credentials already exists"));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         try {
             $userRepo->createUserFromArray($formValues, $user);
             $userRepo->saveUser();
         } catch(RepositoryException $e) {
-            return BadAjaxResponse::init("Something unexpected happend. Please, refresh the page and try again")->getResponse();
-            //return BadAjaxResponse::init($e->getMessage())->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         } catch(\Exception $e) {
-            return BadAjaxResponse::init("Something unexpected happend. Please, refresh the page and try again")->getResponse();
-            //return BadAjaxResponse::init($e->getMessage())->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         return new Response('success', 200);

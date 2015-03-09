@@ -12,15 +12,37 @@ namespace App\AuthorizedBundle\Models;
 use App\AuthorizedBundle\Models\Contracts\GenericModelInterface;
 use App\ToolsBundle\Models\GenericModel;
 
-class CreateUserModel extends GenericModel
+class CreateUserModel
 {
+    private $userData = array();
 
-    public function __construct($security) {
-        $this->security = $security;
-        $this->user = $security->getToken()->getUser();
+    public function __construct(array $userFromRequest) {
+        $this->userData = $userFromRequest;
     }
 
-    public function runModel() {
-        $this->modelData['username'] = $this->user->getUsername();
+    public function areValidKeys() {
+        $validKeys = array(
+            'userPermissions',
+            'name',
+            'lastname',
+            'username',
+            'userPassword',
+            'userPassRepeat',
+            'years_of_experience',
+            'fields',
+            'programming_languages',
+            'tools',
+            'years_of_experience',
+            'future_plans',
+            'description',
+        );
+
+        foreach($validKeys as $key) {
+            if( ! array_key_exists($key, $this->userData)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 } 

@@ -1,5 +1,5 @@
 .InstallBody {
-  background:url(../../images/install-background.jpg) no-repeat;
+  background:url(../images/install-background.jpg) no-repeat;
   background-size: cover;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -18,22 +18,17 @@
 
 .Content {
   position:relative;
-  height:650px;
+  width:1280px;
+  height:600px;
   overflow:hidden;
-
+  margin:0 auto;
   margin-top:50px;
 }
 
 .InstallInformation {
-  width:600px;
+  width:800px;
+  left:260px;
   position:absolute;
-  top: 40%;
-  left: 50%;
-
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
 
   .InstallInformation--paragraph {
     width:100%;
@@ -113,10 +108,9 @@
 }
 
 .FormPosition {
-  width:600px;
+  width:800px;
   position:absolute;
-  top: 50%;
-  left:50%;
+  top:0; left:0;
 
   .InstallLabel, .LoginLabel {
 
@@ -127,23 +121,30 @@
   }
 
   .InstallSubmit {
-    margin:15px 120px 0 0;
+    margin:15px 160px 0 0;
   }
 }
 
 
 .InstallForm {
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
+  left:1280px;
 
-  left: 130%;
+  .ActionMoveRight {
+    margin-right:160px;
+  }
+
+  .ActionDecision {
+    width:100%;
+    float:left;
+    text-align: left;
+  }
+
+  .InstallError {
+    left:650px;
+  }
 }
 
 .LoginForm {
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
+  width:800px;
+  margin:150px 00 0 240px;
 }

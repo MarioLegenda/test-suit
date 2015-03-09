@@ -2,15 +2,16 @@
 
 namespace App\AuthorizedBundle\Controller;
 
-use App\AuthorizedBundle\Models\HomeModel;
 use App\ToolsBundle\Entity\TestControl;
 use App\ToolsBundle\Entity\Test;
 use App\ToolsBundle\Helpers\GoodAjaxRequest;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
 use App\ToolsBundle\Helpers\BadAjaxResponse;
+use App\ToolsBundle\Helpers\AdaptedResponse;
 
 use App\ToolsBundle\Repositories\TestRepository;
+use App\ToolsBundle\Repositories\UserRepository;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -41,7 +42,12 @@ class TestController extends ContainerAware
         $errors = ConvenienceValidator::init($toValidate, $this->container->get('validator'))->getErrors();
 
         if($errors !== null) {
-            return BadAjaxResponse::init(null, $errors)->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $errors);
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $testControl->setUser($this->container->get('security.context')->getToken()->getUser());
@@ -51,7 +57,12 @@ class TestController extends ContainerAware
             $em->persist($testControl);
             $em->flush();
         } catch(\Exception $e) {
-            return BadAjaxResponse::init('Something went wrong. Please, refresh the page and try again')->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $testRepo = new TestRepository($doctrine);
@@ -62,7 +73,10 @@ class TestController extends ContainerAware
         $responseParameters->addParameter('success', true);
         $redirectUrl = '/test-managment/create-test/' . \URLify::filter($currentTest['test_name']) . '/' . $currentTest['test_control_id'];
         $responseParameters->addParameter('redirectUrl', $redirectUrl);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     public function modifyTestAction() {
@@ -76,12 +90,20 @@ class TestController extends ContainerAware
         try {
             $testRepo->updateTestById($content['test_control_id'], $content);
         } catch(\Exception $e) {
-            return BadAjaxResponse::init($e->getMessage())->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -93,11 +115,16 @@ class TestController extends ContainerAware
 
         $testRepo = new TestRepository($doctrine);
 
-        $basicTestInfo = $testRepo->getBasicTestInformation($security->getToken()->getUser()->getUserId());
+        $userRepo = new UserRepository($doctrine);
+        $userId = $security->getToken()->getUser()->getUserId();
+        $basicTestInfo = $testRepo->getBasicTestInformation($userId, $userRepo);
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('tests', $basicTestInfo);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -112,12 +139,15 @@ class TestController extends ContainerAware
         $id = $content['id'];
 
         $testRepo = new TestRepository($doctrine);
-
         $basicTestInfo = $testRepo->getBasicTestInformationById($id);
+
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('test', $basicTestInfo);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -137,14 +167,22 @@ class TestController extends ContainerAware
             $testRepo->deleteTestById($id);
         }
         catch(\Exception $e) {
-            return BadAjaxResponse::init($e->getMessage())->getResponse();
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
 
         $basicTestInfo = $testRepo->getBasicTestInformation($security->getToken()->getUser()->getUserId());
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('tests', $basicTestInfo);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
 
     }
 } 
