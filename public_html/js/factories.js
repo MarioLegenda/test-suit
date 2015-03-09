@@ -55,7 +55,7 @@ angular.module('suit.factories', []).factory('$', function () {
             if(environment === null || path === null || url === null) {
                 throw new Error('Url cannot be constructed beacuse some of the parameters are null');
             }
-            
+
             return domain + path + environment + url;
         };
 

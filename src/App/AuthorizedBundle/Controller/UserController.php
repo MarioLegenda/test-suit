@@ -162,7 +162,7 @@ class UserController extends ContainerAware
 
         if($result !== null) {
             $content = new ResponseParameters();
-            $content->addParameter("errors", array("User with these credentials already exists"));
+            $content->addParameter("errors", array("errors" => array("User with these credentials already exists")));
 
             $response = new AdaptedResponse();
             $response->setContent($content);
