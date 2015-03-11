@@ -6,6 +6,10 @@
 !app/logs/.gitkeep
 /build/
 /composer.phar
+/public_html/bower_components/es5-shim/*
+!public_html/bower_components/es5-shim/es5-shim.min.js
+/public_html/bower_components/es6-shim/*
+!public_html/bower_components/es6-shim/es6-shim.min.js
 /public_html/bower_components/jquery/*
 !public_html/bower_components/jquery/dist
 /public_html/bower_components/jquery/dist/*
