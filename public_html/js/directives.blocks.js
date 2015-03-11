@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('suit.directives.blocks', [])
-.directive('plainTextSuitAnswerBlock', function(DataShepard, Types, $timeout) {
+.directive('plainTextSuitAnswerBlock', function(Types, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -59,7 +59,7 @@ angular.module('suit.directives.blocks', [])
         }
     }
 })
-    .directive('codeSuitAnswerBlock', function(DataShepard, Types, $timeout) {
+    .directive('codeSuitAnswerBlock', function(Types, $timeout) {
         return {
             restrict: 'E',
             replace: true,
@@ -117,7 +117,7 @@ angular.module('suit.directives.blocks', [])
             }
         }
     })
-    .directive('plainTextSuitBlock', function(DataShepard, Types, $timeout) {
+    .directive('plainTextSuitBlock', function(Types, $timeout) {
         return {
             restrict: 'E',
             replace: true,
@@ -174,7 +174,7 @@ angular.module('suit.directives.blocks', [])
                 });
             }
         }
-    }).directive('codeBlockSuite', function(DataShepard, Types, $timeout) {
+    }).directive('codeBlockSuite', function(Types, $timeout) {
         return {
             restrict: 'E',
             replace: true,
@@ -248,7 +248,7 @@ angular.module('suit.directives.blocks', [])
                 });
             }
         }
-    }).directive('genericBlockSuit', function(DataShepard, Types, $timeout) {
+    }).directive('genericBlockSuit', function(Types, $timeout) {
         return {
             restrict: 'E',
             scope: {
