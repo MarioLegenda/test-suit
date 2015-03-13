@@ -619,20 +619,4 @@ angular.module('suit.factories', []).factory('$', function () {
     }
 
     return new DataMediator();
-}).factory('ObjectFactory', function() {
-    function ObjectFactory() {
-        var objectTypes = [
-            'compile-commander'
-        ];
-
-        this.create = function(objectType) {
-            if(objectTypes.indexOf(objectType) === -1) {
-                throw new Error("Not a valid type in ObjectFactory");
-            }
-
-
-        }
-    }
-
-    return new ObjectFactory();
 });
