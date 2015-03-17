@@ -1,0 +1,53 @@
+.FilterComponentUI {
+  width:100%;
+  float:left;
+
+  padding:10px;
+  margin:0 0 20px 0;
+
+  border:1px solid $blueLight;
+
+  .FilterUI {
+    .UI--option {
+      display:inline-block;
+      float:left;
+      font-size:1.2em;
+      border-right: 1px solid $grayLight;
+      color:$grayLight;
+
+      padding:5px 10px 5px 10px;
+
+      &:hover {
+        color:white;
+      }
+    }
+
+    .UI--heading {
+      width:100px;
+      border:none;
+
+      &:hover {
+        color:$grayLight;
+      }
+    }
+  }
+}
+
+.FilterOption {
+  width:100%;
+  float:left;
+
+  padding:10px;
+  margin:20px 0 20px 0;
+
+  .FilterSubmit {
+    background-color: transparent;
+    margin: 0 0 0 20px;
+  }
+
+  .Separator {
+    padding:10px;
+    color:white;
+    font-size:1.2em;
+  }
+}

@@ -1,0 +1,29 @@
+<script type="text/ng-template" id="userFilter.html">
+    <div class="FilterComponentUI">
+        <div class="FilterUI">
+            <h2 class="UI--option  UI--heading">Filter by...</h2>
+            <a href="" ng-click="menus.toggle($event, 'filterUsername')" class="UI--option">Username</a>
+            <a href="" ng-click="menus.toggle($event, 'filterPersonal')" class="UI--option">Name or lastname</a>
+        </div>
+
+        <div ng-if="menus.filterUsername" name="filterForm" class="FilterOption">
+            <form action="" method="POST">
+                <div class="FormRow  FilterWrapper">
+                    <input type="text" ng-model="directiveData.username" ng-keyup="directiveData.interaction($event, 'username')" placeholder="Username" class="BasicField">
+                    <button ng-click="directiveData.submit($event, 'username')" type="submit" class="BasicField  FilterSubmit">Filter</button>
+                </div>
+            </form>
+        </div>
+
+        <div ng-if="menus.filterPersonal" class="FilterOption">
+            <form action="" method="POST">
+                <div class="FormRow  FilterWrapper">
+                    <input type="text" ng-model="directiveData.name" ng-keyup="directiveData.interaction($event, 'name')" placeholder="Name" class="BasicField">
+                    <label class="Separator">Or</label>
+                    <input type="text" ng-model="directiveData.lastname" ng-keyup="directiveData.interaction($event, 'lastname')" placeholder="Lastname" class="BasicField">
+                    <button ng-click="directiveData.submit($event, 'name')" type="submit" class="BasicField  FilterSubmit">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</script>

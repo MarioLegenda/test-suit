@@ -607,6 +607,41 @@ body {
   .MainContent .CreateUserError {
     left: 650px; }
 
+.Expandable--info {
+  padding: 50px 10px 10px 10px; }
+  .Expandable--info .Expandable--click .Expandable--testName {
+    margin: 0 5px 0 0; }
+  .Expandable--info .Expandable--click .Expandable--created {
+    float: right; }
+  .Expandable--info .InfoSection--finished {
+    color: #5de253; }
+  .Expandable--info .InfoSection--notFinished {
+    color: #EC7063; }
+  .Expandable--info .ModificationActions {
+    width: 100%;
+    float: left;
+    border-top: 1px solid white; }
+    .Expandable--info .ModificationActions .ModifyAction--action {
+      width: 150px;
+      float: left;
+      padding: 10px;
+      color: white;
+      text-align: center;
+      font-size: 1.2em;
+      -webkit-transition: background-color 0.3s;
+      -moz-transition: background-color 0.3s;
+      -ms-transition: background-color 0.3s;
+      -o-transition: background-color 0.3s;
+      transition: background-color 0.3s; }
+    .Expandable--info .ModificationActions .ModifyAction--modify:hover {
+      background-color: #2C84EE; }
+    .Expandable--info .ModificationActions .ModifyAction--change:hover {
+      background-color: #2C84EE; }
+    .Expandable--info .ModificationActions .ModifyAction--continue:hover {
+      background-color: #2C84EE; }
+    .Expandable--info .ModificationActions .ModifyAction--delete:hover {
+      background-color: #EC7063; }
+
 .ContentElement .ContentMainTitle {
   position: relative;
   color: white; }
@@ -617,6 +652,19 @@ body {
     margin: 0 5px 0 0; }
   .UserManagmentMain .Expandable--click .Expandable--username {
     float: right; }
+
+.Listing .LoadMore {
+  display: block;
+  width: 100%;
+  height: 46px;
+  float: left;
+  text-decoration: none;
+  color: #a0a0a0;
+  font-size: 1.2em;
+  text-align: center;
+  padding: 10px; }
+  .Listing .LoadMore:hover {
+    color: white; }
 
 .ContentSubTitle {
   color: white; }
@@ -648,41 +696,6 @@ body {
   float: left;
   overflow: auto;
   border: 1px solid white; }
-
-.TestListManagment {
-  padding: 50px 0 0 0; }
-  .TestListManagment .Expandable--click .Expandable--testName {
-    margin: 0 5px 0 0; }
-  .TestListManagment .Expandable--click .Expandable--created {
-    float: right; }
-  .TestListManagment .InfoSection--finished {
-    color: #5de253; }
-  .TestListManagment .InfoSection--notFinished {
-    color: #EC7063; }
-  .TestListManagment .ModificationActions {
-    width: 100%;
-    float: left;
-    border-top: 1px solid white; }
-    .TestListManagment .ModificationActions .ModifyAction--action {
-      width: 150px;
-      float: left;
-      padding: 10px;
-      color: white;
-      text-align: center;
-      font-size: 1.2em;
-      -webkit-transition: background-color 0.3s;
-      -moz-transition: background-color 0.3s;
-      -ms-transition: background-color 0.3s;
-      -o-transition: background-color 0.3s;
-      transition: background-color 0.3s; }
-    .TestListManagment .ModificationActions .ModifyAction--modify:hover {
-      background-color: #2C84EE; }
-    .TestListManagment .ModificationActions .ModifyAction--change:hover {
-      background-color: #2C84EE; }
-    .TestListManagment .ModificationActions .ModifyAction--continue:hover {
-      background-color: #2C84EE; }
-    .TestListManagment .ModificationActions .ModifyAction--delete:hover {
-      background-color: #EC7063; }
 
 .MainContent {
   padding: 50px 0 0 0; }
@@ -868,5 +881,39 @@ body {
     width: 100%;
     float: left;
     margin-top: 50px; }
+
+.FilterComponentUI {
+  width: 100%;
+  float: left;
+  padding: 10px;
+  margin: 0 0 20px 0;
+  border: 1px solid #2C84EE; }
+  .FilterComponentUI .FilterUI .UI--option {
+    display: inline-block;
+    float: left;
+    font-size: 1.2em;
+    border-right: 1px solid #a0a0a0;
+    color: #a0a0a0;
+    padding: 5px 10px 5px 10px; }
+    .FilterComponentUI .FilterUI .UI--option:hover {
+      color: white; }
+  .FilterComponentUI .FilterUI .UI--heading {
+    width: 100px;
+    border: none; }
+    .FilterComponentUI .FilterUI .UI--heading:hover {
+      color: #a0a0a0; }
+
+.FilterOption {
+  width: 100%;
+  float: left;
+  padding: 10px;
+  margin: 20px 0 20px 0; }
+  .FilterOption .FilterSubmit {
+    background-color: transparent;
+    margin: 0 0 0 20px; }
+  .FilterOption .Separator {
+    padding: 10px;
+    color: white;
+    font-size: 1.2em; }
 
 /*# sourceMappingURL=style.css.map */

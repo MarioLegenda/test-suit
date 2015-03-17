@@ -1,0 +1,114 @@
+.Expandable--info {
+
+  padding:50px 10px 10px 10px;
+
+  .Expandable--click {
+
+    .Expandable--testName {
+      margin:0 5px 0 0;
+    }
+
+    .Expandable--created {
+      float:right;
+    }
+  }
+
+  .InfoSection--finished {
+    color:$greenLight;
+  }
+
+  .InfoSection--notFinished {
+    color:$mainHoverColor
+  }
+
+  .ModificationActions {
+    width:100%;
+    float:left;
+
+    border-top:1px solid white;
+
+    .ModifyAction--action {
+      width:150px;
+      float:left;
+
+      padding:10px;
+
+      color:white;
+      text-align: center;
+      font-size:1.2em;
+
+      @include transition(background-color 0.3s);
+    }
+
+    .ModifyAction--modify {
+      &:hover {
+        background-color: $blueLight;
+      }
+    }
+
+    .ModifyAction--change {
+      &:hover {
+        background-color: $blueLight;
+      }
+    }
+
+    .ModifyAction--continue {
+      &:hover {
+        background-color: $blueLight;
+      }
+    }
+
+    .ModifyAction--delete {
+      &:hover {
+        background-color: $mainHoverColor;
+      }
+    }
+  }
+}
+
+.UserManagment {
+}
+
+.ContentElement {
+  .ContentMainTitle {
+    position:relative;
+    color:white;
+  }
+}
+
+.UserManagmentMain {
+
+  padding:50px 0 0 0;
+
+  .Expandable--click {
+
+    .Expandable--name {
+      margin:0 5px 0 0;
+    }
+
+    .Expandable--username {
+      float:right;
+    }
+  }
+}
+
+.Listing {
+
+  .LoadMore {
+    display:block;
+    width:100%;
+    height:46px;
+    float:left;
+
+    text-decoration: none;
+    color:$grayLight;
+    font-size:1.2em;
+    text-align: center;
+
+    padding:10px;
+
+    &:hover {
+      color:white;
+    }
+  }
+}

@@ -188,4 +188,185 @@ angular.module('suit.directives.components', [])
             });
         }
     }
-});
+}).directive('filter', [function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'userFilter.html',
+        controller: function($scope) {
+            var decideEvnObject = function(type) {
+                var eventObj = {
+                    filterType: null,
+                    key: null,
+                    username: '',
+                    personal: {
+                        name: '',
+                        lastname: ''
+                    }
+                };
+
+                if(type === 'username') {
+                    eventObj.filterType = 'username-filter';
+                    eventObj.key = 'username';
+                    eventObj.username =  $scope.directiveData.username;
+                    delete eventObj.personal;
+                }
+                else {
+                    eventObj.filterType = 'personal-filter';
+                    eventObj.key = 'personal';
+                    eventObj.personal.name = $scope.directiveData.name;
+                    eventObj.personal.lastname =  $scope.directiveData.lastname;
+                    delete eventObj.username;
+                }
+
+                return eventObj;
+            };
+
+            $scope.directiveData = {
+                username: '',
+                name: '',
+                lastname: '',
+
+                submit: function($event, type) {
+                    $event.preventDefault();
+                    var eventObj = decideEvnObject(type);
+                    $scope.$emit('action-user-filter', eventObj);
+
+                    return false;
+                },
+
+                interaction: function($event, type) {
+                    var eventObj = decideEvnObject(type);
+
+                    if(this[type].length >= 4) {
+                        $scope.$emit('action-user-filter', eventObj);
+                    }
+                }
+            };
+
+            $scope.menus = {
+                filterUsername: false,
+                filterPersonal: false,
+
+                toggle: function ($event, type) {
+                    $scope.directiveData.username = '';
+                    $scope.directiveData.name = '';
+                    $scope.directiveData.lastname = '';
+                    if (!this.hasOwnProperty(type)) {
+                        throw Error('ManagmentMenu: Wrong type ' + type);
+                    }
+
+                    this[type] = !this[type];
+                    var menus = ['filterUsername', 'filterPersonal'];
+                    menus.splice(menus.indexOf(type), 1);
+
+                    for (var i = 0; i < menus.length; i++) {
+                        this[menus[i]] = false;
+                    }
+                }
+            }
+        },
+        link: function($scope, elem, attrs) {
+
+        }
+    }
+}]).directive('listingComponent', ['$compile', 'CompileCommander', function($compile, CompileCommander) {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                listing: '=listing',
+                directiveType: '@directiveType'
+            },
+            templateUrl: 'listingTemplate.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    directiveType: $scope.directiveType,
+                    loadMore: function($event) {
+                        $scope.$emit('action-load-more', {});
+                    }
+                };
+
+            }
+        };
+}]).directive('userRow', ['User', '$timeout', 'Animator', function(User, $timeout, Animator) {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'userRow.html',
+        controller: function($scope) {
+        },
+        link: function($scope, elem, attrs) {
+            $scope.directiveData = {
+                userInfo: {},
+                expandSection: function($event, user_id) {
+                    var promise,
+                        userInfo,
+                        clickedElem = $($event.currentTarget),
+                        parentElem = clickedElem.parent();
+
+                    if(typeof $scope.directiveData.userInfo[user_id] === 'undefined') {
+                        promise = User.getUsersById(user_id);
+
+                        promise.then(function (data, status, headers, config) {
+                            userInfo = data.data.user;
+                            $scope.directiveData.userInfo[userInfo.user_id] = userInfo;
+                            $timeout(function() {
+                                Animator.heightToggle({
+                                    mainElem: parentElem,
+                                    clicked: clickedElem,
+                                    fromElem: parentElem.find('.Expandable--info'),
+                                    downCallback: function (definition) {
+                                        definition.mainElem.css({
+                                            border: '1px solid #2C84EE'
+                                        });
+
+                                        definition.clicked.css({
+                                            backgroundColor: '#2C84EE'
+                                        });
+                                    },
+                                    upCallback: function (definition) {
+                                        definition.mainElem.css({
+                                            border: '1px solid white'
+                                        });
+
+                                        definition.clicked.css({
+                                            backgroundColor: 'transparent'
+                                        });
+                                    }
+                                });
+                            }, 200);
+                        });
+                    }
+                    else {
+                        $timeout(function() {
+                            Animator.heightToggle({
+                                mainElem: parentElem,
+                                clicked: clickedElem,
+                                fromElem: parentElem.find('.Expandable--info'),
+                                downCallback: function (definition) {
+                                    definition.mainElem.css({
+                                        border: '1px solid #2C84EE'
+                                    });
+
+                                    definition.clicked.css({
+                                        backgroundColor: '#2C84EE'
+                                    });
+                                },
+                                upCallback: function (definition) {
+                                    definition.mainElem.css({
+                                        border: '1px solid white'
+                                    });
+
+                                    definition.clicked.css({
+                                        backgroundColor: 'transparent'
+                                    });
+                                }
+                            });
+                        }, 200);
+                    }
+                }
+            }
+        }
+    }
+}]);

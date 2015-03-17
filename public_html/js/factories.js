@@ -13,7 +13,9 @@ angular.module('suit.factories', []).factory('$', function () {
             user: {
                 saveUrl : 'user-managment/save-user',
                 allUsersUrl: 'user-managment/user-list',
-                userInfo: 'user-managment/user-info'
+                userInfo: 'user-managment/user-info',
+                paginatedUsers: 'user-managment/user-list-paginated',
+                userFilter: 'user-managment/user-filter'
             },
             test: {
                 createTestUrl: 'test-managment/create-test',
@@ -206,6 +208,22 @@ angular.module('suit.factories', []).factory('$', function () {
                 method: 'POST',
                 url: Path.namespace('user.userInfo').construct(),
                 data: {id: id}
+            });
+        },
+
+        getPaginatedUsers: function(pagination) {
+            return $http({
+                method: 'POST',
+                url: Path.namespace('user.paginatedUsers').construct(),
+                data: pagination
+            });
+        },
+
+        filter: function(filterData) {
+            return $http({
+                method: 'POST',
+                url: Path.namespace('user.userFilter').construct(),
+                data: filterData
             });
         },
 
@@ -591,6 +609,8 @@ angular.module('suit.factories', []).factory('$', function () {
                 case 'checkbox-block':
                 case 'radio-block':
                     return $("<generic-block-suit non-compiled='{[{ directiveData.nonCompiled }]}'  block-id='{[{ directiveData.blockId }]}' block-data-type='{[{ directiveData.dataType }]}' block-type='{[{ directiveData.type }]}' block-directive-type='{[{ directiveData.directiveType }]}' shepard='dataShepard'></generic-block-suit>");
+                case 'user-row':
+                    return $("<user-row></user-row>")
 
             }
         }
@@ -619,4 +639,81 @@ angular.module('suit.factories', []).factory('$', function () {
     }
 
     return new DataMediator();
-});
+}).factory('Animator', ['$', '$timeout', function($, $timeout) {
+    function Animator() {
+        var toggleShows = {
+            heightShow: false
+        };
+
+        this.heightToggle = function(definition) {
+            var definitionCheck = ['mainElem', 'clicked', 'fromElem'], i;
+            for(i = 0; i < definitionCheck.length; i++) {
+                if( ! definition.hasOwnProperty(definitionCheck[i])) {
+                    throw new Error('Animator: Definition object does not have \'' + definitionCheck[i] + '\'')
+                }
+            }
+
+
+            var h = definition.fromElem.outerHeight() + 50;
+            if (toggleShows.heightShow === false) {
+                definition.mainElem.animate({
+                    height: h + 'px'
+                }, 500);
+
+                if (definition.hasOwnProperty('downCallback')) {
+                    definition.downCallback(definition);
+                }
+
+                toggleShows.heightShow = true;
+            }
+            else if (toggleShows.heightShow === true) {
+                definition.mainElem.animate({
+                    height: 45 + 'px'
+                }, 500);
+
+                if (definition.hasOwnProperty('upCallback')) {
+                    definition.upCallback(definition);
+                }
+
+                toggleShows.heightShow = false;
+            }
+        }
+    }
+
+    return new Animator();
+}]).factory('Pagination', [function() {
+    function Pagination(s, e) {
+        this.start = s;
+        this.end = e;
+
+        this.constant = {
+            start: s,
+            end: e
+        };
+
+        this.currentPagination = function() {
+            return {
+                start: this.start,
+                end: this.end
+            }
+        };
+
+        this.nextPagination = function() {
+            return {
+                start: this.start + 10,
+                end: this.end + 10
+            }
+        };
+
+        this.reset = function() {
+            this.start = this.constant.start;
+            this.end = this.constant.end;
+        }
+    }
+
+    return {
+        init: function(start, end) {
+            return new Pagination(start, end)
+        }
+    }
+}]);

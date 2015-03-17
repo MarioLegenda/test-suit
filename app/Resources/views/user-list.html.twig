@@ -1,65 +1,6 @@
 <script type="text/ng-template" id="userListing.html">
     <div class="MainContent  ContentCentered  OverflowContainer  UserManagmentMain">
         <h2 class="ContentSubTitle">Users</h2>
-        <section class="Expandable" ng-repeat="user in users" expand-section type="{[{ factoryType }]}" id="{[{ user.user_id }]}" saving-object="userInfo">
-            <a href="" class="Expandable--click">
-                <span class="Expandable--item  Expandable--name">{[{ user.name }]}</span>
-                <span class="Expandable--item  Expandable--lastname">{[{ user.lastname }]}</span>
-                <span class="Expandable--item  Expandable--username">{[{ user.username }]}</span>
-            </a>
-
-            <div class="Expandable--info  UserManagment--info">
-                <div class="InfoSection">
-                    <h2 class="InfoSection--title">Fields</h2>
-                    <p class="InfoSection--text">{[{ userInfo[user.user_id].fields }]}</p>
-                </div>
-
-                <div class="InfoSection">
-                    <h2 class="InfoSection--title">Programming languages</h2>
-                    <p class="InfoSection--text">{[{ userInfo[user.user_id].programming_languages }]}</p>
-                </div>
-
-                <div class="InfoSection">
-                    <h2 class="InfoSection--title">Tools</h2>
-                    <p class="InfoSection--text">{[{ userInfo[user.user_id].tools }]}</p>
-                </div>
-
-                <div class="InfoSection">
-                    <h2 class="InfoSection--title">Years of experience</h2>
-                    <p class="InfoSection--text">{[{ userInfo[user.user_id].years_of_experience }]}</p>
-                </div>
-
-                <div class="InfoSection  InfoSection--expand">
-                    <h2 class="InfoSection--title">Permissions</h2>
-                    <p class="InfoSection--text">
-                        <label class="InfoSection--block">
-                        </label>
-
-                        <label ng-if="user.role == 'user_manager'" class="InfoSection--block">
-                            USER MANAGER: can create/solve tests but and create/edit/delete users. This is
-                            the maximum permission that a user can have
-                        </label>
-
-                        <label ng-if="user.role == 'test_creator'" class="InfoSection--block">
-                            TEST CREATOR: can create/solve tests but cannot create/edit/delete users
-                        </label>
-
-                        <label ng-if="user.role == 'test_solver'" class="InfoSection--block">
-                            TEST SOLVER: can only solve tests and nothing more
-                        </label>
-                    </p>
-                </div>
-
-                <div class="InfoSection  InfoSection--expand">
-                    <h2 class="InfoSection--title">Future plans</h2>
-                    <p class="InfoSection--text">{[{ userInfo[user.user_id].future_plans }]}</p>
-                </div>
-
-                <div class="InfoSection  InfoSection--expand">
-                    <h2 class="InfoSection--title">Personal description</h2>
-                    <p class="InfoSection--text">{[{ userInfo[user.user_id].description }]}</p>
-                </div>
-            </div>
-        </section>
+        <listing-component ng-if="directiveData.loaded" listing="directiveData.users" directive-type="{[{ directiveData.directiveType }]}"></listing-component>
     </div>
 </script>

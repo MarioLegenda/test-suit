@@ -104,13 +104,19 @@ class UserRepository extends Repository
         return $numIndexed;
     }
 
-    public function getPaginatedUsers($offset, $limit) {
+    public function getPaginatedUsers($from, $to) {
         $qb = $this->em->createQueryBuilder();
         $result = $qb->select('u.user_id', 'u.username', 'u.name', 'u.lastname', 'u.logged')
             ->from('AppToolsBundle:User', 'u')
+            ->where($qb->expr()->between(
+                'u.user_id',
+                ':from',
+                ':to'
+            ))
             ->orderBy('u.logged', 'DESC')
-            ->setFirstResult($offset)
-            ->setMaxResults($limit)
+            ->setMaxResults(10)
+            ->setParameter(':from', $from)
+            ->setParameter(':to', $to)
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 

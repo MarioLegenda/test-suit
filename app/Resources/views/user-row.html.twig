@@ -1,0 +1,62 @@
+<script type="text/ng-template" id="userRow.html">
+    <section class="Expandable">
+        <a href="" ng-click="directiveData.expandSection($event, user.user_id)" class="Expandable--click">
+            <span class="Expandable--item  Expandable--name">{[{ user.name }]}</span>
+            <span class="Expandable--item  Expandable--lastname">{[{ user.lastname }]}</span>
+            <span class="Expandable--item  Expandable--username">{[{ user.username }]}</span>
+        </a>
+
+        <div class="Expandable--info  UserManagment--info">
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Fields</h2>
+                <p class="InfoSection--text">{[{ directiveData.userInfo[user.user_id].fields }]}</p>
+            </div>
+
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Programming languages</h2>
+                <p class="InfoSection--text">{[{ directiveData.userInfo[user.user_id].programming_languages }]}</p>
+            </div>
+
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Tools</h2>
+                <p class="InfoSection--text">{[{ directiveData.userInfo[user.user_id].tools }]}</p>
+            </div>
+
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Years of experience</h2>
+                <p class="InfoSection--text">{[{ directiveData.userInfo[user.user_id].years_of_experience }]}</p>
+            </div>
+
+            <div class="InfoSection  InfoSection--expand">
+                <h2 class="InfoSection--title">Permissions</h2>
+                <p class="InfoSection--text">
+                    <label class="InfoSection--block">
+                    </label>
+
+                    <label ng-if="user.role == 'user_manager'" class="InfoSection--block">
+                        USER MANAGER: can create/solve tests but and create/edit/delete users. This is
+                        the maximum permission that a user can have
+                    </label>
+
+                    <label ng-if="user.role == 'test_creator'" class="InfoSection--block">
+                        TEST CREATOR: can create/solve tests but cannot create/edit/delete users
+                    </label>
+
+                    <label ng-if="user.role == 'test_solver'" class="InfoSection--block">
+                        TEST SOLVER: can only solve tests and nothing more
+                    </label>
+                </p>
+            </div>
+
+            <div class="InfoSection  InfoSection--expand">
+                <h2 class="InfoSection--title">Future plans</h2>
+                <p class="InfoSection--text">{[{ directiveData.userInfo[user.user_id].future_plans }]}</p>
+            </div>
+
+            <div class="InfoSection  InfoSection--expand">
+                <h2 class="InfoSection--title">Personal description</h2>
+                <p class="InfoSection--text">{[{ directiveData.userInfo[user.user_id].description }]}</p>
+            </div>
+        </div>
+    </section>
+</script>

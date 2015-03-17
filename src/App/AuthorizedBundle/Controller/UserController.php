@@ -4,15 +4,18 @@ namespace App\AuthorizedBundle\Controller;
 
 
 use App\AuthorizedBundle\Models\CreateUserModel;
+use App\AuthorizedBundle\Models\UserModel;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Helpers\AdaptedResponse;
 use App\ToolsBundle\Helpers\AppLogger;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
+use App\ToolsBundle\Helpers\Exceptions\ModelException;
 use App\ToolsBundle\Helpers\ResponseParameters;
 
 
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
+use App\ToolsBundle\Repositories\FilterRepository;
 use App\ToolsBundle\Repositories\UserRepository;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -24,7 +27,51 @@ class UserController extends ContainerAware
     /**
      * @Security("has_role('ROLE_USER_MANAGER')")
      */
-    public function userFilterAction() {
+    public function filterAction() {
+        $doctrine = $this->container->get('doctrine');
+        $request = $this->container->get('request');
+
+        $content = (array)json_decode($request->getContent(), true);
+
+        $userModel = new UserModel();
+        if($userModel->requestContentMode($content)->extractType()->isContentValid()) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', 'Invalid request from the user');
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+
+        $filterRepo = new FilterRepository($doctrine);
+        try {
+            $filterRepo->assignFilter($userModel->getType());
+            $filterRepo->runFilter($userModel->getPureContent());
+            $users = $filterRepo->getRepositoryData();
+        }
+        catch(ModelException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('model-error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('generic-error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('users', $users);
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
 
     }
 
@@ -58,10 +105,27 @@ class UserController extends ContainerAware
      */
     public function userPaginatedAction() {
         $doctrine = $this->container->get('doctrine');
-        $em = $this->container->get('doctrine')->getManager();
+        $request = $this->container->get('request');
 
-        $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
-        $users = $userRepo->getPaginatedUsers(0, 10);
+        $content = (array)json_decode($request->getContent());
+
+        if( ! array_key_exists('start', $content) OR ! array_key_exists('end', $content)) {
+            $logger = $this->container->get('app_logger');
+            $logger->makeLog(AppLogger::WARNING)
+                ->addDate()
+                ->addMessage("Someone tried to make a custom request in UserController::userPaginatedAction(). No 'end' or 'start' parameters. Possible hack")
+                ->log();
+
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('errors', 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        $userRepo = new UserRepository($doctrine);
+        $users = $userRepo->getPaginatedUsers($content['start'], $content['end']);
 
         $responseParameters = new ResponseParameters();
         if($users !== null) {

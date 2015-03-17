@@ -13,10 +13,20 @@ app_authorized_allUsers:
     defaults: { _controller: AppAuthorizedBundle:User:userListing }
     methods: [POST]
 
+app_authorized_userListPaginated:
+    path: /user-managment/user-list-paginated
+    defaults: { _controller: AppAuthorizedBundle:User:userPaginated }
+    methods: [POST]
+
 # scheduled for removal
 app_authorized_userInfo:
     path: /user-managment/user-info
     defaults: { _controller: AppAuthorizedBundle:User:userInfo }
+    methods: [POST]
+
+app_authorized_userFilter:
+    path: /user-managment/user-filter
+    defaults: { _controller: AppAuthorizedBundle:User:filter }
     methods: [POST]
 
 # ajax

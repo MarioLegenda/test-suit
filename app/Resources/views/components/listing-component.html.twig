@@ -1,0 +1,7 @@
+<script type="text/ng-template" id="listingTemplate.html">
+    <div class="Listing">
+        <filter></filter>
+        <user-row ng-repeat="user in listing"></user-row>
+        <a href="" class="LoadMore" ng-click="directiveData.loadMore($event)">Load more</a>
+    </div>
+</script>
