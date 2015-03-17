@@ -287,6 +287,8 @@ angular.module('suit.directives.components', [])
                     }
                 };
 
+
+
             }
         };
 }]).directive('userRow', ['User', '$timeout', 'Animator', function(User, $timeout, Animator) {
