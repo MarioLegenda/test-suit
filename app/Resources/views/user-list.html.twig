@@ -1,6 +1,11 @@
 <script type="text/ng-template" id="userListing.html">
     <div class="MainContent  ContentCentered  OverflowContainer  UserManagmentMain">
         <h2 class="ContentSubTitle">Users</h2>
-        <listing-component ng-if="directiveData.loaded" listing="directiveData.users" directive-type="{[{ directiveData.directiveType }]}"></listing-component>
+        <listing-component
+                ng-if="directiveData.loaded"
+                listing="directiveData.users"
+                directive-type="{[{ directiveData.directiveType }]}"
+                show-load-more="directiveData.loadMore">
+        </listing-component>
     </div>
 </script>

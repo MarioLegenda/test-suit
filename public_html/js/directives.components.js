@@ -276,7 +276,8 @@ angular.module('suit.directives.components', [])
             replace: true,
             scope: {
                 listing: '=listing',
-                directiveType: '@directiveType'
+                directiveType: '@directiveType',
+                showLoadMore: '=showLoadMore'
             },
             templateUrl: 'listingTemplate.html',
             controller: function($scope) {
@@ -284,8 +285,20 @@ angular.module('suit.directives.components', [])
                     directiveType: $scope.directiveType,
                     loadMore: function($event) {
                         $scope.$emit('action-load-more', {});
-                    }
+                    },
+                    showLoadMore: $scope.showLoadMore,
+                    noData: false,
+                    noDataMessage: ''
                 };
+
+                $scope.$watch(function() { return $scope.listing.length }, function(newVal, oldVal, scope) {
+                    if(newVal === 0) {
+                        scope.directiveData.noData = true;
+                    }
+                    else {
+                        scope.directiveData.noData = false;
+                    }
+                });
 
 
 
@@ -367,6 +380,55 @@ angular.module('suit.directives.components', [])
                             });
                         }, 200);
                     }
+                }
+            }
+        }
+    }
+}]).directive('testRow', ['$timeout', 'Animator', function($timeout, Animator) {
+    return {
+        restring: 'E',
+        replace: true,
+        templateUrl: 'testRow.html',
+        controller: function($scope) {
+        },
+        link: function($scope, elem, attrs) {
+            $scope.directiveData = {
+                expandSection: function($event) {
+                    var clickedElem = $($event.currentTarget),
+                        parentElem = clickedElem.parent();
+
+                    Animator.heightToggle({
+                        mainElem: parentElem,
+                        clicked: clickedElem,
+                        fromElem: parentElem.find('.Expandable--info'),
+                        downCallback: function (definition) {
+                            definition.mainElem.css({
+                                border: '1px solid #2C84EE'
+                            });
+
+                            definition.clicked.css({
+                                backgroundColor: '#2C84EE'
+                            });
+                        },
+                        upCallback: function (definition) {
+                            definition.mainElem.css({
+                                border: '1px solid white'
+                            });
+
+                            definition.clicked.css({
+                                backgroundColor: 'transparent'
+                            });
+                        }
+                    });
+                },
+                deleteTest: function(testId) {
+                    $scope.$emit('action-delete-test', {id: testId});
+                },
+                changeMetadata: function(testId) {
+                    $scope.$emit('action-test-metadata-change', {testId: testId});
+                },
+                workspace: function(testId) {
+                    $scope.$emit('action-workspace', {testId: testId});
                 }
             }
         }

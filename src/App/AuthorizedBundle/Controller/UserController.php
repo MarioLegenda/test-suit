@@ -33,6 +33,8 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent(), true);
 
+
+
         $userModel = new UserModel();
         if($userModel->requestContentMode($content)->extractType()->isContentValid()) {
             $responseParameters = new ResponseParameters();

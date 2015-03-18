@@ -2,6 +2,8 @@
     <div class="Listing">
         <filter ng-if="directiveData.directiveType == 'user-row'"></filter>
         <user-row ng-if="directiveData.directiveType == 'user-row'" ng-repeat="user in listing"></user-row>
-        <a href="" class="LoadMore" ng-click="directiveData.loadMore($event)">Load more</a>
+        <test-row ng-if="directiveData.directiveType == 'test-row'" ng-repeat="t in listing"></test-row>
+        <p ng-if="directiveData.noData" class="NoUsers">No data to show</p>
+        <a href="" ng-if="directiveData.showLoadMore" class="LoadMore" ng-click="directiveData.loadMore($event)">Load more</a>
     </div>
 </script>

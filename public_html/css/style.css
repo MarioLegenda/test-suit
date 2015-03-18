@@ -646,11 +646,11 @@ body {
   position: relative;
   color: white; }
 
-.UserManagmentMain {
+.UserManagmentMain, .TestListManagment {
   padding: 50px 0 0 0; }
-  .UserManagmentMain .Expandable--click .Expandable--name {
+  .UserManagmentMain .Expandable--click .Expandable--name, .UserManagmentMain .Expandable--click .Expandable--testName, .TestListManagment .Expandable--click .Expandable--name, .TestListManagment .Expandable--click .Expandable--testName {
     margin: 0 5px 0 0; }
-  .UserManagmentMain .Expandable--click .Expandable--username {
+  .UserManagmentMain .Expandable--click .Expandable--username, .UserManagmentMain .Expandable--click .Expandable--created, .TestListManagment .Expandable--click .Expandable--username, .TestListManagment .Expandable--click .Expandable--created {
     float: right; }
 
 .Listing .LoadMore {
@@ -665,6 +665,16 @@ body {
   padding: 10px; }
   .Listing .LoadMore:hover {
     color: white; }
+.Listing .NoUsers {
+  display: block;
+  width: 100%;
+  height: 46px;
+  float: left;
+  text-decoration: none;
+  color: #a0a0a0;
+  font-size: 1.2em;
+  text-align: center;
+  padding: 10px; }
 
 .ContentSubTitle {
   color: white; }

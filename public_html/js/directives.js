@@ -14,7 +14,7 @@ angular.module("suite.app", [
 
 
 angular.module('suit.directives.actions', [])
-   .directive('testCreation', function(Test, DataMediator, $timeout) {
+   .directive('testCreation', ['Test', 'DataMediator', '$timeout', function(Test, DataMediator, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -160,7 +160,7 @@ angular.module('suit.directives.actions', [])
             }
         }
     }
-}).directive('createUser', function() {
+}]).directive('createUser', function() {
     return {
         restrict: 'E',
         replace: true,
@@ -263,7 +263,7 @@ angular.module('suit.directives.actions', [])
 
             }
         }
-}).directive('workspaceBuilder', function($timeout, Test, DataShepard, RangeIterator) {
+}).directive('workspaceBuilder', ['$timeout', 'Test', 'DataShepard', 'RangeIterator', function($timeout, Test, DataShepard, RangeIterator) {
         return {
             restrict: 'A',
             replace: true,
@@ -458,8 +458,7 @@ angular.module('suit.directives.actions', [])
                 });
             }
         }
-    })
-.directive('builderModifier', function($, $compile, DataMediator, Test, CompileCommander, $timeout) {
+}]).directive('builderModifier', ['$', '$compile', 'DataMediator', 'Test', 'CompileCommander', '$timeout', function($, $compile, DataMediator, Test, CompileCommander, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -609,7 +608,7 @@ angular.module('suit.directives.actions', [])
             };
         }
     }
-}).directive('builderCreator', function($, $compile, DataMediator, Test, CompileCommander) {
+}]).directive('builderCreator', ['$', '$compile', 'DataMediator', 'Test', 'CompileCommander', function($, $compile, DataMediator, Test, CompileCommander) {
     return {
         restrict: 'E',
         replace: true,
@@ -746,7 +745,7 @@ angular.module('suit.directives.actions', [])
             };
         }
     }
-}).directive('managmentMenu', function($, $timeout) {
+}]).directive('managmentMenu', ['$', '$timeout', function($, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -829,17 +828,20 @@ angular.module('suit.directives.actions', [])
 
         }
     }
-}).directive('testList', function(Test) {
+}]).directive('testListing', ['Test', 'Pagination', function(Test, Pagination) {
     return {
         restrict: 'E',
         scope: true,
         replace: true,
-        templateUrl: 'testList.html',
+        templateUrl: 'testListing.html',
         controller: function($scope) {
-            $scope.test = {
+            $scope.directiveData = {
                 modify: false,
                 testInfo: {},
                 tests: [],
+                loaded: false,
+                loadMore: true,
+                directiveType: 'test-row',
 
                 deleteTest: function($event, id) {
                     $event.preventDefault();
@@ -847,24 +849,55 @@ angular.module('suit.directives.actions', [])
                     var promise = Test.deleteTest(id);
 
                     promise.then(function(data, status, headers, config) {
-                        $scope.test.tests = data.data.tests;
+                        $scope.directiveData.tests = data.data.tests;
                     }, function(data, status, headers, config) {
                         console.log('Something bad happend', data, status);
                     });
-                },
-                changeMetadata: function(testId) {
-                    $scope.$emit('action-test-metadata-change', {'testId': testId});
-                },
-                workspace: function(testId) {
-                    $scope.$emit('action-workspace', {testId: testId});
                 }
             };
 
-            $scope.factoryType = 'test';
+            var pagination = Pagination.init(1, 10);
+
+            $scope.$on('action-load-more', function (event, data) {
+                var promise = Test.getPaginatedUsers(pagination.nextPagination());
+
+                promise.then(function (data, status, headers, config) {
+                    var users = data.data.users;
+                    if (users.length < pagination.constant.end) {
+                        $('.LoadMore').remove();
+                    }
+
+                    for (var user in users) {
+                        if (users.hasOwnProperty(user)) {
+                            $scope.directiveData.users.push(users[user]);
+                        }
+                    }
+
+                    $scope.directiveData.loaded = true;
+                }, function (data, status, headers, config) {
+
+                });
+            });
+
+            $scope.$on('action-delete-test', function(event, data) {
+                console.log(data);
+                var promise = Test.deleteTest(data.id);
+
+                promise.then(function(data, status, headers, config) {
+                    $scope.directiveData.tests = data.data.tests;
+                }, function(data, status, headers, config) {
+                    console.log('Something bad happend', data, status);
+                });
+            });
 
             var promise = Test.getBasicTests();
             promise.then(function(data, status, headers, config) {
-                $scope.test.tests = data.data.tests;
+                var tests = data.data.tests;
+                $scope.directiveData.tests = data.data.tests;
+                $scope.directiveData.loaded = true;
+                if (tests.length < pagination.constant.end) {
+                    $scope.directiveData.loadMore = false;
+                }
             }, function(data, status, headers, config) {
                 console.log('Something bad happend', data, status);
             });
@@ -872,7 +905,7 @@ angular.module('suit.directives.actions', [])
         link: function(scope, elem, attrs) {
         }
     }
-}).directive('userListing', ['User', 'Pagination', function(User, Pagination) {
+}]).directive('userListing', ['User', 'Pagination', function(User, Pagination) {
         return {
             restrict: 'E',
             replace: true,
@@ -881,30 +914,34 @@ angular.module('suit.directives.actions', [])
                 $scope.directiveData = {
                     users: [],
                     loaded: false,
-                    directiveType: 'user-row'
+                    directiveType: 'user-row',
+                    loadMore: true
                 };
 
                 var pagination = Pagination.init(1, 10);
 
                 $scope.$on('action-load-more', function (event, data) {
-                    var promise = User.getPaginatedUsers(pagination.nextPagination());
+                    if($scope.directiveData.loadMore === true) {
+                        var promise = User.getPaginatedUsers(pagination.nextPagination());
 
-                    promise.then(function (data, status, headers, config) {
-                        var users = data.data.users;
-                        if (users.length < pagination.constant.end) {
-                            $('.LoadMore').remove();
-                        }
-
-                        for (var user in users) {
-                            if (users.hasOwnProperty(user)) {
-                                $scope.directiveData.users.push(users[user]);
+                        promise.then(function (data, status, headers, config) {
+                            var users = data.data.users;
+                            if (users.length < pagination.constant.end) {
+                                $scope.directiveData.loadMore = false;
+                                $('.LoadMore').remove();
                             }
-                        }
 
-                        $scope.directiveData.loaded = true;
-                    }, function (data, status, headers, config) {
+                            for (var user in users) {
+                                if (users.hasOwnProperty(user)) {
+                                    $scope.directiveData.users.push(users[user]);
+                                }
+                            }
 
-                    });
+                            $scope.directiveData.loaded = true;
+                        }, function (data, status, headers, config) {
+
+                        });
+                    }
                 });
 
                 $scope.$on('action-user-filter', function (event, data) {
@@ -919,8 +956,13 @@ angular.module('suit.directives.actions', [])
 
                 var promise = User.getPaginatedUsers(pagination.currentPagination());
                 promise.then(function (data, status, headers, config) {
-                    $scope.directiveData.users = data.data.users;
+                    var users = data.data.users;
+                    $scope.directiveData.users = users;
                     $scope.directiveData.loaded = true;
+
+                    if (users.length < pagination.constant.end) {
+                        $scope.directiveData.loadMore = false;
+                    }
                 }, function (data, status, headers, config) {
                     console.log('Something bad happend', data, status);
                 });

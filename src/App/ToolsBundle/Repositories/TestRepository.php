@@ -104,7 +104,7 @@ class TestRepository extends Repository
             ->getResult();
 
         if(empty($result)) {
-            return null;
+            return array();
         }
 
         $tests = array();

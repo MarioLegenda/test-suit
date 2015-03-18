@@ -1,0 +1,38 @@
+<script type="text/ng-template" id="testRow.html">
+    <section class="Expandable">
+        <a href=""  ng-click="directiveData.expandSection($event)" class="Expandable--click">
+            <span class="Expandable--item  Expandable--testName">{[{ t.test_name }]}</span>
+            <span class="Expandable--item  Expandable--created">Created: {[{ t.created }]}</span>
+        </a>
+
+        <div class="Expandable--info  TestManagment--info">
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Created by</h2>
+                <p class="InfoSection--text">{[{ t.user.username }]}</p>
+                <p class="InfoSection--text">{[{ t.user.name }]} {[{ t.user.lastname }]}</p>
+            </div>
+
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Status</h2>
+                <p ng-if="t.finished == 0" class="InfoSection--text  InfoSection--highlightNotOk">Not finished</p>
+                <p ng-if="t.finished == 1" class="InfoSection--text  InfoSection--highlightOk">Finished</p>
+            </div>
+
+            <div class="InfoSection  InfoSection--expand">
+                <h2 class="InfoSection--title">Remarks</h2>
+                <p class="InfoSection--text">{[{ t.remarks }]}</p>
+            </div>
+
+            <div class="InfoSection  InfoSection--expand">
+                <h2 class="InfoSection--title">Visibility</h2>
+                <label ng-repeat="visibility in t.visibility" class="InfoSection--text  InfoSection--rowAligned">{[{ visibility }]}</label>
+            </div>
+
+            <div class="ModificationActions">
+                <a ng-click="directiveData.changeMetadata(t.test_id)" href="" class="ModifyAction--action  ModifyAction--change">Change metadata</a>
+                <a ng-click="directiveData.workspace(t.test_id)" href="" class="ModifyAction--action  ModifyAction--modify">Workspace</a>
+                <a ng-click="directiveData.deleteTest(t.test_id)" href="" class="ModifyAction--action  ModifyAction--delete">Delete</a>
+            </div>
+        </div>
+    </section>
+</script>
