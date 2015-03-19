@@ -5,8 +5,10 @@ namespace App\ToolsBundle\Repositories;
 
 use App\ToolsBundle\Helpers\AppLogger;
 use App\ToolsBundle\Helpers\Contracts\LoggerInterface;
+use App\ToolsBundle\Helpers\Factory\ParameterInterface;
+use App\ToolsBundle\Helpers\Factory\Parameters;
 
-abstract class Repository implements LoggerInterface
+abstract class Repository implements LoggerInterface, ParameterInterface
 {
     protected $doctrine;
     protected $em;
@@ -14,12 +16,12 @@ abstract class Repository implements LoggerInterface
 
     protected $logger;
 
-    public function __construct($doctrine, $security = null) {
-        $this->doctrine = $doctrine;
+    public function __construct(Parameters $parameters) {
+        $this->doctrine = $parameters->getParameter('doctrine');
         $this->em = $this->doctrine->getManager();
 
-        if($security !== null) {
-            $this->security = $security;
+        if($parameters->getParameter('security') !== null) {
+            $this->security = $parameters->getParameter('security');
         }
     }
 

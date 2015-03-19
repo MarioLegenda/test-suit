@@ -10,8 +10,9 @@ namespace App\AuthorizedBundle\Models;
 
 
 use App\ToolsBundle\Helpers\Exceptions\ModelException;
+use App\ToolsBundle\Helpers\Factory\ParameterInterface;
 
-class UserModel
+class UserModel implements ParameterInterface
 {
     private $content = array();
     private $filterType = null;

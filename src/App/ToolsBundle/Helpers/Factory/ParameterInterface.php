@@ -3,6 +3,7 @@
 namespace App\ToolsBundle\Helpers\Factory;
 
 
-abstract class AbstractFactory
+interface ParameterInterface
 {
+
 } 

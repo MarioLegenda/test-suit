@@ -10,6 +10,7 @@ namespace App\ToolsBundle\Repositories;
 
 
 use App\ToolsBundle\Helpers\Exceptions\ModelException;
+use App\ToolsBundle\Helpers\Factory\Parameters;
 
 class FilterRepository extends Repository
 {
@@ -17,8 +18,8 @@ class FilterRepository extends Repository
     private $callback = null;
     private $returnData = null;
 
-    public function __construct($doctrine) {
-        parent::__construct($doctrine);
+    public function __construct(Parameters $parameters) {
+        parent::__construct($parameters);
 
         $this->filters['username-filter'] = function($username) {
             $qb = $this->em->createQueryBuilder();
