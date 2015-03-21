@@ -53,12 +53,30 @@ class UserModel implements ParameterInterface
             return false;
         }
 
-        if($this->filterType === 'personal-filter') {
+        if($this->filterType === 'username-filter') {
+            if($this->key !== 'username') {
+                return false;
+            }
+
+            return true;
+        }
+        else if($this->filterType === 'personal-filter') {
+            if($this->key !== 'personal') {
+                return false;
+            }
+
             $content = $this->content[$this->key];
-            return ! array_key_exists('name', $content) AND ! array_key_exists('lastname', $content);
+
+            if( ! array_key_exists('name', $content)) {
+                return false;
+            }
+
+            if( ! array_key_exists('lastname', $content)) {
+                return false;
+            }
         }
 
-        return false;
+        return true;
     }
 
     public function getType() {

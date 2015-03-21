@@ -4,6 +4,7 @@ namespace App\AuthorizedBundle\Controller;
 
 
 use App\AuthorizedBundle\Models\CreateUserModel;
+use App\AuthorizedBundle\Models\UserModel;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Helpers\AdaptedResponse;
@@ -11,11 +12,13 @@ use App\ToolsBundle\Helpers\AppLogger;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
 use App\ToolsBundle\Helpers\Exceptions\ModelException;
 use App\ToolsBundle\Helpers\Factory\ObjectFactory;
+use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\ResponseParameters;
 
 
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 use App\ToolsBundle\Repositories\UserRepository;
+use App\ToolsBundle\Repositories\FilterRepository;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\DependencyInjection\ContainerAware;
@@ -32,12 +35,8 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent(), true);
 
-        $factory = new ObjectFactory();
-        $userModel = $factory
-            ->defineType('App\\AuthorizedBundle\\Models\\UserModel')
-            ->createObject();
-
-        if($userModel->requestContentMode($content)->extractType()->isContentValid()) {
+        $userModel = new UserModel();
+        if( ! $userModel->requestContentMode($content)->extractType()->isContentValid()) {
             $responseParameters = new ResponseParameters();
             $responseParameters->addParameter('error', 'Invalid request from the user');
 
@@ -46,15 +45,9 @@ class UserController extends ContainerAware
             return $response->sendResponse(400, "BAD");
         }
 
-
-        $filterRepo = $factory
-            ->defineType('App\\ToolsBundle\\Repositories\\FilterRepository')
-            ->withObjectDependencies(array(
-                'doctrine' => $doctrine
-            ))
-            ->createObject();
-
-        //$filterRepo = new FilterRepository($doctrine);
+        $filterRepo = new FilterRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
         try {
             $filterRepo->assignFilter($userModel->getType());
             $filterRepo->runFilter($userModel->getPureContent());
@@ -134,14 +127,9 @@ class UserController extends ContainerAware
             return $response->sendResponse(400, "BAD");
         }
 
-        $factory = new ObjectFactory();
-
-        $userRepo = $factory
-            ->defineType('App\\ToolsBundle\\Repositories\\UserRepository')
-            ->withObjectDependencies(array(
-                'doctrine' => $doctrine
-            ))
-            ->createObject();
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         $users = $userRepo->getPaginatedUsers($content['start'], $content['end']);
 
@@ -187,13 +175,9 @@ class UserController extends ContainerAware
 
         $id = $content['id'];
 
-        $factory = new ObjectFactory();
-        $userRepo = $factory
-            ->defineType('App\\ToolsBundle\\Repositories\\UserRepository')
-            ->withObjectDependencies(array(
-                'doctrine' => $doctrine
-            ))
-            ->createObject();
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         $user = $userRepo->getUserInfoById($id);
 
