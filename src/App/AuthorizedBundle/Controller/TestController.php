@@ -4,6 +4,7 @@ namespace App\AuthorizedBundle\Controller;
 
 use App\ToolsBundle\Entity\TestControl;
 use App\ToolsBundle\Entity\Test;
+use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\GoodAjaxRequest;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
@@ -65,7 +66,9 @@ class TestController extends ContainerAware
             return $response->sendResponse();
         }
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
         $currentTest = $testRepo->getTestByIdentifier($testControl->getIdentifier());
 
 
@@ -85,7 +88,9 @@ class TestController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         try {
             $testRepo->updateTestById($content['test_control_id'], $content);
@@ -113,9 +118,13 @@ class TestController extends ContainerAware
         $doctrine = $this->container->get('doctrine');
         $security = $this->container->get('security.context');
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
-        $userRepo = new UserRepository($doctrine);
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
         $userId = $security->getToken()->getUser()->getUserId();
         $basicTestInfo = $testRepo->getBasicTestInformation($userId, $userRepo);
 
@@ -138,7 +147,9 @@ class TestController extends ContainerAware
         $content = (array)json_decode($request->getContent());
         $id = $content['id'];
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
         $basicTestInfo = $testRepo->getBasicTestInformationById($id);
 
 
@@ -161,7 +172,9 @@ class TestController extends ContainerAware
         $content = (array)json_decode($request->getContent());
         $id = $content['id'];
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         try {
             $testRepo->deleteTestById($id);

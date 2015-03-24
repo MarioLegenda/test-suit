@@ -28,6 +28,14 @@ class UserModel implements ParameterInterface
         return $this;
     }
 
+    public function isValidPagination() {
+        if( ! array_key_exists('start', $this->content) AND ! array_key_exists('end', $this->content)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function extractType() {
         if(array_key_exists('filterType', $this->content)) {
             $this->filterType = $this->content['filterType'];

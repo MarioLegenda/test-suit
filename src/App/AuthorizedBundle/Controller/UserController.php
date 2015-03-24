@@ -16,11 +16,14 @@ use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\ResponseParameters;
 
 
+
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 use App\ToolsBundle\Repositories\UserRepository;
 use App\ToolsBundle\Repositories\FilterRepository;
 
+use ControlFlowCompiler\Compiler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use StrongType\String;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -112,7 +115,30 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        if( ! array_key_exists('start', $content) OR ! array_key_exists('end', $content)) {
+        /*$userModel = new UserModel();
+        $compiler = new Compiler();
+        $compiler
+            ->runObject($userModel)
+            ->withMethods(
+                $compiler->method()->name('requestContentMode')->withParameters($content)->void()->save(),
+                $compiler->method()->name('isValidPagination')->true()->save()
+            )
+            ->ifFailsRun(function() {
+                $logger = $this->container->get('app_logger');
+                $logger->makeLog(AppLogger::WARNING)
+                    ->addDate()
+                    ->addMessage("Someone tried to make a custom request in UserController::userPaginatedAction(). No 'end' or 'start' parameters. Possible hack")
+                    ->log();
+
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('errors', 'Invalid request from the client');
+
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(400, "BAD");
+            })
+            ->compile();*/
+        if( ! array_key_exists('start', $content) AND ! array_key_exists('end', $content)) {
             $logger = $this->container->get('app_logger');
             $logger->makeLog(AppLogger::WARNING)
                 ->addDate()
@@ -157,6 +183,7 @@ class UserController extends ContainerAware
         $doctrine = $this->container->get('doctrine');
 
         $content = (array)json_decode($request->getContent());
+
 
         if( ! array_key_exists('id', $content) OR empty($content['id'])) {
             $logger = $this->container->get('app_logger');
