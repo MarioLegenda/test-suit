@@ -39,71 +39,55 @@ class UserController extends ContainerAware
         $content = (array)json_decode($request->getContent(), true);
 
         $userModel = new UserModel();
-        if( ! $userModel->requestContentMode($content)->extractType()->isContentValid()) {
-            $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('error', 'Invalid request from the user');
-
-            $response = new AdaptedResponse();
-            $response->setContent($responseParameters);
-            return $response->sendResponse(400, "BAD");
-        }
-
         $filterRepo = new FilterRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
-        try {
-            $filterRepo->assignFilter($userModel->getType());
-            $filterRepo->runFilter($userModel->getPureContent());
-            $users = $filterRepo->getRepositoryData();
-        }
-        catch(ModelException $e) {
-            $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('model-error', $e->getMessage());
 
-            $response = new AdaptedResponse();
-            $response->setContent($responseParameters);
-            return $response->sendResponse(400, "BAD");
-        }
-        catch(\Exception $e) {
-            $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('generic-error', $e->getMessage());
+        $compiler = new Compiler();
+        $compiler
+            ->runObject($userModel)
+            ->withMethods(
+                $compiler->method()->name('requestContentMode')->withParameters($content)->void()->save(),
+                $compiler->method()->name('extractType')->void()->save(),
+                $compiler->method()->name('isContentValid')->true()->save()
+            )
+            ->ifFailsRun(function() {
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('error', 'Invalid request from the user');
 
-            $response = new AdaptedResponse();
-            $response->setContent($responseParameters);
-            return $response->sendResponse(400, "BAD");
-        }
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(400, "BAD");
+            })
+            ->then()
+            ->runObject($filterRepo)
+            ->withMethods(
+                $compiler->method()->name('assignFilter')->withParameters($userModel->getType())->void()->save(),
+                $compiler->method()->name('runFilter')->withParameters($userModel->getPureContent())->void()->save(),
+                $compiler->method()->name('getRepositoryData')->arr()->save()
+            )
+            ->ifFailsRun(function() {
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('generic-error', 'Something bad happend');
 
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('users', $users);
-        $response = new AdaptedResponse();
-        $response->setContent($responseParameters);
-        return $response->sendResponse(200, "OK");
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(400, "BAD");
+            })
+            ->ifSuccedesRun(function($context) use ($filterRepo) {
+                $users = $context->getObjectStorage()->retreiveUnit($filterRepo)->retreive('getRepositoryData')->getValue();
 
-    }
 
-    /**
-     * @Security("has_role('ROLE_USER_MANAGER')")
-     */
-    public function userListingAction() {
-        $doctrine = $this->container->get('doctrine');
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('users', $users);
 
-        $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
-        $users = $userRepo->getAllUsers();
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(200, "OK");
+            })
+            ->compile();
 
-        $responseParameters = new ResponseParameters();
-        if($users !== null) {
-            $responseParameters->addParameter('users', $users);
-
-            $response = new AdaptedResponse();
-            $response->setContent($responseParameters);
-            return $response->sendResponse(200, "OK");
-        }
-
-        $responseParameters->addParameter('users', array());
-
-        $response = new AdaptedResponse();
-        $response->setContent($responseParameters);
-        return $response->sendResponse(200, "OK");
+        return $compiler->getResponse();
     }
 
     /**
@@ -115,7 +99,11 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        /*$userModel = new UserModel();
+        $userModel = new UserModel();
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
+
         $compiler = new Compiler();
         $compiler
             ->runObject($userModel)
@@ -137,42 +125,32 @@ class UserController extends ContainerAware
                 $response->setContent($responseParameters);
                 return $response->sendResponse(400, "BAD");
             })
-            ->compile();*/
-        if( ! array_key_exists('start', $content) AND ! array_key_exists('end', $content)) {
-            $logger = $this->container->get('app_logger');
-            $logger->makeLog(AppLogger::WARNING)
-                ->addDate()
-                ->addMessage("Someone tried to make a custom request in UserController::userPaginatedAction(). No 'end' or 'start' parameters. Possible hack")
-                ->log();
+            ->then()
+            ->runObject($userRepo)
+            ->withMethods(
+                $compiler->method()->name('getPaginatedUsers')->withParameters($content['start'], $content['end'])->arr()->save()
+            )
+            ->ifFailsRun(function() {
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('users', array());
 
-            $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('errors', 'Invalid request from the client');
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(200, "OK");
+            })
+            ->ifSuccedesRun(function($context) use ($userRepo) {
+                $users = $context->getObjectStorage()->retreiveUnit($userRepo)->retreive('getPaginatedUsers')->getValue();
 
-            $response = new AdaptedResponse();
-            $response->setContent($responseParameters);
-            return $response->sendResponse(400, "BAD");
-        }
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('users', $users);
 
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(200, "OK");
+            })
+            ->compile();
 
-        $users = $userRepo->getPaginatedUsers($content['start'], $content['end']);
-
-        $responseParameters = new ResponseParameters();
-        if($users !== null) {
-            $responseParameters->addParameter('users', $users);
-
-            $response = new AdaptedResponse();
-            $response->setContent($responseParameters);
-            return $response->sendResponse(200, "OK");
-        }
-
-        $responseParameters->addParameter('users', array());
-
-        $response = new AdaptedResponse();
-        $response->setContent($responseParameters);
-        return $response->sendResponse(200, "OK");
+        return $compiler->getResponse();
     }
 
     /**
@@ -184,36 +162,58 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-
-        if( ! array_key_exists('id', $content) OR empty($content['id'])) {
-            $logger = $this->container->get('app_logger');
-            $logger->makeLog(AppLogger::WARNING)
-                ->addDate()
-                ->addMessage("Someone tried to make a request outside of the app in UserController::userInfoAction(). Probably inside the console. Possible hack.")
-                ->log();
-
-            $content = new ResponseParameters();
-            $content->addParameter("errors", array("Invalid request from the client"));
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse();
-        }
-
-        $id = $content['id'];
-
+        $userModel = new UserModel();
         $userRepo = new UserRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
+        $logger = $this->container->get('app_logger');
 
-        $user = $userRepo->getUserInfoById($id);
+        $compiler = new Compiler();
+        $compiler
+            ->runObject($userModel)
+            ->withMethods(
+                $compiler->method()->name('requestContentMode')->withParameters($content)->void()->save(),
+                $compiler->method()->name('isUserInfoValid')->true()->save()
+            )
+            ->ifFailsRun(function() use ($logger) {
+                $logger->makeLog(AppLogger::WARNING)
+                    ->addDate()
+                    ->addMessage("Someone tried to make a request outside of the app in UserController::userInfoAction(). Probably inside the console. Possible hack.")
+                    ->log();
 
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('user', $user);
+                $content = new ResponseParameters();
+                $content->addParameter("errors", array("Invalid request from the client"));
 
-        $response = new AdaptedResponse();
-        $response->setContent($responseParameters);
-        return $response->sendResponse(200, "OK");
+                $response = new AdaptedResponse();
+                $response->setContent($content);
+                return $response->sendResponse();
+            })
+            ->then()
+            ->runObject($userRepo)
+            ->withMethods(
+                $compiler->method()->name('getUserInfoById')->withParameters($content['id'])->arr()->save()
+            )
+            ->ifFailsRun(function() {
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('generic-error', 'No user infos were found or something bad happend');
+
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(400, "BAD");
+            })
+            ->ifSuccedesRun(function($context) use ($userRepo) {
+                $user = $context->getObjectStorage()->retreiveUnit($userRepo)->retreive('getUserInfoById')->getValue();
+
+                $responseParameters = new ResponseParameters();
+                $responseParameters->addParameter('user', $user);
+
+                $response = new AdaptedResponse();
+                $response->setContent($responseParameters);
+                return $response->sendResponse(200, "OK");
+            })
+            ->compile();
+
+        return $compiler->getResponse();
     }
 
     /**
@@ -271,7 +271,10 @@ class UserController extends ContainerAware
             return $response->sendResponse();
         }
 
-        $userRepo = new UserRepository($doctrine, $this->container->get('security.password_encoder'));
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine,
+            'security' => $this->container->get('security.password_encoder')
+        )));
         $result = $userRepo->getUserByUsername($user->getUsername());
 
         if($result !== null) {

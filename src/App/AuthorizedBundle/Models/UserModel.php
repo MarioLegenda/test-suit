@@ -36,6 +36,14 @@ class UserModel implements ParameterInterface
         return true;
     }
 
+    public function isUserInfoValid() {
+        if( ! array_key_exists('id', $this->content) OR empty($this->content['id'])) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function extractType() {
         if(array_key_exists('filterType', $this->content)) {
             $this->filterType = $this->content['filterType'];

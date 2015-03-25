@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d332069d557be4995cef3aee85810f09",
+    "hash": "23ef685aaec58dba2d518575be0f970f",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1098,16 +1098,16 @@
         },
         {
             "name": "mario-legenda/control-flow-compiler",
-            "version": "0.0.1",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MarioLegenda/control-flow-compiler.git",
-                "reference": "1c2ac8876c543103a35cd5a8cf2c70976ae7f236"
+                "reference": "97d4f37d3d82040505b873d27c2851db0d9e2fba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MarioLegenda/control-flow-compiler/zipball/1c2ac8876c543103a35cd5a8cf2c70976ae7f236",
-                "reference": "1c2ac8876c543103a35cd5a8cf2c70976ae7f236",
+                "url": "https://api.github.com/repos/MarioLegenda/control-flow-compiler/zipball/97d4f37d3d82040505b873d27c2851db0d9e2fba",
+                "reference": "97d4f37d3d82040505b873d27c2851db0d9e2fba",
                 "shasum": ""
             },
             "require": {
@@ -1136,7 +1136,7 @@
             "keywords": [
                 "php"
             ],
-            "time": "2015-03-24 21:54:58"
+            "time": "2015-03-25 02:32:39"
         },
         {
             "name": "mario-legenda/php-strong-types",
@@ -2644,7 +2644,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "mario-legenda/control-flow-compiler": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

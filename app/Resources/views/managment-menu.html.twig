@@ -5,7 +5,7 @@
         <div class="MenuBlock">
             <p ng-click="menus.toggle($event, 'userMenu')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-user fa-3x"></span><span class="MenuChoice--text">User managment</span></p>
             <p ng-click="menus.toggle($event, 'testMenu')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-code fa-3x"></span><span class="MenuChoice--text">Test managment</span></p>
-            <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-question fa-3x"></span><span class="MenuChoice--text">Help</span></p>
+            <p ng-click="managment.toggle($event, 'helpMenu')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-question fa-3x"></span><span class="MenuChoice--text">Help</span></p>
             <a href="{{ path('logout') }}" class="MenuChoice"><span class="MenuChoice--icon  fa fa-power-off fa-3x"></span><span class="MenuChoice--text">Logout</span></a>
         </div>
 
@@ -32,6 +32,7 @@
             <test-creation ng-if="managment.createTest"></test-creation>
             <test-listing ng-if="managment.testList"></test-listing>
             <workspace ng-if="managment.workspace" test-control-id="{[{ importance.testControlId }]}"></workspace>
+            <help ng-if="managment.helpMenu"></help>
         </div>
     </div>
 

@@ -5,9 +5,12 @@ namespace ControlFlowCompiler;
 use ControlFlowCompiler\Arguments\ArgumentFactory;
 use ControlFlowCompiler\Exceptions\CriticalErrorException;
 use ControlFlowCompiler\Exceptions\MethodResolverException;
+use ControlFlowCompiler\MethodTypes\Contracts\ReturnsValueInterface;
 use ControlFlowCompiler\MethodTypes\Exceptions\CriticalMethodException;
 use ControlFlowCompiler\MethodTypes\MethodFactory\MethodFactory;
+use ControlFlowCompiler\Storage\StorageUnit;
 use StrongType\Exceptions\CriticalTypeException;
+use ControlFlowCompiler\Storage\ObjectStorage;
 
 class Compiler
 {
@@ -24,12 +27,11 @@ class Compiler
     private $resolverSuccess = false;
 
 
-    private $methodObjectStorage;
+    private $objectStorage;
     private $returned;
 
     public function __construct() {
-        $this->returned = new Returned();
-        $this->methodObjectStorage = new \SplObjectStorage();
+        $this->objectStorage = new ObjectStorage(new \SplObjectStorage());
     }
 
     public function runObject($object) {
@@ -39,7 +41,6 @@ class Compiler
 
         $this->methods = array();
         $this->workingObject = $object;
-        $this->returned->clear();
 
         $this->response['failure'] = null;
         $this->response['success'] = null;
@@ -47,7 +48,7 @@ class Compiler
         $this->resolverSuccess = false;
         $this->resolverFailed = false;
 
-        $this->methodObjectStorage = new \SplObjectStorage();
+        $this->objectStorage->emptyStorage();
 
         return $this;
     }
@@ -104,6 +105,13 @@ class Compiler
         try {
             foreach($this->methods as $method) {
                 $failed = $method->execute($this->workingObject)->checkReturned();
+
+                if($method instanceof ReturnsValueInterface) {
+                    $storageUnit = new StorageUnit();
+                    $storageUnit->store($method->getMethodName(), $method->getReturned());
+                    $this->objectStorage->storeUnit($this->workingObject, $storageUnit);
+                }
+
                 if($failed === false) {
                     $this->resolverFailed = true;
                     break;
@@ -130,6 +138,13 @@ class Compiler
         try {
             foreach($this->methods as $method) {
                 $failed = $method->execute($this->workingObject)->checkReturned();
+
+                if($method instanceof ReturnsValueInterface) {
+                    $returned = new StorageUnit();
+                    $returned->store($method->getMethodName(), $returned);
+                    $this->objectStorage->storeUnit($this->workingObject, $returned);
+                }
+
                 if($failed === false) {
                     $this->resolverFailed = true;
                     break;
@@ -170,14 +185,18 @@ class Compiler
                 throw new CriticalErrorException('MethodResolver: MethodResolver has failed to resolve method stack but no failure response has been given');
             }
 
-            return $this->response['failure']($this);
+            $context = new Context();
+            $context->setObjectStorage($this->objectStorage);
+            return $this->response['failure']($context);
         }
         else if($this->resolverSuccess === true) {
             if($this->response['success'] === null) {
                 throw new CriticalErrorException('MethodResolver: MethodResolver has failed to resolve method stack but no failure response has been given');
             }
 
-            return $this->response['success']($this);
+            $context = new Context();
+            $context->setObjectStorage($this->objectStorage);
+            return $this->response['success']($context);
         }
 
         throw new CriticalErrorException('MethodResolver::getResponse(): If MethodResolver::getResponse() is called, it has to return a Response');

@@ -33,18 +33,20 @@
                     <label class="InfoSection--block">
                     </label>
 
-                    <label ng-if="user.role == 'user_manager'" class="InfoSection--block">
-                        USER MANAGER: can create/solve tests but and create/edit/delete users. This is
+                <div ng-repeat="permition in directiveData.userInfo[user.user_id].permitions">
+                    <label ng-if="permition.role == 'ROLE_USER_MANAGER'" class="InfoSection--block">
+                        USER MANAGER: can create/solve tests and create/edit users. This is
                         the maximum permission that a user can have
                     </label>
 
-                    <label ng-if="user.role == 'test_creator'" class="InfoSection--block">
-                        TEST CREATOR: can create/solve tests but cannot create/edit/delete users
+                    <label ng-if="permition.role == 'ROLE_TEST_CREATOR'" class="InfoSection--block">
+                        TEST CREATOR: can create/solve tests
                     </label>
 
-                    <label ng-if="user.role == 'test_solver'" class="InfoSection--block">
-                        TEST SOLVER: can only solve tests and nothing more
+                    <label ng-if="permition.role == 'ROLE_TEST_SOLVER'" class="InfoSection--block">
+                        TEST SOLVER: can solve tests
                     </label>
+                </div>
                 </p>
             </div>
 

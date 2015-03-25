@@ -14,6 +14,16 @@ angular.module("suite.app", [
 
 
 angular.module('suit.directives.actions', [])
+   .directive('help', [function() {
+        return {
+            restirct: 'E',
+            replace: true,
+            templateUrl: 'help.html',
+            link: function($scope, elem, attrs) {
+
+            }
+        }
+    }])
    .directive('testCreation', ['Test', 'DataMediator', '$timeout', function(Test, DataMediator, $timeout) {
     return {
         restrict: 'E',
@@ -780,6 +790,7 @@ angular.module('suit.directives.actions', [])
                 createTest: false,
                 testList: false,
                 workspace: false,
+                helpMenu: false,
 
                 toggle: function($event, type) {
                     if( ! this.hasOwnProperty(type)) {
@@ -787,7 +798,7 @@ angular.module('suit.directives.actions', [])
                     }
 
                     this[type] = !this[type];
-                    var menus = ['createUser', 'listUsers', 'createTest', 'testList', 'workspace'];
+                    var menus = ['createUser', 'listUsers', 'createTest', 'testList', 'workspace', 'helpMenu'];
                     menus.splice(menus.indexOf(type), 1);
 
                     for(var i = 0; i < menus.length; i++) {

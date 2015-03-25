@@ -18,18 +18,40 @@ class UserRepository extends Repository
 
     public function getUserInfoById($id) {
         $qb = $this->em->createQueryBuilder();
-        $result = $qb->select('ui.user_id', 'ui.fields', 'ui.programming_languages', 'ui.tools', 'ui.years_of_experience', 'ui.future_plans', 'ui.description')
+        $userInfos = $qb->select(
+            'ui.user_id',
+            'ui.fields',
+            'ui.programming_languages',
+            'ui.tools',
+            'ui.years_of_experience',
+            'ui.future_plans',
+            'ui.description')
             ->from('AppToolsBundle:UserInfo', 'ui')
             ->where($qb->expr()->eq('ui.user_id', ':user_id'))
             ->setParameter(':user_id', $id)
             ->getQuery()
-            ->getResult();
+            ->getResult(QUERY::HYDRATE_ARRAY);
 
-        if(empty($result)) {
+        if(empty($userInfos)) {
             return null;
         }
 
-        return $result[0];
+        $qb = $this->em->createQueryBuilder();
+        $roles = $qb->select('r.role')
+            ->from('AppToolsBundle:Role', 'r')
+            ->where($qb->expr()->eq('r.user_id', ':user_id'))
+            ->setParameter(':user_id', $id)
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+
+        if(empty($roles)) {
+            return null;
+        }
+
+        $ui = $userInfos[0];
+        $ui['permitions'] = $roles;
+
+        return $ui;
     }
 
     public function getUserByUsername($username) {

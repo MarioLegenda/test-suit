@@ -4,6 +4,7 @@ namespace ControlFlowCompiler\MethodTypes\MethodFactory;
 
 
 use ControlFlowCompiler\DefinitionExaminer;
+use ControlFlowCompiler\MethodTypes\ReturnedValue;
 use ControlFlowCompiler\MethodTypes\ReturnsObjectMethod;
 use ControlFlowCompiler\MethodTypes\ReturnsTrueMethod;
 use ControlFlowCompiler\MethodTypes\ReturnsFalseMethod;
@@ -69,46 +70,70 @@ class MethodFactory extends AbstractMethodFactory
 
         if($this->examiner->isReturningArray()) {
             if ($this->examiner->hasArguments()) {
-                return new ReturnsArrayMethod(
+                $arrayMethod =  new ReturnsArrayMethod(
                     $this->methodDefinition->getMethodName(),
                     $this->methodDefinition->getParameters()
                 );
+
+                $arrayMethod->setReturned(new ReturnedValue());
+
+                return $arrayMethod;
             }
 
             if (!$this->examiner->hasArguments()) {
-                return new ReturnsArrayMethod(
+                $arrayMethod =  new ReturnsArrayMethod(
                     $this->methodDefinition->getMethodName()
                 );
+
+                $arrayMethod->setReturned(new ReturnedValue());
+
+                return $arrayMethod;
             }
         }
 
         if($this->examiner->doesReturnObject()) {
             if($this->examiner->hasArguments()) {
-                return new ReturnsObjectMethod(
+                $objectMethod =  new ReturnsObjectMethod(
                     $this->methodDefinition->getMethodName(),
                     $this->methodDefinition->getParameters()
                 );
+
+                $objectMethod->setReturned(new ReturnedValue());
+
+                return $objectMethod;
             }
 
             if( ! $this->examiner->hasArguments()) {
-                return new ReturnsObjectMethod(
+                $objectMethod = new ReturnsObjectMethod(
                     $this->methodDefinition->getMethodName()
                 );
+
+                $objectMethod->setReturned(new ReturnedValue());
+
+                return $objectMethod;
             }
         }
 
         if($this->examiner->doesReturnString()) {
             if ($this->examiner->hasArguments()) {
-                return new ReturnsStringMethod(
+                $stringMethod =  new ReturnsStringMethod(
                     $this->methodDefinition->getMethodName(),
                     $this->methodDefinition->getParameters()
                 );
+
+                $stringMethod->setReturned(new ReturnedValue());
+
+                return $stringMethod;
             }
 
             if (!$this->examiner->hasArguments()) {
-                return new ReturnsStringMethod(
+                $stringMethod = new ReturnsStringMethod(
                     $this->methodDefinition->getMethodName()
                 );
+
+                $stringMethod->setReturned(new ReturnedValue());
+
+                return $stringMethod;
             }
         }
 

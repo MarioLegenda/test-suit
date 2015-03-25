@@ -63,12 +63,13 @@ $compiler->runObject($company)
     ->withMethods(
         $compiler->method()->name('hireEmployee')->withParameters($mario)->void()->save(),
         $compiler->method()->name('hireEmployee')->withParameters($martina)->void()->save(),
-        $compiler->method()->name('lookupEmployee')->withParameters($mario)->self()->save()
+        $compiler->method()->name('lookupEmployee')->withParameters($mario)->self()->save(),
+        $compiler->method()->name('asArray')->arr()->save()
     )
-    ->ifFailsRun(function() {
+    ->ifFailsRun(function($context) {
         die('propalo');
     })
-    ->ifSuccedesRun(function() {
+    ->ifSuccedesRun(function($context) {
         die('uspjelo');
     })
     ->compile();

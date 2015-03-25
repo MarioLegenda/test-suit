@@ -69,8 +69,8 @@ class TestController extends ContainerAware
         $testRepo = new TestRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
-        $currentTest = $testRepo->getTestByIdentifier($testControl->getIdentifier());
 
+        $currentTest = $testRepo->getTestByIdentifier($testControl->getIdentifier());
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);

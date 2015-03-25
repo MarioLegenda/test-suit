@@ -1,0 +1,39 @@
+.Help {
+  .HelpContent {
+
+  }
+
+  .ContentPart {
+    width:100%;
+    float:left;
+    color:white;
+
+    .PartTitle {
+      width:100%;
+      float:left;
+      font-size:1.4em;
+
+      padding:5px;
+    }
+
+    .PartRow {
+      width:70%;
+      float:left;
+      font-size:1.2em;
+      color:$grayLight;
+
+      margin:0 0 0 25px;
+      padding:5px;
+      padding-left:0;
+      border-bottom:1px dotted white;
+
+      &:hover {
+        color:white;
+      }
+    }
+
+    .Important {
+      color:$mainHoverColor;
+    }
+  }
+}

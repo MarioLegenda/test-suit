@@ -28,6 +28,10 @@ abstract class MethodType
         return $this->returnedValue;
     }
 
+    public function getMethodName() {
+        return $this->methodName;
+    }
+
     public function execute($workingObject) {
         $this->workingObject = $workingObject;
 
