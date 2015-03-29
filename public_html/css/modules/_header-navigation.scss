@@ -1,22 +1,14 @@
 .MainNavigation {
   z-index:100;
 
-  .MainNavigation__List {
-    width:600px;
+  .AppLogo {
+    width:100px;
     float:left;
+    font-family: "Dancing Script", "Open Sans Condensed", sans-serif;
+    color:$mainHoverColor;
+    font-size:1.6em;
 
-    padding:5px;
-
-    .List--navigationLink {
-      display:block;
-      float:left;
-
-      width:$iconWidth;
-      height:$iconHeight;
-
-      background: url(../images/icons/home-icon.png) no-repeat;
-      @include prefix(background-size, cover);
-    }
+    padding:5px 0 5px 0;
   }
 
   .UserInfo {

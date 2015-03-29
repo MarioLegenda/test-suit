@@ -39,6 +39,10 @@
     color:white;
   }
 
+  .InsideLink {
+    color:$mainHoverColor;
+  }
+
   .InstallInformation--continueButton {
     width:150px;
     float:right;
@@ -71,7 +75,7 @@
   font-family: 'Dancing Script', cursive;
   font-size:7em;
   text-align: center;
-  color:white;
+  color:$mainHoverColor;
 
   margin:50px 0 50px 0;
 }

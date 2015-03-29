@@ -5,6 +5,7 @@ namespace App\PublicBundle\Controller;
 
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Helpers\BadAjaxResponse;
+use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\InstallHelper;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\BadAjaxRequest;
@@ -74,7 +75,10 @@ class InstallController extends ContainerAware
 
 
 
-        $userRepo = new UserRepository($doctrine, $encoder);
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine,
+            'security' => $encoder
+        )));
         try {
             $userRepo->createUser($user, array('ROLE_USER_MANAGER', 'ROLE_TEST_CREATOR', 'ROLE_TEST_SOLVER'));
             $userRepo->saveUser();

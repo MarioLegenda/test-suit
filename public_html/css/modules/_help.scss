@@ -1,6 +1,11 @@
 .Help {
   .HelpContent {
+    width:100%;
+    float:left;
+  }
 
+  .HelpInformation {
+    margin:100px 0 100px 0;
   }
 
   .ContentPart {
@@ -12,6 +17,7 @@
       width:100%;
       float:left;
       font-size:1.4em;
+      color:white;
 
       padding:5px;
     }
@@ -34,6 +40,58 @@
 
     .Important {
       color:$mainHoverColor;
+    }
+
+    .InsideLink {
+      color:$blueSoft;
+      &:hover {
+        border-bottom:1px dotted white;
+      }
+    }
+
+    .TitleHighlight {
+      border-bottom:1px solid white;
+    }
+
+    .ContentText {
+      color:white;
+      font-size:1.2em;
+      line-height: 1.4em;
+      letter-spacing: 0.06em;
+      margin:20px 0 0 0;
+
+      padding:0 0 0 40px;
+    }
+
+    .ContentList {
+      margin:20px 0 20px 0;
+    }
+
+    .NextRight--15 {
+      margin-right:15px;
+    }
+
+    .NextRight--10 {
+      margin-right:8px;
+    }
+
+    .MenuHighlight {
+      width:100%;
+      float:left;
+      margin:10px 0 10px 0;
+
+      .MenuHighlight--label {
+        display:inline-block;
+        float:left;
+
+        border-bottom:1px dotted white;
+      }
+
+      .MenuHighlight--menuDirection {
+        color:$mainHoverColor;
+        margin:0 10px 0 10px;
+        border:none;
+      }
     }
   }
 }

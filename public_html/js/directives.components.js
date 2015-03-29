@@ -238,7 +238,7 @@ angular.module('suit.directives.components', [])
                 interaction: function($event, type) {
                     var eventObj = decideEvnObject(type);
 
-                    if(this[type].length >= 4) {
+                    if(this[type].length >= 0) {
                         $scope.$emit('action-user-filter', eventObj);
                     }
                 }

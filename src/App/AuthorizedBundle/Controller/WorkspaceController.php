@@ -2,6 +2,7 @@
 
 namespace App\AuthorizedBundle\Controller;
 
+use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\BadAjaxResponse;
 use App\ToolsBundle\Helpers\GoodAjaxRequest;
@@ -25,7 +26,10 @@ class WorkspaceController extends ContainerAware
         $contents = (array)json_decode($request->getContent(), true);
         $testId = $contents['id'];
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
+
         $testControl = $testRepo->getTestControlById($testId);
         $testRange = $testRepo->getTestRange($testId);
 
@@ -51,7 +55,9 @@ class WorkspaceController extends ContainerAware
 
         $data = (array)json_decode($request->getContent(), true);
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         $testControl = $testRepo->getTestControlById($testControlId);
         $test = new Test();
@@ -91,7 +97,9 @@ class WorkspaceController extends ContainerAware
         $contents = (array)json_decode($request->getContent(), true);
         $id = $contents['id'];
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         try {
             $testRepo->finishTest($id);
@@ -123,7 +131,9 @@ class WorkspaceController extends ContainerAware
         $testId = $contents['test_id'];
         $testControlId = (array_key_exists('test_control_id', $contents)) ? $contents['test_control_id'] : null;
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
         $test = $testRepo->getTestById($testId, $testControlId);
 
         if($test === null) {
@@ -155,7 +165,9 @@ class WorkspaceController extends ContainerAware
         $id = $contents['id'];
         $content = $contents['test'];
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         try {
             $testRepo->modifyTestById($id, $content);
@@ -186,7 +198,9 @@ class WorkspaceController extends ContainerAware
         $contents = (array)json_decode($request->getContent(), true);
         $id = $contents['id'];
 
-        $testRepo = new TestRepository($doctrine);
+        $testRepo = new TestRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
 
         try {
             $testRepo->deleteQuestionById($id);

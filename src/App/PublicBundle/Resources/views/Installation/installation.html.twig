@@ -3,20 +3,19 @@
 {% block content %}
     <div class="Container">
         <div class="InstallInformation" ng-controller="inst.informationCtrl">
-            <p class="InstallInformation--paragraph">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent non sollicitudin dui.
-                Vivamus tempus ex nisl, nec gravida massa mattis facilisis. Nullam dapibus lorem in blandit
-                finibus. Morbi arcu augue, tincidunt vitae tristique a, lacinia vitae arcu. Integer vel
-                molestie ipsum, ac pellentesque nibh.
-            </p>
+            <div class="InstallInformation--paragraph">
+                Test suit has to be installed before using it. Installation requires for you to
+                create the first user. This user will be created with maximum priviledges.
+                Please, insure that you issued the command
+            </div>
 
-            <p class="InstallInformation--paragraph">
-                In hac habitasse platea dictumst. Quisque semper est
-                ut odio mollis tempus. Sed ut mattis ante. Mauris quis sollicitudin sapien. Nullam augue
-                quam, suscipit at felis ac, sodales pulvinar justo. Sed ante ex, pulvinar quis porta sit
-                amet, mollis sed nunc. In lacinia eu sem laoreet fringilla. In eget lacus eu turpis dapibus
-                scelerisque.
-            </p>
+            <div class="InstallInformation--paragraph">
+                <span class="InsideLink">php app/console doctrine:schema:create</span>
+            </div>
+
+            <div class="InstallInformation--paragraph">
+                before you create the first user.
+            </div>
 
             <button class="InstallInformation--continueButton" ng-click="showForm()">Continue</button>
         </div>

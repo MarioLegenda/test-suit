@@ -93,6 +93,36 @@ class UserController extends ContainerAware
     /**
      * @Security("has_role('ROLE_USER_MANAGER')")
      */
+    public function userListingAction() {
+        $doctrine = $this->container->get('doctrine');
+
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine,
+            'security' => $this->container->get('security.password_encoder')
+        )));
+        $users = $userRepo->getAllUsers();
+
+        $responseParameters = new ResponseParameters();
+        if($users !== null) {
+            $responseParameters->addParameter('users', $users);
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+
+            return $response->sendResponse(200, "OK");
+        }
+
+        $responseParameters->addParameter('users', array());
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+
+        return $response->sendResponse(200, "OK");
+    }
+
+    /**
+     * @Security("has_role('ROLE_USER_MANAGER')")
+     */
     public function userPaginatedAction() {
         $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');

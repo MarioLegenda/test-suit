@@ -14,11 +14,50 @@ angular.module("suite.app", [
 
 
 angular.module('suit.directives.actions', [])
-   .directive('help', [function() {
+   .directive('help', ['$timeout', function($timeout) {
         return {
             restirct: 'E',
             replace: true,
             templateUrl: 'help.html',
+            controller: function($scope) {
+                $scope.help = {
+                    introduction: true,
+                    creating_users: false,
+                    user_permissions: false,
+                    informational_fields: false,
+                    creating_tests: false,
+                    test_permissions: false,
+                    question_suit: false,
+                    question_blocks: false,
+
+                    toggle: function($event, type) {
+                        if( ! this.hasOwnProperty(type)) {
+                            throw Error('ManagmentMenu: Wrong type ' + type);
+                        }
+
+                        this[type] = !this[type];
+                        var menus = [
+                            'introduction',
+                            'creating_users',
+                            'user_permissions',
+                            'informational_fields',
+                            'creating_tests',
+                            'test_permissions',
+                            'question_suit',
+                            'question_blocks'
+                        ];
+                        menus.splice(menus.indexOf(type), 1);
+
+                        for(var i = 0; i < menus.length; i++) {
+                            this[menus[i]] = false;
+                        }
+
+                        $timeout(function() {
+                            window.scrollTo(0, 830);
+                        }, 200);
+                    }
+                }
+            },
             link: function($scope, elem, attrs) {
 
             }
