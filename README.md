@@ -26,5 +26,5 @@ Execute command `php app/console doctrine:schema:update --force`
 
 That is it.
 
-Test suit will work with `localhost` and the domain that you create. Also (for Symfony2 users), you can run the application in development environment with `localhost/test-suite/public_html/app_dev.php`. Either choice will work.
+Test suit will work with either `localhost` or a domain that you create. Also (for Symfony2 users), you can run the application in development environment with `localhost/test-suite/public_html/app_dev.php`. Either choice will work.
 
