@@ -8,7 +8,6 @@ use App\AuthorizedBundle\Models\UserModel;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Helpers\AdaptedResponse;
-use App\ToolsBundle\Helpers\AppLogger;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
 use App\ToolsBundle\Helpers\Exceptions\ModelException;
 use App\ToolsBundle\Helpers\Factory\ObjectFactory;
@@ -257,13 +256,6 @@ class UserController extends ContainerAware
 
         $userModel = new CreateUserModel($formValues);
         if( ! $userModel->areValidKeys() ) {
-            $logger = $this->container->get('app_logger');
-            $logger->makeLog(AppLogger::WARNING)
-                ->addDate()
-                ->addMessage("Someone tried to make a request outside of the app in UserController::saveUserAction(). Probably inside the console. Possible hack.")
-                ->log();
-
-
             $content = new ResponseParameters();
             $content->addParameter("errors", array("Some form values are invalid. Refresh the current page and try again"));
 
@@ -308,12 +300,6 @@ class UserController extends ContainerAware
         $result = $userRepo->getUserByUsername($user->getUsername());
 
         if($result !== null) {
-            $logger = $this->container->get('app_logger');
-            $logger->makeLog(AppLogger::NOTIFICATION)
-                ->addDate()
-                ->addMessage("Someone wrote an already using email/username which is weird in UserController::saveUserAction()")
-                ->log();
-
             $content = new ResponseParameters();
             $content->addParameter("errors", array("errors" => array("User with these credentials already exists")));
 
@@ -326,14 +312,6 @@ class UserController extends ContainerAware
             $userRepo->createUserFromArray($formValues, $user);
             $userRepo->saveUser();
         } catch(RepositoryException $e) {
-            $logger = $this->container->get('app_logger');
-            $logger->makeLog(AppLogger::EXCEPTION)
-                ->addDate()
-                ->addMessage("User could not be created due to a exception with message: " . $e->getMessage() .
-                    " . Possible bug in UserController::saveUserAction or UserRepository::createUserFromArray()
-                    or UserRepository::saveUser(). Check those methods.")
-                ->log();
-
             $content = new ResponseParameters();
             $content->addParameter("errors", array($e->getMessage()));
 
@@ -341,11 +319,6 @@ class UserController extends ContainerAware
             $response->setContent($content);
             return $response->sendResponse();
         } catch(\Exception $e) {
-            $logger = $this->container->get('logger');
-            $logger->makeLogger(AppLogger::EXCEPTION)
-                ->addDate()
-                ->addMessage("An unsuspected exception occurred with message: " . $e->getMessage() . ' in UserController::saveUserAction()')
-                ->log();
             $content = new ResponseParameters();
             $content->addParameter("errors", array($e->getMessage()));
 
