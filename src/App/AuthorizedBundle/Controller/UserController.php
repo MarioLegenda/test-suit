@@ -141,12 +141,6 @@ class UserController extends ContainerAware
                 $compiler->method()->name('isValidPagination')->true()->save()
             )
             ->ifFailsRun(function() {
-                $logger = $this->container->get('app_logger');
-                $logger->makeLog(AppLogger::WARNING)
-                    ->addDate()
-                    ->addMessage("Someone tried to make a custom request in UserController::userPaginatedAction(). No 'end' or 'start' parameters. Possible hack")
-                    ->log();
-
                 $responseParameters = new ResponseParameters();
                 $responseParameters->addParameter('errors', 'Invalid request from the client');
 
@@ -205,10 +199,6 @@ class UserController extends ContainerAware
                 $compiler->method()->name('isUserInfoValid')->true()->save()
             )
             ->ifFailsRun(function() use ($logger) {
-                $logger->makeLog(AppLogger::WARNING)
-                    ->addDate()
-                    ->addMessage("Someone tried to make a request outside of the app in UserController::userInfoAction(). Probably inside the console. Possible hack.")
-                    ->log();
 
                 $content = new ResponseParameters();
                 $content->addParameter("errors", array("Invalid request from the client"));
