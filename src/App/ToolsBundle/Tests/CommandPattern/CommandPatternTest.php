@@ -67,29 +67,6 @@ class CommandPatternTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($command->isValid(), 'CommandPatternTest::testFilterContent()-> UserFilterCommand::isValid() returned false but had to return true');
     }
 
-    public function testUserInfoContent() {
-        $content = array(
-            'id' => 1
-        );
-
-        $context = new CommandContext();
-        $context->addParam('user-info-content', $content);
-
-        $this->assertTrue($context->hasParam('user-info-content'),
-            'CommandPatternTest::testUserInfoContent()-> CommandContext::hasParam() returned false but had to return true');
-        $this->assertInternalType('array', $context->getParam('user-info-content'),
-            'CommandPatternTest::testUserInfoContent()-> CommandContext::getParam() had to return array');
-
-        $command = CommandFactory::construct('user-info')->getCommand();
-
-        $this->assertInstanceOf('App\\ToolsBundle\\Helpers\\Command\\Commands\\UserInfoCommand', $command,
-            'CommandPatternTest::testUserInfoContent()-> CommandFactory did not create UserInfoCommand');
-
-        $command->execute($context);
-
-        $this->assertTrue($command->isValid(), 'CommandPatternTest::testUserInfoContent()-> UserInfoCommand::isValid() returned false but had to return true');
-    }
-
     public function testValidUserContent() {
         $content = array(
             'userPermissions' => array(),
@@ -179,5 +156,28 @@ class CommandPatternTest extends \PHPUnit_Framework_TestCase
         $command->execute($context);
 
         $this->assertTrue($command->isValid(), 'CommandPatternTest::testModifiedTestContent()-> ;ModifyTestCommand::isValid() returned false but had to return true');
+    }
+
+    public function testIdCheckCommand() {
+        $content = array(
+            'id' => 1
+        );
+
+        $context = new CommandContext();
+        $context->addParam('id-content', $content);
+
+        $this->assertTrue($context->hasParam('id-content'),
+            'CommandPatternTest::testIdCheckCommand()-> CommandContext::hasParam() returned false but had to return true');
+        $this->assertInternalType('array', $context->getParam('id-content'),
+            'CommandPatternTest::testIdCheckCommand()-> CommandContext::getParam() had to return array');
+
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
+
+        $this->assertInstanceOf('App\\ToolsBundle\\Helpers\\Command\\Commands\\IdCheckCommand', $command,
+            'CommandPatternTest::testIdCheckCommand()-> CommandFactory did not create IdCheckCommand');
+
+        $command->execute($context);
+
+        $this->assertTrue($command->isValid(), 'CommandPatternTest::testIdCheckCommand()-> IdCheckCommand::isValid() returned false but had to return true');
     }
 } 

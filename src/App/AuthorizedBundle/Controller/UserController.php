@@ -156,13 +156,13 @@ class UserController extends ContainerAware
         $content = (array)json_decode($request->getContent());
 
         $context = new CommandContext();
-        $context->addParam('user-info-content', $content);
+        $context->addParam('id-content', $content);
 
-        $command = CommandFactory::construct('user-info')->getCommand();
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
 
         if( ! $command->execute($context)->isValid()) {
             $content = new ResponseParameters();
-            $content->addParameter("errors", array("Invalid request from the client"));
+            $content->addParameter("error", 'Invalid request from the client');
 
             $response = new AdaptedResponse();
             $response->setContent($content);

@@ -338,8 +338,7 @@ angular.module('suit.factories', []).factory('$', function () {
                 data: {
                     id: id,
                     test: data
-                },
-                cache: true
+                }
             });
         };
 
@@ -373,16 +372,14 @@ angular.module('suit.factories', []).factory('$', function () {
             return $http({
                 method: 'POST',
                 url: Path.namespace('test.workspaceData').construct(),
-                data: {id: id},
-                cache: true
+                data: {id: id}
             });
         };
 
         this.getBasicTests = function() {
             return $http({
                 method: 'POST',
-                url: Path.namespace('test.getBasicTests').construct(),
-                cache: true
+                url: Path.namespace('test.getBasicTests').construct()
             });
         };
 

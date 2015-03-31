@@ -4,11 +4,11 @@ namespace App\AuthorizedBundle\Controller;
 
 use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\ResponseParameters;
-use App\ToolsBundle\Helpers\BadAjaxResponse;
-use App\ToolsBundle\Helpers\GoodAjaxRequest;
 use App\ToolsBundle\Repositories\TestRepository;
 use App\ToolsBundle\Entity\Test;
 use App\ToolsBundle\Helpers\AdaptedResponse;
+use App\ToolsBundle\Helpers\Command\CommandContext;
+use App\ToolsBundle\Helpers\Command\CommandFactory;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -23,15 +23,38 @@ class WorkspaceController extends ContainerAware
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
 
-        $contents = (array)json_decode($request->getContent(), true);
-        $testId = $contents['id'];
+        $content = (array)json_decode($request->getContent(), true);
 
-        $testRepo = new TestRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
+        $context = new CommandContext();
+        $context->addParam('id-content', $content);
 
-        $testControl = $testRepo->getTestControlById($testId);
-        $testRange = $testRepo->getTestRange($testId);
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
+
+        try {
+            $testRepo = new TestRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
+
+            $testControl = $testRepo->getTestControlById($content['id']);
+            $testRange = $testRepo->getTestRange($content['id']);
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('test', array(
@@ -94,15 +117,28 @@ class WorkspaceController extends ContainerAware
         $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
 
-        $contents = (array)json_decode($request->getContent(), true);
-        $id = $contents['id'];
+        $content = (array)json_decode($request->getContent(), true);
+
+        $context = new CommandContext();
+        $context->addParam('id-content', $content);
+
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
 
         $testRepo = new TestRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
 
         try {
-            $testRepo->finishTest($id);
+            $testRepo->finishTest($content['id']);
         } catch(\Exception $e) {
             $content = new ResponseParameters();
             $content->addParameter("errors", array($e->getMessage()));
@@ -195,18 +231,32 @@ class WorkspaceController extends ContainerAware
         $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
 
-        $contents = (array)json_decode($request->getContent(), true);
-        $id = $contents['id'];
+        $content = (array)json_decode($request->getContent(), true);
+
+        $context = new CommandContext();
+        $context->addParam('id-content', $content);
+
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
 
         $testRepo = new TestRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
 
         try {
-            $testRepo->deleteQuestionById($id);
-        } catch(\Exception $e) {
+            $testRepo->deleteQuestionById($content['id']);
+        }
+        catch(\Exception $e) {
             $content = new ResponseParameters();
-            $content->addParameter("errors", array($e->getMessage()));
+            $content->addParameter("error", 'Invalid request from the client');
 
             $response = new AdaptedResponse();
             $response->setContent($content);

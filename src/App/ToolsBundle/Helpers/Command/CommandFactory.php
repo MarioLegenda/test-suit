@@ -2,7 +2,7 @@
 
 namespace App\ToolsBundle\Helpers\Command;
 
-
+use App\ToolsBundle\Helpers\Command\Commands\IdCheckCommand;
 use App\ToolsBundle\Helpers\Command\Commands\ModifyTestCommand;
 use App\ToolsBundle\Helpers\Command\Commands\UserFilterCommand;
 use App\ToolsBundle\Helpers\Command\Commands\UserInfoCommand;
@@ -41,6 +41,10 @@ class CommandFactory
 
         $this->closures['valid-modified-test'] = function() {
             return new ModifyTestCommand();
+        };
+
+        $this->closures['generic-id-check'] = function() {
+            return new IdCheckCommand();
         };
     }
 

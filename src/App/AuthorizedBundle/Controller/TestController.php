@@ -2,21 +2,16 @@
 
 namespace App\AuthorizedBundle\Controller;
 
-use App\ToolsBundle\Entity\TestControl;
-use App\ToolsBundle\Entity\Test;
 use App\ToolsBundle\Helpers\Command\CommandContext;
 use App\ToolsBundle\Helpers\Command\CommandFactory;
 use App\ToolsBundle\Helpers\Factories\DoctrineEntityFactory;
 use App\ToolsBundle\Helpers\Factory\Parameters;
-use App\ToolsBundle\Helpers\GoodAjaxRequest;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
-use App\ToolsBundle\Helpers\BadAjaxResponse;
 use App\ToolsBundle\Helpers\AdaptedResponse;
 
 use App\ToolsBundle\Repositories\TestRepository;
 use App\ToolsBundle\Repositories\UserRepository;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Doctrine\ORM\Query;
@@ -121,6 +116,7 @@ class TestController extends ContainerAware
             $testRepo = new TestRepository(new Parameters(array(
                 'doctrine' => $doctrine
             )));
+
             $testRepo->updateTestById($content['test_control_id'], $content);
         }
         catch(\Exception $e) {
@@ -154,6 +150,7 @@ class TestController extends ContainerAware
         $userRepo = new UserRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
+
         $userId = $security->getToken()->getUser()->getUserId();
         $basicTestInfo = $testRepo->getBasicTestInformation($userId, $userRepo);
 
@@ -174,12 +171,25 @@ class TestController extends ContainerAware
         $request = $this->container->get('request');
 
         $content = (array)json_decode($request->getContent());
-        $id = $content['id'];
+
+        $context = new CommandContext();
+        $context->addParam('id-content', $content);
+
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
 
         $testRepo = new TestRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
-        $basicTestInfo = $testRepo->getBasicTestInformationById($id);
+        $basicTestInfo = $testRepo->getBasicTestInformationById($content['id']);
 
 
         $responseParameters = new ResponseParameters();
@@ -199,14 +209,27 @@ class TestController extends ContainerAware
         $security = $this->container->get('security.context');
 
         $content = (array)json_decode($request->getContent());
-        $id = $content['id'];
 
-        $testRepo = new TestRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
+        $context = new CommandContext();
+        $context->addParam('id-content', $content);
+
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
 
         try {
-            $testRepo->deleteTestById($id);
+            $testRepo = new TestRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
+
+            $testRepo->deleteTestById($content['id']);
         }
         catch(\Exception $e) {
             $content = new ResponseParameters();

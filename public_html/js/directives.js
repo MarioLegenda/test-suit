@@ -287,7 +287,6 @@ angular.module('suit.directives.actions', [])
                             $scope.globalErrors.show = true;
 
                             $scope.globalErrors.errors = data.data.errors.errors;
-                            console.log($scope.globalErrors);
                             window.scrollTo(0, 0);
                         });
                     }
@@ -383,6 +382,7 @@ angular.module('suit.directives.actions', [])
 
                         testPromise.then(function(data, status, headers, config) {
                             if(data.status === 205) {
+                                $scope.dataShepard.clearHeard().clearCounter();
                                 $scope.controller.rangeIterator = RangeIterator.initIterator([]);
                                 $scope.builder = {
                                     builderCreator: true,
@@ -454,6 +454,7 @@ angular.module('suit.directives.actions', [])
                     var deletePromise = Test.deleteQuestion(id);
 
                     deletePromise.then(function(data, status, headers, config) {
+                        $scope.dataShepard.clearHeard().clearCounter();
                         var workspacePromise = Test.workspaceData($scope.currentTestId);
 
                         workspacePromise.then(function(data, status, headers, config) {
@@ -586,7 +587,6 @@ angular.module('suit.directives.actions', [])
                 }
                 $scope.dataShepard.syncCurrentId();
 
-                //console.log($scope.dataShepard.current(), $scope.dataShepard.all());
                 var trueTest = $scope.dataShepard.all();
                 for(i = 0; i < trueTest.length; i++) {
                     var newScope = $scope.$new();
@@ -752,6 +752,7 @@ angular.module('suit.directives.actions', [])
                     });
 
                     scope.dataShepard.arangeBlockIds();
+
                     var promise = Test.saveTest(scope.currentTestId, scope.dataShepard.all());
 
                     promise.then(function (data, status, headers, config) {
@@ -930,7 +931,6 @@ angular.module('suit.directives.actions', [])
             });
 
             $scope.$on('action-delete-test', function(event, data) {
-                console.log(data);
                 var promise = Test.deleteTest(data.id);
 
                 promise.then(function(data, status, headers, config) {
@@ -995,7 +995,6 @@ angular.module('suit.directives.actions', [])
                 });
 
                 $scope.$on('action-user-filter', function (event, data) {
-                    console.log(data);
                     var promise = User.filter(data);
 
                     promise.then(function (data, status, headers, config) {
