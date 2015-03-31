@@ -4,6 +4,9 @@ namespace App\AuthorizedBundle\Controller;
 
 use App\ToolsBundle\Entity\TestControl;
 use App\ToolsBundle\Entity\Test;
+use App\ToolsBundle\Helpers\Command\CommandContext;
+use App\ToolsBundle\Helpers\Command\CommandFactory;
+use App\ToolsBundle\Helpers\Factories\DoctrineEntityFactory;
 use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\GoodAjaxRequest;
 use App\ToolsBundle\Helpers\ResponseParameters;
@@ -28,27 +31,35 @@ class TestController extends ContainerAware
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
 
-        $formValues = (array)json_decode($request->getContent());
-        $factory = new RandomLib\Factory();
-        $generator = $factory->getMediumStrengthGenerator();
+        $content = (array)json_decode($request->getContent(), true);
 
-        $testControl = new TestControl();
-        $testControl->setIdentifier($generator->generateString(32));
-        $testControl->setTestName($formValues['test_name']);
-        $testControl->setVisibility($formValues['test_solvers']);
-        $testControl->setRemarks($formValues['remarks']);
-        $testControl->setIsFinished(0);
+        $context = new CommandContext();
+        $context->addParam('create-test-content', $content);
+
+        $command = CommandFactory::construct('valid-test')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('errors', 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        $testControl = DoctrineEntityFactory::initiate('TestControl')->with($content)->create();
 
         $toValidate = array($testControl);
         $errors = ConvenienceValidator::init($toValidate, $this->container->get('validator'))->getErrors();
 
         if($errors !== null) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", $errors);
+
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('errors', $errors);
 
             $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
         }
 
         $testControl->setUser($this->container->get('security.context')->getToken()->getUser());
@@ -63,7 +74,7 @@ class TestController extends ContainerAware
 
             $response = new AdaptedResponse();
             $response->setContent($content);
-            return $response->sendResponse();
+            return $response->sendResponse(400, "BAD");
         }
 
         $testRepo = new TestRepository(new Parameters(array(
@@ -82,19 +93,37 @@ class TestController extends ContainerAware
         return $response->sendResponse(200, "OK");
     }
 
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     */
     public function modifyTestAction() {
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
 
         $content = (array)json_decode($request->getContent());
 
-        $testRepo = new TestRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
+        $context = new CommandContext();
+        $context->addParam('modify-test-content', $content);
+
+        $command = CommandFactory::construct('valid-modified-test')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('errors', 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
 
         try {
+
+            $testRepo = new TestRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
             $testRepo->updateTestById($content['test_control_id'], $content);
-        } catch(\Exception $e) {
+        }
+        catch(\Exception $e) {
             $content = new ResponseParameters();
             $content->addParameter("errors", array($e->getMessage()));
 
@@ -188,7 +217,11 @@ class TestController extends ContainerAware
             return $response->sendResponse();
         }
 
-        $basicTestInfo = $testRepo->getBasicTestInformation($security->getToken()->getUser()->getUserId());
+        $user = $security->getToken()->getUser();
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
+        $basicTestInfo = $testRepo->getBasicTestInformation($user->getUserId(), $userRepo);
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('tests', $basicTestInfo);

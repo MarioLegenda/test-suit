@@ -2,27 +2,19 @@
 
 namespace App\AuthorizedBundle\Controller;
 
-
-use App\AuthorizedBundle\Models\CreateUserModel;
-use App\AuthorizedBundle\Models\UserModel;
-use App\ToolsBundle\Entity\User;
-use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Helpers\AdaptedResponse;
+use App\ToolsBundle\Helpers\Command\CommandContext;
+use App\ToolsBundle\Helpers\Command\CommandFactory;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
-use App\ToolsBundle\Helpers\Exceptions\ModelException;
-use App\ToolsBundle\Helpers\Factory\ObjectFactory;
+use App\ToolsBundle\Helpers\Factories\DoctrineEntityFactory;
 use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\ResponseParameters;
-
-
 
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 use App\ToolsBundle\Repositories\UserRepository;
 use App\ToolsBundle\Repositories\FilterRepository;
 
-use ControlFlowCompiler\Compiler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use StrongType\String;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,56 +29,44 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent(), true);
 
-        $userModel = new UserModel();
-        $filterRepo = new FilterRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
+        $context = new CommandContext();
+        $context->addParam('filtering-content', $content);
 
-        $compiler = new Compiler();
-        $compiler
-            ->runObject($userModel)
-            ->withMethods(
-                $compiler->method()->name('requestContentMode')->withParameters($content)->void()->save(),
-                $compiler->method()->name('extractType')->void()->save(),
-                $compiler->method()->name('isContentValid')->true()->save()
-            )
-            ->ifFailsRun(function() {
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('error', 'Invalid request from the user');
+        $command = CommandFactory::construct('user-filter')->getCommand();
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(400, "BAD");
-            })
-            ->then()
-            ->runObject($filterRepo)
-            ->withMethods(
-                $compiler->method()->name('assignFilter')->withParameters($userModel->getType())->void()->save(),
-                $compiler->method()->name('runFilter')->withParameters($userModel->getPureContent())->void()->save(),
-                $compiler->method()->name('getRepositoryData')->arr()->save()
-            )
-            ->ifFailsRun(function() {
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('generic-error', 'Something bad happend');
+        if( ! $command->execute($context)->isValid()) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('errors', 'Invalid request from the client');
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(400, "BAD");
-            })
-            ->ifSuccedesRun(function($context) use ($filterRepo) {
-                $users = $context->getObjectStorage()->retreiveUnit($filterRepo)->retreive('getRepositoryData')->getValue();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
 
+        try {
+            $filterRepo = new FilterRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
 
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('users', $users);
+            $filterRepo->assignFilter($command->getType());
+            $filterRepo->runFilter($command->getPureContent());
+            $users = $filterRepo->getRepositoryData();
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('generic-error', 'Something bad happend');
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(200, "OK");
-            })
-            ->compile();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
 
-        return $compiler->getResponse();
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('users', $users);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -99,6 +79,7 @@ class UserController extends ContainerAware
             'doctrine' => $doctrine,
             'security' => $this->container->get('security.password_encoder')
         )));
+
         $users = $userRepo->getAllUsers();
 
         $responseParameters = new ResponseParameters();
@@ -128,52 +109,41 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $userModel = new UserModel();
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
+        $context = new CommandContext();
+        $context->addParam('pagination-content', $content);
 
-        $compiler = new Compiler();
-        $compiler
-            ->runObject($userModel)
-            ->withMethods(
-                $compiler->method()->name('requestContentMode')->withParameters($content)->void()->save(),
-                $compiler->method()->name('isValidPagination')->true()->save()
-            )
-            ->ifFailsRun(function() {
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('errors', 'Invalid request from the client');
+        $command = CommandFactory::construct('user-pagination')->getCommand();
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(400, "BAD");
-            })
-            ->then()
-            ->runObject($userRepo)
-            ->withMethods(
-                $compiler->method()->name('getPaginatedUsers')->withParameters($content['start'], $content['end'])->arr()->save()
-            )
-            ->ifFailsRun(function() {
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('users', array());
+        if( ! $command->execute($context)->isValid()) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('errors', 'Invalid request from the client');
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(200, "OK");
-            })
-            ->ifSuccedesRun(function($context) use ($userRepo) {
-                $users = $context->getObjectStorage()->retreiveUnit($userRepo)->retreive('getPaginatedUsers')->getValue();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
 
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('users', $users);
+        try {
+            $userRepo = new UserRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(200, "OK");
-            })
-            ->compile();
+            $users = $userRepo->getPaginatedUsers($content['start'], $content['end']);
+        } catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('users', array());
 
-        return $compiler->getResponse();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(200, "OK");
+        }
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('users', $users);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -185,54 +155,43 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $userModel = new UserModel();
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
-        $logger = $this->container->get('app_logger');
+        $context = new CommandContext();
+        $context->addParam('user-info-content', $content);
 
-        $compiler = new Compiler();
-        $compiler
-            ->runObject($userModel)
-            ->withMethods(
-                $compiler->method()->name('requestContentMode')->withParameters($content)->void()->save(),
-                $compiler->method()->name('isUserInfoValid')->true()->save()
-            )
-            ->ifFailsRun(function() use ($logger) {
+        $command = CommandFactory::construct('user-info')->getCommand();
 
-                $content = new ResponseParameters();
-                $content->addParameter("errors", array("Invalid request from the client"));
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array("Invalid request from the client"));
 
-                $response = new AdaptedResponse();
-                $response->setContent($content);
-                return $response->sendResponse();
-            })
-            ->then()
-            ->runObject($userRepo)
-            ->withMethods(
-                $compiler->method()->name('getUserInfoById')->withParameters($content['id'])->arr()->save()
-            )
-            ->ifFailsRun(function() {
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('generic-error', 'No user infos were found or something bad happend');
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(400, "BAD");
-            })
-            ->ifSuccedesRun(function($context) use ($userRepo) {
-                $user = $context->getObjectStorage()->retreiveUnit($userRepo)->retreive('getUserInfoById')->getValue();
+        try {
+            $userRepo = new UserRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
 
-                $responseParameters = new ResponseParameters();
-                $responseParameters->addParameter('user', $user);
+            $user = $userRepo->getUserInfoById($content['id']);
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('generic-error', 'No user infos were found or something bad happend');
 
-                $response = new AdaptedResponse();
-                $response->setContent($responseParameters);
-                return $response->sendResponse(200, "OK");
-            })
-            ->compile();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
 
-        return $compiler->getResponse();
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('user', $user);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
     }
 
     /**
@@ -244,8 +203,12 @@ class UserController extends ContainerAware
 
         $formValues = (array)json_decode($request->getContent());
 
-        $userModel = new CreateUserModel($formValues);
-        if( ! $userModel->areValidKeys() ) {
+        $context = new CommandContext();
+        $context->addParam('valid-user-content', $formValues);
+
+        $command = CommandFactory::construct('valid-user')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
             $content = new ResponseParameters();
             $content->addParameter("errors", array("Some form values are invalid. Refresh the current page and try again"));
 
@@ -257,20 +220,9 @@ class UserController extends ContainerAware
         $permissionArrayfied = (array)$formValues['userPermissions'];
         $formValues['userPermissions'] = $permissionArrayfied;
 
-        $user = new User();
-        $user->setName($formValues['name']);
-        $user->setLastname($formValues['lastname']);
-        $user->setUsername($formValues['username']);
-        $user->setPassword($formValues['userPassword']);
-        $user->setPassRepeat($formValues['userPassRepeat']);
+        $user = $user = DoctrineEntityFactory::initiate('User')->with($formValues)->create();
+        $userInfo = DoctrineEntityFactory::initiate('UserInfo')->with($formValues)->create();
 
-        $userInfo = new UserInfo();
-        $userInfo->setFields($formValues['fields']);
-        $userInfo->setProgrammingLanguages($formValues['programming_languages']);
-        $userInfo->setTools($formValues['tools']);
-        $userInfo->setYearsOfExperience($formValues['years_of_experience']);
-        $userInfo->setFuturePlans($formValues['future_plans']);
-        $userInfo->setDescription($formValues['description']);
         $toValidate = array($user, $userInfo);
         $errors = ConvenienceValidator::init($toValidate, $this->container->get('validator'))->getErrors();
 
@@ -283,22 +235,23 @@ class UserController extends ContainerAware
             return $response->sendResponse();
         }
 
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine,
-            'security' => $this->container->get('security.password_encoder')
-        )));
-        $result = $userRepo->getUserByUsername($user->getUsername());
-
-        if($result !== null) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", array("errors" => array("User with these credentials already exists")));
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse();
-        }
-
         try {
+            $userRepo = new UserRepository(new Parameters(array(
+                'doctrine' => $doctrine,
+                'security' => $this->container->get('security.password_encoder')
+            )));
+
+            $result = $userRepo->getUserByUsername($user->getUsername());
+
+            if($result !== null) {
+                $content = new ResponseParameters();
+                $content->addParameter("errors", array("errors" => array("User with these credentials already exists")));
+
+                $response = new AdaptedResponse();
+                $response->setContent($content);
+                return $response->sendResponse();
+            }
+
             $userRepo->createUserFromArray($formValues, $user);
             $userRepo->saveUser();
         } catch(RepositoryException $e) {

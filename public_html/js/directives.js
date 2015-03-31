@@ -995,6 +995,7 @@ angular.module('suit.directives.actions', [])
                 });
 
                 $scope.$on('action-user-filter', function (event, data) {
+                    console.log(data);
                     var promise = User.filter(data);
 
                     promise.then(function (data, status, headers, config) {
