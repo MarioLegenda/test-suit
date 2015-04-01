@@ -2,6 +2,7 @@
 
 namespace App\ToolsBundle\Helpers\Command;
 
+use App\ToolsBundle\Helpers\Command\Commands\ConfigurableCommand;
 use App\ToolsBundle\Helpers\Command\Commands\IdCheckCommand;
 use App\ToolsBundle\Helpers\Command\Commands\ModifyTestCommand;
 use App\ToolsBundle\Helpers\Command\Commands\UserFilterCommand;
@@ -45,6 +46,10 @@ class CommandFactory
 
         $this->closures['generic-id-check'] = function() {
             return new IdCheckCommand();
+        };
+
+        $this->closures['configurable'] = function() {
+            return new ConfigurableCommand();
         };
     }
 

@@ -5,6 +5,7 @@ namespace App\ToolsBundle\Tests\CommandPattern;
 
 use App\ToolsBundle\Helpers\Command\CommandContext;
 use App\ToolsBundle\Helpers\Command\CommandFactory;
+use App\ToolsBundle\Helpers\Command\Filters\Exists;
 
 class CommandPatternTest extends \PHPUnit_Framework_TestCase
 {
@@ -179,5 +180,37 @@ class CommandPatternTest extends \PHPUnit_Framework_TestCase
         $command->execute($context);
 
         $this->assertTrue($command->isValid(), 'CommandPatternTest::testIdCheckCommand()-> IdCheckCommand::isValid() returned false but had to return true');
+    }
+
+    public function testConfigurableCommand() {
+        $content = array(
+            'test_id' => 1,
+            'test_control_id' => 3
+        );
+
+        $context = new CommandContext();
+        $context->addParam('filters', array(
+            new Exists('test_id')
+        ));
+        $context->addParam('evaluate-data', $content);
+
+        $this->assertTrue($context->hasParam('filters'),
+            'CommandPatternTest::testConfigurableCommand()-> CommandContext::hasParam() returned false for \'filters\' but had to return true');
+        $this->assertInternalType('array', $context->getParam('filters'),
+            'CommandPatternTest::testConfigurableCommand()-> -> CommandContext::getParam() had to return array for \'filters\'');
+
+        $this->assertTrue($context->hasParam('evaluate-data'),
+            'CommandPatternTest::testConfigurableCommand()-> CommandContext::hasParam() returned false for \'configurable-data\' but had to return true');
+        $this->assertInternalType('array', $context->getParam('evaluate-data'),
+            'CommandPatternTest::testConfigurableCommand()-> -> CommandContext::getParam() had to return array for \'configurable-data\'');
+
+        $command = CommandFactory::construct('configurable')->getCommand();
+
+        $this->assertInstanceOf('App\\ToolsBundle\\Helpers\\Command\\Commands\\ConfigurableCommand', $command,
+            'CommandPatternTest::testIdCheckCommand()-> CommandFactory did not create IdCheckCommand');
+
+        $command->execute($context);
+
+        $this->assertTrue($command->isValid(), 'CommandPatternTest::testConfigurableCommand()-> ConfigurableCommand::isValid() returned false but had to return true');
     }
 } 

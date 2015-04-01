@@ -2,6 +2,7 @@
 
 namespace App\AuthorizedBundle\Controller;
 
+use App\ToolsBundle\Helpers\Command\Filters\Exists;
 use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Repositories\TestRepository;
@@ -36,7 +37,7 @@ class WorkspaceController extends ContainerAware
 
             $response = new AdaptedResponse();
             $response->setContent($content);
-            return $response->sendResponse();
+            return $response->sendResponse(400, 'BAD');
         }
 
         try {
@@ -164,13 +165,30 @@ class WorkspaceController extends ContainerAware
         $request = $this->container->get('request');
 
         $contents = (array)json_decode($request->getContent(), true);
-        $testId = $contents['test_id'];
-        $testControlId = (array_key_exists('test_control_id', $contents)) ? $contents['test_control_id'] : null;
 
+        $context = new CommandContext();
+        $context->addParam('filters', array(
+            new Exists('test_id')
+        ));
+        $context->addParam('evaluate-data', $contents);
+
+        $command = CommandFactory::construct('configurable')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter('error', 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        $testControlId = (array_key_exists('test_control_id', $contents)) ? $contents['test_control_id'] : null;
         $testRepo = new TestRepository(new Parameters(array(
             'doctrine' => $doctrine
         )));
-        $test = $testRepo->getTestById($testId, $testControlId);
+
+        $test = $testRepo->getTestById($contents['test_id'], $testControlId);
 
         if($test === null) {
             $content = new ResponseParameters();
