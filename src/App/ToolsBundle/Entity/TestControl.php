@@ -100,7 +100,7 @@ class TestControl
     }
 
     public function getVisibility() {
-        return json_decode($this->visibility);
+        return json_decode($this->visibility, true);
     }
 
     public function setIdentifier($identifier) {

@@ -173,7 +173,6 @@ class TestRepository extends Repository
         $this->em->remove($testControl);
 
         $this->em->flush();
-
     }
 
     public function updateTestById($id, array $testArray) {

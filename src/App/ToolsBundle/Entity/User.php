@@ -75,6 +75,11 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
     private $logged;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $assignedTests;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\ToolsBundle\Entity\Role", mappedBy="user", cascade="persist")
      **/
     private $roles;
@@ -144,6 +149,14 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
 
     public function getLogged() {
         return $this->logged;
+    }
+
+    public function setAssignedTests(array $assignedTests) {
+        $this->assignedTests = $assignedTests;
+    }
+
+    public function getAssignedTests() {
+        return $this->assignedTests;
     }
 
     public function setUserInfo(UserInfo $userInfo) {

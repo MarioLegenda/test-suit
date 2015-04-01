@@ -168,6 +168,8 @@ angular.module('suit.directives.actions', [])
                                 idsArray[idsArray.length] = scope.test.allowed_users[i].user_id;
                             }
 
+                            console.log(idsArray);
+
                             return idsArray;
                         } () ),
                         remarks: scope.test.remarks
@@ -713,6 +715,7 @@ angular.module('suit.directives.actions', [])
                     $scope.dataShepard.next();
                 },
                 builderChange: function($event, builder) {
+                    console.log($scope.dataShepard.all());
                     $scope.$emit('action-builder-change', {
                         change: builder
                     });
