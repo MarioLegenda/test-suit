@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "23ef685aaec58dba2d518575be0f970f",
+    "hash": "d944b77bdb4d14f42c0788131d75eeeb",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1097,89 +1097,6 @@
             "time": "2014-12-12 05:04:05"
         },
         {
-            "name": "mario-legenda/control-flow-compiler",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MarioLegenda/control-flow-compiler.git",
-                "reference": "97d4f37d3d82040505b873d27c2851db0d9e2fba"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/MarioLegenda/control-flow-compiler/zipball/97d4f37d3d82040505b873d27c2851db0d9e2fba",
-                "reference": "97d4f37d3d82040505b873d27c2851db0d9e2fba",
-                "shasum": ""
-            },
-            "require": {
-                "mario-legenda/php-strong-types": "0.0.1",
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "ControlFlowCompiler\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mario Škrlec",
-                    "email": "whitepostmail@gmail.com",
-                    "homepage": "https://github.com/MarioLegenda"
-                }
-            ],
-            "description": "Uniform design pattern for object execution",
-            "homepage": "https://github.com/MarioLegenda/control-flow-compiler",
-            "keywords": [
-                "php"
-            ],
-            "time": "2015-03-25 02:32:39"
-        },
-        {
-            "name": "mario-legenda/php-strong-types",
-            "version": "0.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/MarioLegenda/php-strong-types.git",
-                "reference": "1d7dc068d1ce3e66889f07b7b7bb6a965bd1630e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/MarioLegenda/php-strong-types/zipball/1d7dc068d1ce3e66889f07b7b7bb6a965bd1630e",
-                "reference": "1d7dc068d1ce3e66889f07b7b7bb6a965bd1630e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "utility",
-            "autoload": {
-                "psr-0": {
-                    "StrongType\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mario Škrlec",
-                    "email": "whitepostmail@gmail.com",
-                    "homepage": "https://github.com/MarioLegenda/php-strong-types"
-                }
-            ],
-            "description": "Provides strongly typed object of String, Integer, Float and ArrayType",
-            "homepage": "https://github.com/MarioLegenda",
-            "keywords": [
-                "php"
-            ],
-            "time": "2015-03-24 21:48:21"
-        },
-        {
             "name": "monolog/monolog",
             "version": "1.13.1",
             "source": {
@@ -2034,17 +1951,17 @@
         },
         {
             "name": "sensio/distribution-bundle",
-            "version": "v2.3.11",
+            "version": "v2.3.13",
             "target-dir": "Sensio/Bundle/DistributionBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
-                "reference": "374bbea795fa69a85b1623048798a89aebffe62b"
+                "reference": "c344892aa9f09f0005b395d79ad2531a7deaedc9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/374bbea795fa69a85b1623048798a89aebffe62b",
-                "reference": "374bbea795fa69a85b1623048798a89aebffe62b",
+                "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/c344892aa9f09f0005b395d79ad2531a7deaedc9",
+                "reference": "c344892aa9f09f0005b395d79ad2531a7deaedc9",
                 "shasum": ""
             },
             "require": {
@@ -2076,7 +1993,7 @@
                 "configuration",
                 "distribution"
             ],
-            "time": "2015-02-27 12:58:18"
+            "time": "2015-03-26 11:09:17"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -2416,16 +2333,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.6.5",
+            "version": "v2.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "80833da9d04b004fa59fd23102e6dfad80c98106"
+                "reference": "48c9e835a877adfb023b8b6d033d9dd14f342b4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/80833da9d04b004fa59fd23102e6dfad80c98106",
-                "reference": "80833da9d04b004fa59fd23102e6dfad80c98106",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/48c9e835a877adfb023b8b6d033d9dd14f342b4b",
+                "reference": "48c9e835a877adfb023b8b6d033d9dd14f342b4b",
                 "shasum": ""
             },
             "require": {
@@ -2529,7 +2446,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2015-03-17 14:58:46"
+            "time": "2015-04-01 16:55:26"
         },
         {
             "name": "twig/extensions",
@@ -2644,9 +2561,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mario-legenda/control-flow-compiler": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

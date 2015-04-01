@@ -1880,125 +1880,6 @@
         ]
     },
     {
-        "name": "symfony/symfony",
-        "version": "v2.6.5",
-        "version_normalized": "2.6.5.0",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/symfony/symfony.git",
-            "reference": "80833da9d04b004fa59fd23102e6dfad80c98106"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/symfony/symfony/zipball/80833da9d04b004fa59fd23102e6dfad80c98106",
-            "reference": "80833da9d04b004fa59fd23102e6dfad80c98106",
-            "shasum": ""
-        },
-        "require": {
-            "doctrine/common": "~2.3",
-            "php": ">=5.3.3",
-            "psr/log": "~1.0",
-            "twig/twig": "~1.12,>=1.12.3"
-        },
-        "replace": {
-            "symfony/browser-kit": "self.version",
-            "symfony/class-loader": "self.version",
-            "symfony/config": "self.version",
-            "symfony/console": "self.version",
-            "symfony/css-selector": "self.version",
-            "symfony/debug": "self.version",
-            "symfony/debug-bundle": "self.version",
-            "symfony/dependency-injection": "self.version",
-            "symfony/doctrine-bridge": "self.version",
-            "symfony/dom-crawler": "self.version",
-            "symfony/event-dispatcher": "self.version",
-            "symfony/expression-language": "self.version",
-            "symfony/filesystem": "self.version",
-            "symfony/finder": "self.version",
-            "symfony/form": "self.version",
-            "symfony/framework-bundle": "self.version",
-            "symfony/http-foundation": "self.version",
-            "symfony/http-kernel": "self.version",
-            "symfony/intl": "self.version",
-            "symfony/locale": "self.version",
-            "symfony/monolog-bridge": "self.version",
-            "symfony/options-resolver": "self.version",
-            "symfony/process": "self.version",
-            "symfony/propel1-bridge": "self.version",
-            "symfony/property-access": "self.version",
-            "symfony/proxy-manager-bridge": "self.version",
-            "symfony/routing": "self.version",
-            "symfony/security": "self.version",
-            "symfony/security-acl": "self.version",
-            "symfony/security-bundle": "self.version",
-            "symfony/security-core": "self.version",
-            "symfony/security-csrf": "self.version",
-            "symfony/security-http": "self.version",
-            "symfony/serializer": "self.version",
-            "symfony/stopwatch": "self.version",
-            "symfony/swiftmailer-bridge": "self.version",
-            "symfony/templating": "self.version",
-            "symfony/translation": "self.version",
-            "symfony/twig-bridge": "self.version",
-            "symfony/twig-bundle": "self.version",
-            "symfony/validator": "self.version",
-            "symfony/var-dumper": "self.version",
-            "symfony/web-profiler-bundle": "self.version",
-            "symfony/yaml": "self.version"
-        },
-        "require-dev": {
-            "doctrine/data-fixtures": "1.0.*",
-            "doctrine/dbal": "~2.2",
-            "doctrine/doctrine-bundle": "~1.2",
-            "doctrine/orm": "~2.2,>=2.2.3",
-            "egulias/email-validator": "~1.2",
-            "ircmaxell/password-compat": "~1.0",
-            "monolog/monolog": "~1.11",
-            "ocramius/proxy-manager": "~0.4|~1.0",
-            "propel/propel1": "~1.6",
-            "symfony/phpunit-bridge": "~2.7"
-        },
-        "time": "2015-03-17 14:58:46",
-        "type": "library",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.6-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Symfony\\": "src/"
-            },
-            "classmap": [
-                "src/Symfony/Component/HttpFoundation/Resources/stubs",
-                "src/Symfony/Component/Intl/Resources/stubs"
-            ],
-            "files": [
-                "src/Symfony/Component/Intl/Resources/stubs/functions.php"
-            ]
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Symfony Community",
-                "homepage": "http://symfony.com/contributors"
-            },
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "The Symfony PHP framework",
-        "homepage": "http://symfony.com",
-        "keywords": [
-            "framework"
-        ]
-    },
-    {
         "name": "doctrine/doctrine-bundle",
         "version": "v1.4.0",
         "version_normalized": "1.4.0.0",
@@ -2142,54 +2023,6 @@
             "assets",
             "compression",
             "minification"
-        ]
-    },
-    {
-        "name": "sensio/distribution-bundle",
-        "version": "v2.3.11",
-        "version_normalized": "2.3.11.0",
-        "target-dir": "Sensio/Bundle/DistributionBundle",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
-            "reference": "374bbea795fa69a85b1623048798a89aebffe62b"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/374bbea795fa69a85b1623048798a89aebffe62b",
-            "reference": "374bbea795fa69a85b1623048798a89aebffe62b",
-            "shasum": ""
-        },
-        "require": {
-            "symfony/framework-bundle": "~2.2"
-        },
-        "time": "2015-02-27 12:58:18",
-        "type": "symfony-bundle",
-        "extra": {
-            "branch-alias": {
-                "dev-master": "2.3.x-dev"
-            }
-        },
-        "installation-source": "dist",
-        "autoload": {
-            "psr-0": {
-                "Sensio\\Bundle\\DistributionBundle": ""
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Fabien Potencier",
-                "email": "fabien@symfony.com"
-            }
-        ],
-        "description": "The base bundle for the Symfony Distributions",
-        "keywords": [
-            "configuration",
-            "distribution"
         ]
     },
     {
@@ -2637,30 +2470,103 @@
         ]
     },
     {
-        "name": "mario-legenda/php-strong-types",
-        "version": "0.0.1",
-        "version_normalized": "0.0.1.0",
+        "name": "symfony/symfony",
+        "version": "v2.6.6",
+        "version_normalized": "2.6.6.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/MarioLegenda/php-strong-types.git",
-            "reference": "1d7dc068d1ce3e66889f07b7b7bb6a965bd1630e"
+            "url": "https://github.com/symfony/symfony.git",
+            "reference": "48c9e835a877adfb023b8b6d033d9dd14f342b4b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/MarioLegenda/php-strong-types/zipball/1d7dc068d1ce3e66889f07b7b7bb6a965bd1630e",
-            "reference": "1d7dc068d1ce3e66889f07b7b7bb6a965bd1630e",
+            "url": "https://api.github.com/repos/symfony/symfony/zipball/48c9e835a877adfb023b8b6d033d9dd14f342b4b",
+            "reference": "48c9e835a877adfb023b8b6d033d9dd14f342b4b",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.3.3"
+            "doctrine/common": "~2.3",
+            "php": ">=5.3.3",
+            "psr/log": "~1.0",
+            "twig/twig": "~1.12,>=1.12.3"
         },
-        "time": "2015-03-24 21:48:21",
-        "type": "utility",
+        "replace": {
+            "symfony/browser-kit": "self.version",
+            "symfony/class-loader": "self.version",
+            "symfony/config": "self.version",
+            "symfony/console": "self.version",
+            "symfony/css-selector": "self.version",
+            "symfony/debug": "self.version",
+            "symfony/debug-bundle": "self.version",
+            "symfony/dependency-injection": "self.version",
+            "symfony/doctrine-bridge": "self.version",
+            "symfony/dom-crawler": "self.version",
+            "symfony/event-dispatcher": "self.version",
+            "symfony/expression-language": "self.version",
+            "symfony/filesystem": "self.version",
+            "symfony/finder": "self.version",
+            "symfony/form": "self.version",
+            "symfony/framework-bundle": "self.version",
+            "symfony/http-foundation": "self.version",
+            "symfony/http-kernel": "self.version",
+            "symfony/intl": "self.version",
+            "symfony/locale": "self.version",
+            "symfony/monolog-bridge": "self.version",
+            "symfony/options-resolver": "self.version",
+            "symfony/process": "self.version",
+            "symfony/propel1-bridge": "self.version",
+            "symfony/property-access": "self.version",
+            "symfony/proxy-manager-bridge": "self.version",
+            "symfony/routing": "self.version",
+            "symfony/security": "self.version",
+            "symfony/security-acl": "self.version",
+            "symfony/security-bundle": "self.version",
+            "symfony/security-core": "self.version",
+            "symfony/security-csrf": "self.version",
+            "symfony/security-http": "self.version",
+            "symfony/serializer": "self.version",
+            "symfony/stopwatch": "self.version",
+            "symfony/swiftmailer-bridge": "self.version",
+            "symfony/templating": "self.version",
+            "symfony/translation": "self.version",
+            "symfony/twig-bridge": "self.version",
+            "symfony/twig-bundle": "self.version",
+            "symfony/validator": "self.version",
+            "symfony/var-dumper": "self.version",
+            "symfony/web-profiler-bundle": "self.version",
+            "symfony/yaml": "self.version"
+        },
+        "require-dev": {
+            "doctrine/data-fixtures": "1.0.*",
+            "doctrine/dbal": "~2.2",
+            "doctrine/doctrine-bundle": "~1.2",
+            "doctrine/orm": "~2.2,>=2.2.3",
+            "egulias/email-validator": "~1.2",
+            "ircmaxell/password-compat": "~1.0",
+            "monolog/monolog": "~1.11",
+            "ocramius/proxy-manager": "~0.4|~1.0",
+            "propel/propel1": "~1.6",
+            "symfony/phpunit-bridge": "~2.7"
+        },
+        "time": "2015-04-01 16:55:26",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.6-dev"
+            }
+        },
         "installation-source": "dist",
         "autoload": {
             "psr-0": {
-                "StrongType\\": "src/"
-            }
+                "Symfony\\": "src/"
+            },
+            "classmap": [
+                "src/Symfony/Component/HttpFoundation/Resources/stubs",
+                "src/Symfony/Component/Intl/Resources/stubs"
+            ],
+            "files": [
+                "src/Symfony/Component/Intl/Resources/stubs/functions.php"
+            ]
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
@@ -2668,42 +2574,50 @@
         ],
         "authors": [
             {
-                "name": "Mario Škrlec",
-                "email": "whitepostmail@gmail.com",
-                "homepage": "https://github.com/MarioLegenda/php-strong-types"
+                "name": "Symfony Community",
+                "homepage": "http://symfony.com/contributors"
+            },
+            {
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
             }
         ],
-        "description": "Provides strongly typed object of String, Integer, Float and ArrayType",
-        "homepage": "https://github.com/MarioLegenda",
+        "description": "The Symfony PHP framework",
+        "homepage": "http://symfony.com",
         "keywords": [
-            "php"
+            "framework"
         ]
     },
     {
-        "name": "mario-legenda/control-flow-compiler",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
+        "name": "sensio/distribution-bundle",
+        "version": "v2.3.13",
+        "version_normalized": "2.3.13.0",
+        "target-dir": "Sensio/Bundle/DistributionBundle",
         "source": {
             "type": "git",
-            "url": "https://github.com/MarioLegenda/control-flow-compiler.git",
-            "reference": "97d4f37d3d82040505b873d27c2851db0d9e2fba"
+            "url": "https://github.com/sensiolabs/SensioDistributionBundle.git",
+            "reference": "c344892aa9f09f0005b395d79ad2531a7deaedc9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/MarioLegenda/control-flow-compiler/zipball/97d4f37d3d82040505b873d27c2851db0d9e2fba",
-            "reference": "97d4f37d3d82040505b873d27c2851db0d9e2fba",
+            "url": "https://api.github.com/repos/sensiolabs/SensioDistributionBundle/zipball/c344892aa9f09f0005b395d79ad2531a7deaedc9",
+            "reference": "c344892aa9f09f0005b395d79ad2531a7deaedc9",
             "shasum": ""
         },
         "require": {
-            "mario-legenda/php-strong-types": "0.0.1",
-            "php": ">=5.3.0"
+            "symfony/framework-bundle": "~2.2"
         },
-        "time": "2015-03-25 02:32:39",
-        "type": "library",
-        "installation-source": "source",
+        "time": "2015-03-26 11:09:17",
+        "type": "symfony-bundle",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "2.3.x-dev"
+            }
+        },
+        "installation-source": "dist",
         "autoload": {
             "psr-0": {
-                "ControlFlowCompiler\\": "src/"
+                "Sensio\\Bundle\\DistributionBundle": ""
             }
         },
         "notification-url": "https://packagist.org/downloads/",
@@ -2712,15 +2626,14 @@
         ],
         "authors": [
             {
-                "name": "Mario Škrlec",
-                "email": "whitepostmail@gmail.com",
-                "homepage": "https://github.com/MarioLegenda"
+                "name": "Fabien Potencier",
+                "email": "fabien@symfony.com"
             }
         ],
-        "description": "Uniform design pattern for object execution",
-        "homepage": "https://github.com/MarioLegenda/control-flow-compiler",
+        "description": "The base bundle for the Symfony Distributions",
         "keywords": [
-            "php"
+            "configuration",
+            "distribution"
         ]
     }
 ]
