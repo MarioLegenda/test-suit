@@ -8,7 +8,7 @@ use RandomLib;
 
 class TestControlFactory implements ConcreteFactoryInterface
 {
-    private $data;
+    private $data = null;
 
     public function addConstructionData(array $data) {
         $this->data = $data;

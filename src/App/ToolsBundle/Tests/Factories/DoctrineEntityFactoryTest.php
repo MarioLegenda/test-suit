@@ -84,7 +84,7 @@ class DoctrineEntityFactoryTest  extends \PHPUnit_Framework_TestCase
             'DoctrineEntityFactoryTest::testTestControlCreation()-> TestControl::getTestName() did not return the correct value');
 
         $this->assertInternalType('array', $testControl->getVisibility(),
-            'DoctrineEntityFactoryTest::testTestControlCreation()-> TestControl::getTestSolvers() did not return an array');
+            'DoctrineEntityFactoryTest::testTestControlCreation()-> TestControl::getVisibility() did not return an array');
 
         $this->assertEquals('no remarks', $testControl->getRemarks(),
             'DoctrineEntityFactoryTest::testTestControlCreation()->  TestControl::getRemarks() did not return the correct value');

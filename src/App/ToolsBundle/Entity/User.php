@@ -75,11 +75,6 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
     private $logged;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $assignedTests;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\ToolsBundle\Entity\Role", mappedBy="user", cascade="persist")
      **/
     private $roles;

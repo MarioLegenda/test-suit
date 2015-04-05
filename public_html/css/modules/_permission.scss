@@ -1,0 +1,49 @@
+.PermissionComponent {
+  width:100%;
+  float:left;
+
+  border:1px solid white;
+
+  margin: 0 0 10px 0;
+
+  .PermissionMetadata {
+    width:100%;
+    float:left;
+    padding:15px;
+
+    .Person {
+      width:100%;
+      float:left;
+      color:white;
+      font-size:1.2em;
+    }
+  }
+
+  .PermissionControls {
+    width:100%;
+    float:left;
+
+    .Assign {
+      width:100px;
+      float:left;
+
+      margin:20px 0 0 0;
+    }
+
+    .Status {
+      width:100px;
+      float:right;
+
+      font-size:1.2em;
+      margin:30px 0 0 0;
+    }
+
+    .NotAssigned {
+      color:$mainHoverColor;
+    }
+
+    .Assigned {
+      color:$greenLight;
+    }
+  }
+}

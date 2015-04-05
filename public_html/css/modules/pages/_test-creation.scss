@@ -2,42 +2,36 @@
   color: white;
 }
 
-.TestRestrictions {
+.CreateTest {
 
-  .UserTable {
-    background-color: $mainColor;
-    color: white;
-    width: 300px;
-    height: 300px;
+  .PermissionType {
+    width:120px;
+    float:left;
 
-    .ListTable--label {
-      width: 100%;
-      float: left;
-      padding: 10px;
+    margin-right:5px;
+
+    &:hover {
       cursor: pointer;
-
-      @include transition(background-color 0.3s);
-
-      &:hover {
-        background-color: $blueLight;
-      }
     }
   }
 
-  .UserListTable {
-    float: left;
-    overflow:auto;
-
-    margin-right: 20px;
-
-    border: 1px solid white;
+  .PermissionHighlight {
+    background-color: $mainHoverColor;
+    color:white;
+    border:1px solid $mainHoverColor;
   }
 
-  .UserAllowedTable {
-    width: 40%;
-    float: left;
-    overflow:auto;
+  .Restricted {
+    width:640px;
 
-    border: 1px solid white;
+    margin:20px 0 20px 0;
+    padding:15px;
+
+    border:1px solid $blueLight;
+  }
+
+  .FilterComponentUI {
+    padding:0;
+    border:none;
   }
 }

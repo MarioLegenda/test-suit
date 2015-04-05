@@ -4,6 +4,7 @@ namespace App\ToolsBundle\Helpers\Factories;
 
 use App\ToolsBundle\Entity\TestControl;
 use App\ToolsBundle\Entity\UserInfo;
+use App\ToolsBundle\Helpers\Factories\EntityFactory\AssignedTestsFactory;
 use App\ToolsBundle\Helpers\Factories\EntityFactory\TestControlFactory;
 use App\ToolsBundle\Helpers\Factories\EntityFactory\UserFactory;
 use App\ToolsBundle\Helpers\Factories\EntityFactory\UserInfoFactory;
@@ -29,6 +30,10 @@ class DoctrineEntityFactory
 
         $this->closures['TestControl'] = function() {
             return new TestControlFactory();
+        };
+
+        $this->closures['AssignedTests'] = function() {
+            return new AssignedTestsFactory();
         };
     }
 

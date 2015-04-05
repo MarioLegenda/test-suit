@@ -95,11 +95,20 @@ class TestControl
         return $this->test_name;
     }
 
-    public function setVisibility(array $visibility) {
-        $this->visibility = json_encode($visibility);
+    public function setVisibility($visibility) {
+        if(is_array($visibility)) {
+            $this->visibility = json_encode($visibility);
+            return;
+        }
+
+        $this->visibility = $visibility;
     }
 
     public function getVisibility() {
+        if($this->visibility === 'public') {
+            return $this->visibility;
+        }
+
         return json_decode($this->visibility, true);
     }
 
@@ -149,14 +158,6 @@ class TestControl
 
     public function validateVisibility(ExecutionContextInterface $context)
     {
-        if( ! is_array($this->getVisibility())) {
-            $context->buildViolation('If test visibility is not public, then at least one user has to be provided as the one who can solve the test')
-                ->atPath('visibility')
-                ->addViolation();
-
-            return;
-        }
-
         $v = $this->getVisibility();
         if(empty($v)) {
             $context->buildViolation('If test visibility is not public, then at least one user has to be provided as the one who can solve the test')

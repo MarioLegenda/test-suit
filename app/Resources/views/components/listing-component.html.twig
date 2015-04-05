@@ -1,6 +1,6 @@
 <script type="text/ng-template" id="listingTemplate.html">
     <div class="Listing">
-        <filter ng-if="directiveData.directiveType == 'user-row'"></filter>
+        <filter ng-if="directiveData.directiveType == 'user-row'" minimal-word-length="2"></filter>
         <user-row ng-if="directiveData.directiveType == 'user-row'" ng-repeat="user in listing"></user-row>
         <test-row ng-if="directiveData.directiveType == 'test-row'" ng-repeat="t in listing"></test-row>
         <p ng-if="directiveData.noData" class="NoUsers">No data to show</p>

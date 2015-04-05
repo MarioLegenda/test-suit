@@ -1,51 +1,46 @@
 <script type="text/ng-template" id="createTest.html">
-    <form action="" name="CreateTestForm" method="POST">
+    <div class="CreateTest">
+        <form action="" name="CreateTestForm" method="POST" novalidate>
 
-        <div class="FormRow">
-            <action-global-error></action-global-error>
-        </div>
-
-        <div class="FormRow">
-            <label for="test_name" class="FormRow--label  BasicLabel">Test name</label>
-            <input type="text" name="test_name" class="FormRow--field  BasicField" ng-model="test.test_name" required/>
-
-            <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('test_name')">
-                <p>Test name has to be provided</p>
-            </div>
-        </div>
-
-        <div class="FormRow">
-            <label for="test_name" class="FormRow--label  BasicLabel">Permission</label>
-            <select ng-model="test.current_permission" ng-options="permission for permission in test.permission_items" class="BasicSelect"></select>
-        </div>
-
-        <div class="FormRow">
-
-            <div class="FormError  BasicError  CreateUserError"
-                 ng-show="test.current_permission == 'restricted' && theForm.notEmpty(test.allowed_users)">
-                <p>If restriction is not public, and no users are provided, restriction is automaticlly going to be public</p>
+            <div class="FormRow">
+                <action-global-error></action-global-error>
             </div>
 
-            <div class="TestRestrictions" ng-show="test.current_permission == 'restricted'">
-                <div class="UserTable  UserListTable">
-                    <label class="ListTable--label" ng-click="managment.addUser(user)" ng-repeat="user in available_users">{[{ user.username }]}</label>
-                </div>
+            <div class="FormRow">
+                <label for="test_name" class="FormRow--label  BasicLabel">Test name</label>
+                <input type="text" name="test_name" class="FormRow--field  BasicField" ng-model="newTest.test_name"
+                       required/>
 
-                <div class="UserTable  UserAllowedTable">
-                    <label class="ListTable--label" ng-click="managment.removeUser(user)" ng-repeat="user in test.allowed_users">{[{ user.username }]}</label>
+                <div class="FormError  BasicError  CreateUserError" ng-show="theForm.notExists('test_name')">
+                    <p>Test name has to be provided</p>
                 </div>
             </div>
 
-        </div>
+            <div class="FormRow">
+                <label for="test_name" class="FormRow--label  BasicLabel">Permission</label>
+                <label ng-class="{ PermissionHighlight: newTest.highlighting.public }"
+                       class="BasicSubmitButton  PermissionType"
+                       ng-click="newTest.changePermission('public', 'restricted')">Public</label>
+                <label ng-class="{ PermissionHighlight: newTest.highlighting.restricted }"
+                       class="BasicSubmitButton  PermissionType"
+                       ng-click="newTest.changePermission('restricted', 'public')">Restricted</label>
+            </div>
 
-        <div class="FormRow">
-            <label for="future_plans" class="FormRow--label  BasicLabel">Remarks</label>
-            <textarea name="remarks" class="FormRow--field  BasicField  BasicTextarea" ng-model="test.remarks"></textarea>
-        </div>
+            <div  ng-if="newTest.highlighting.restricted" class="FormRow  Restricted" permission-handler>
+                <filter show-on-start="filterUsername" minimal-word-length="2"></filter>
+                <permission ng-repeat="user in directiveData.users" user-id="{[{ user.user_id }]}"></permission>
+            </div>
 
-        <div class="FormRow  ActionArea">
-            <action-submit init-key="action-create-test"></action-submit>
-        </div>
-    </form>
+            <div class="FormRow">
+                <label for="future_plans" class="FormRow--label  BasicLabel">Remarks</label>
+                <textarea name="remarks" class="FormRow--field  BasicField  BasicTextarea"
+                          ng-model="newTest.remarks"></textarea>
+            </div>
+
+            <div class="FormRow  ActionArea">
+                <action-submit init-key="action-create-test"></action-submit>
+            </div>
+        </form>
+    </div>
 
 </script>

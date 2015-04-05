@@ -95,6 +95,48 @@ class FilterRepository extends Repository
             return $users;
         };
 
+        $this->filters['permission-filter'] = function($personData) {
+            $qb = $this->em->createQueryBuilder();
+            $result = $qb->select(array('u'))
+                ->from('AppToolsBundle:User', 'u')
+                ->where($qb->expr()->andX(
+                    $qb->expr()->like('u.name', ':name'),
+                    $qb->expr()->like('u.lastname', ':lastname')
+                ))
+                ->setParameter(':name', '%' . $personData['name'] . '%')
+                ->setParameter(':lastname', '%' . $personData['lastname'] . '%')
+                ->getQuery()
+                ->getResult();
+
+            if(empty($result)) {
+                return array();
+            }
+
+
+
+            $users = array();
+            foreach($result as $user) {
+                $temp = array();
+
+                $temp['user_id'] = $user->getUserId();
+                $temp['username'] = $user->getUsername();
+
+                $temp['name'] = $user->getName();
+                $temp['lastname'] = $user->getLastname();
+                $temp['logged'] = $user->getLogged();
+
+                $roles = $user->getRoles();
+
+                foreach($roles as $role) {
+                    $temp['role'] = strtolower(substr($role->getRole(), 5));
+                }
+
+                $users[] = $temp;
+            }
+
+            return $users;
+        };
+
     }
 
     public function assignFilter($type) {

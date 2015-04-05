@@ -14,7 +14,7 @@ angular.module("suite.app", [
 
 
 angular.module('suit.directives.actions', [])
-   .directive('help', ['$timeout', function($timeout) {
+.directive('help', ['$timeout', function($timeout) {
         return {
             restirct: 'E',
             replace: true,
@@ -62,16 +62,13 @@ angular.module('suit.directives.actions', [])
 
             }
         }
-    }])
-   .directive('testCreation', ['Test', 'DataMediator', '$timeout', function(Test, DataMediator, $timeout) {
+}]).directive('testCreation', ['Test', 'DataMediator', 'List', function(Test, DataMediator, List) {
     return {
         restrict: 'E',
         replace: true,
         scope: {},
         templateUrl: 'createTest.html',
-        controller: function($scope, formHandler, $timeout, List, User) {
-            $scope.theForm = formHandler.init($scope, 'CreateTestForm');
-
+        controller: function($scope, formHandler) {
 
             $scope.globalErrors = {
                 errors: [],
@@ -80,135 +77,164 @@ angular.module('suit.directives.actions', [])
 
             DataMediator.addMediateData('action-create-test', {
                 message: 'Please wait...',
-                submitProp: 'test',
+                submitProp: 'newTest',
                 userSpecificClasses: 'ActionMoveRight',
                 awaitClasses: 'AwaitRight',
                 textValue: 'Create/modify test',
                 awaitEvent: 'await-create-test'
             });
 
-            $scope.available_users = null;
-
-            $scope.test = {
+            $scope.newTest= {
+                theForm: formHandler.init($scope, 'CreateTestForm'),
+                assignedList: List.createSimple(),
+                removedList: List.createSimple(),
+                assigned_users: [],
+                removed_users: [],
                 test_control_id: null,
                 test_name: '',
-                current_permission: 'public',
-                permission_items: ['public', 'restricted'],
-                allowed_users: ['public'],
                 remarks: '',
-                preloaded: false,
-                test_mutation: 'create'
-            };
-
-            $scope.managment = {
-                addUser: function (user) {
-                    $scope.test.allowed_users = List.add(user, 'user_id');
+                highlighting: {
+                    public: true,
+                    restricted: false
                 },
-                removeUser: function (user) {
-                    $scope.test.allowed_users = List.remove(user, 'user_id');
+                preloaded: false,
+                changePermission: function(permission, disable) {
+                    this.highlighting[permission] = !this.highlighting[permission];
+                    this.highlighting[disable] = false;
+
+                    if(permission === 'public') {
+                        $scope.newTest.assignedList.clear();
+                    }
+                },
+                directiveQuery: {
+                    isAssigned: function(userId) {
+                        return $scope.newTest.assignedList.hasEntry(parseInt(userId));
+                    }
                 }
             };
-
-            $scope.$watch(function () { return $scope.test.current_permission }, function (newVal, oldVal, scope) {
-                if (scope.available_users === null && scope.test.current_permission === 'restricted') {
-                    var promise = User.getAllUsers();
-                    promise.then(function (data, status, headers, config) {
-                        scope.available_users = data.data.users;
-                    }, function (data, status, headers, config) {
-                        console.log('Something bad happend', data, status);
-                    });
-                }
-            });
 
             $scope.$on('action-preload-test', function(event, data) {
-                $timeout(function() {
-                    var promise = Test.getBasicTestById(data.testId);
+                $scope.newTest.preloaded = true;
+                $scope.newTest.test_control_id = data.testId;
+                var promise;
 
-                    promise.then(function(data, status, headers, config) {
-                        $scope.test.preloaded = true;
-                        $scope.test.test_mutation = 'modify';
-                        var test = data.data.test;
+                promise = Test.getBasicTestById($scope.newTest.test_control_id);
 
-                        $scope.test.test_name = test.test_name;
-                        $scope.test.test_control_id = test.test_control_id;
-                        if( test.visibility[0] !== 'public') {
-                            $scope.test.current_permission = 'restricted';
-                        }
+                promise.then(function(data, status, headers, config) {
+                    $scope.newTest.test_name = data.data.test.test_name
+                    $scope.newTest.remarks = data.data.test.remarks;
+                }, function(data, status, headers, config) {
+                    console.log('Something bad has happend', data);
+                });
 
-                        $scope.test.remarks = test.remarks;
+                promise = Test.getTestPermissions($scope.newTest.test_control_id);
 
-                    }, function(data, status, headers, config) {
-                        console.log('Something bad happend', data, status);
-                    });
-                }, 100);
+                promise.then(function(data, status, headers, config) {
+                    var permissions = data.data.test_permittions;
+
+                    if(permissions.permission === 'public') {
+                        $scope.newTest.highlighting.public = true;
+                    }
+                    else if(permissions.permission === 'restricted') {
+                        $scope.newTest.highlighting.restricted = true;
+                        $scope.newTest.highlighting.public = false;
+                        $scope.newTest.assignedList.multipleAdd(permissions.assigned_users);
+                    }
+                }, function(data, status, headers, config) {
+                    console.log('Something went wrong', data);
+                });
+            });
+
+            $scope.$on('action-assign-user', function(event, data) {
+                $scope.newTest.assignedList.add(data.user_id);
+            });
+
+            $scope.$on('action-remove-user', function(event, data) {
+                $scope.newTest.assignedList.remove(data.user_id);
             });
         },
-        link: function(scope, elem, attrs) {
-            scope.test.submit = function($event) {
+        link: function($scope, elem, attrs) {
+            $scope.newTest.submit = function($event) {
                 $event.preventDefault();
-                if (scope.theForm.isValidForm()) {
-                    scope.$broadcast('await-create-test', {
-                        awaiting: true,
-                        message: 'Please wait...'
-                    });
+                var promise;
 
-                    var promise = Test.modifyTest({
-                        test_control_id: scope.test.test_control_id,
-                        test_name: scope.test.test_name,
-                        test_solvers: ( function() {
-                            if(scope.test.allowed_users.length === 1 && scope.test.allowed_users[0] === 'public') {
-                                return scope.test.allowed_users;
-                            }
-                            else if(scope.test.allowed_users.length === 0) {
-                                return ['public']
-                            }
+                if($scope.newTest.theForm.isValidForm()) {
+                    if($scope.newTest.preloaded === false) {
+                        promise = Test.createTest({
+                            test_name: $scope.newTest.test_name,
+                            test_solvers: ( function() {
+                                if($scope.newTest.assignedList.isEmpty()) {
+                                    return "public";
+                                }
 
-                            var idsArray = [];
-                            for(var i = 0; i < scope.test.allowed_users.length; i++) {
-                                idsArray[idsArray.length] = scope.test.allowed_users[i].user_id;
-                            }
+                                return $scope.newTest.assignedList.all();
+                            } () ),
+                            remarks: $scope.newTest.remarks
+                        });
 
-                            console.log(idsArray);
+                        promise.then(function(data, status, headers, config) {
+                            $scope.$emit('action-create-test', {});
+                        }, function(data, status, headers, config) {
+                            console.log('Something went wrong', data);
+                        })
+                    }
+                    else if($scope.newTest.preloaded === true) {
+                        promise = Test.modifyTest({
+                            test_control_id: $scope.newTest.test_control_id,
+                            test_name: $scope.newTest.test_name,
+                            test_solvers: ( function() {
+                                if($scope.newTest.assignedList.isEmpty()) {
+                                    return "public";
+                                }
 
-                            return idsArray;
-                        } () ),
-                        remarks: scope.test.remarks
-                    }, scope.test.test_mutation);
+                                return $scope.newTest.assignedList.all();
+                            } () ),
+                            remarks: $scope.newTest.remarks
+                        });
 
-                    promise.then(function (data, status, headers, config) {
-                        if(data.status === 205) {
-                            scope.$broadcast('await-create-user', {
-                                awaiting: false,
-                                finished: false
-                            });
-
-                            scope.$broadcast('action-error', {
-                                show: true,
-                                errors: data.data['errors']
-                            });
-
-                            window.scrollTo(0, 0);
-                            return;
-                        }
-
-                        if(scope.test.preloaded === true) {
-                            scope.$broadcast('await-create-test', {
-                                awaiting: true,
-                                message: 'Modified'
-                            });
-
-                            $timeout(function() {
-                                scope.$broadcast('await-create-test', {
-                                    awaiting: false
-                                });
-                            }, 2000)
-                        }
-                        else {
-                            scope.$emit('action-create-test', {});
-                        }
-                    });
+                        promise.then(function(data, status, headers, config) {
+                            $scope.$emit('action-create-test', {});
+                        }, function(data, status, headers, config) {
+                            console.log('Something went wrong', data);
+                        });
+                    }
                 }
             }
+        }
+    }
+}]).directive('permissionHandler', ['User', function(User) {
+    return {
+        restrict: 'AE',
+        replace: false,
+        controller: function($scope) {
+            $scope.directiveData = {
+                users: []
+            };
+
+            $scope.$on('action-user-filter', function($event, data) {
+                var promise = User.filter(data);
+
+                promise.then(function (data, status, headers, config) {
+                    $scope.directiveData.users = data.data.users;
+                }, function (data, status, headers, config) {
+                    console.log(data, data.status);
+                });
+            });
+        },
+        link: function($scope, elem, attrs) {
+
+        }
+    }
+}]).directive('permissionHandlerPreloaded', [function() {
+    return {
+        restrict: 'EA',
+        replace: false,
+        scope: {},
+        controller: function($scope) {
+
+        },
+        link: function($scope, elem, attrs) {
+
         }
     }
 }]).directive('createUser', function() {

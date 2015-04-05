@@ -2,11 +2,70 @@
 
 namespace App\ToolsBundle\Repositories;
 
+use App\ToolsBundle\Helpers\Observer\Observables\PermissionObservable;
+use App\ToolsBundle\Helpers\Observer\Observers\PermissionObserver;
+use App\ToolsBundle\Entity\AssignedTests;
+use App\ToolsBundle\Helpers\Observer\Exceptions\ObserverException;
+use App\ToolsBundle\Helpers\EntityToArray;
 use Doctrine\ORM\Query;
 use URLify;
 
 class TestRepository extends Repository
 {
+    public function createAssignedTests($testControlId, $testSolvers) {
+        if($testSolvers === 'public') {
+            $assignedTests = new AssignedTests();
+            $assignedTests->setTestControlId($testControlId);
+            $assignedTests->setPublicTest(1);
+            $assignedTests->setUserId(null);
+
+            $this->em->persist($assignedTests);
+            $this->em->flush();
+            return true;
+        }
+
+        foreach($testSolvers as $userId) {
+            $assignedTests = new AssignedTests();
+            $assignedTests->setTestControlId($testControlId);
+            $assignedTests->setPublicTest(0);
+            $assignedTests->setUserId($userId);
+
+            $this->em->persist($assignedTests);
+        }
+
+        $this->em->flush();
+    }
+
+    public function getPermittedUsers($testControlId) {
+        $qb = $this->em->createQueryBuilder();
+        $assignedTests = $qb->select(array('at'))
+            ->from('AppToolsBundle:AssignedTests', 'at')
+            ->where($qb->expr()->eq('at.testControlId', ':test_control_id'))
+            ->setParameter(':test_control_id', $testControlId)
+            ->getQuery()
+            ->getResult();
+
+        $observable = new PermissionObservable();
+        $observable->attach(new PermissionObserver($assignedTests));
+        $observable->notify();
+
+        $returnData = array(
+            'permission' => $observable->getStatus()
+        );
+
+        if($observable->getStatus() === 'restricted') {
+            $eta = new EntityToArray($assignedTests, array('getUserId'));
+            $returnData['assigned_users'] = $eta
+                ->config(array(
+                    'numeric-keys' => true,
+                    'use-temp' => false
+                ))
+                ->toArray();
+        }
+
+        return $returnData;
+    }
+
     public function getTestByIdentifier($identifier) {
         $qb = $this->em->createQueryBuilder();
         $result = $qb->select(array('tc'))
@@ -113,10 +172,10 @@ class TestRepository extends Repository
 
             $temp['test_id'] = $res->getTestControlId();
             $temp['test_name'] = $res->getTestName();
-            $temp['visibility'] = $userRepo->getUsernamesById($res->getVisibility());
+            /*$temp['visibility'] = $userRepo->getUsernamesById($res->getVisibility());
             if($temp['visibility'] === null) {
                 $temp['visibility'] = array("public");
-            }
+            }*/
             $temp['user']['username'] = $res->getUser()->getUsername();
             $temp['url'] = '/test-managment/create-test/' . URLify::filter($res->getTestName()). '/' . $res->getTestControlId();
             $temp['modify_url'] = '/test-managment/modify-test/' . URLify::filter($res->getTestName()). '/' . $res->getTestControlId();
@@ -159,15 +218,27 @@ class TestRepository extends Repository
     public function deleteTestById($id) {
         $testControl = $this->doctrine->getRepository('AppToolsBundle:TestControl')->find($id);
         $qb = $this->em->createQueryBuilder();
-        $result = $qb->select(array('t'))
+        $tests = $qb->select(array('t'))
             ->from('AppToolsBundle:Test', 't')
             ->where($qb->expr()->eq('t.test_control_id', ':test_control_id'))
             ->setParameter(':test_control_id', $id)
             ->getQuery()
             ->getResult();
 
-        foreach($result as $test) {
+        foreach($tests as $test) {
             $this->em->remove($test);
+        }
+
+        $qb = $this->em->createQueryBuilder();
+        $assignedTests = $qb->select(array('at'))
+            ->from('AppToolsBundle:AssignedTests', 'at')
+            ->where($qb->expr()->eq('at.testControlId', ':test_control_id'))
+            ->setParameter(':test_control_id', $id)
+            ->getQuery()
+            ->getResult();
+
+        foreach($assignedTests as $assigned) {
+            $this->em->remove($assigned);
         }
 
         $this->em->remove($testControl);
@@ -175,18 +246,51 @@ class TestRepository extends Repository
         $this->em->flush();
     }
 
-    public function updateTestById($id, array $testArray) {
-        $testControl = $this->em->getRepository('AppToolsBundle:TestControl')->find($id);
+    public function updateTestById($testControlId, array $testArray) {
+        $qb = $this->em->createQueryBuilder();
+        $assignedTests = $qb->select(array('at'))
+            ->from('AppToolsBundle:AssignedTests', 'at')
+            ->where($qb->expr()->eq('at.testControlId', ':test_control_id'))
+            ->setParameter(':test_control_id', $testControlId)
+            ->getQuery()
+            ->getResult();
 
+        foreach($assignedTests as $at) {
+            $this->em->remove($at);
+        }
+
+        $testSolvers = $testArray['test_solvers'];
+        if($testSolvers === 'public') {
+            $assignedTests = new AssignedTests();
+            $assignedTests->setTestControlId($testControlId);
+            $assignedTests->setPublicTest(1);
+            $assignedTests->setUserId(null);
+
+            $this->em->persist($assignedTests);
+        }
+        else if(is_array($testSolvers)) {
+            foreach($testSolvers as $userId) {
+                $assignedTests = new AssignedTests();
+                $assignedTests->setTestControlId($testControlId);
+                $assignedTests->setPublicTest(0);
+                $assignedTests->setUserId($userId);
+
+                $this->em->persist($assignedTests);
+            }
+        }
+
+        $testControl = $this->doctrine->getRepository('AppToolsBundle:TestControl')->find($testControlId);
         $testControl->setTestName($testArray['test_name']);
-        $testControl->setVisibility($testArray['test_solvers']);
         $testControl->setRemarks($testArray['remarks']);
+        $this->em->persist($testControl);
 
         $this->em->flush();
     }
 
     public function deleteQuestionById($id) {
         $test = $this->em->getRepository('AppToolsBundle:Test')->find($id);
+
+
         $this->em->remove($test);
         $this->em->flush();
     }

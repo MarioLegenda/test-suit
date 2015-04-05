@@ -2,7 +2,6 @@
 
 namespace App\ToolsBundle\Entity;
 
-use App\ToolsBundle\Helpers\Contracts\ModelObjectWrapperInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\Role\RoleInterface;
 

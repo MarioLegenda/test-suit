@@ -1,0 +1,15 @@
+<script type="text/ng-template" id="permission.html">
+    <div class="PermissionComponent">
+        <section class="PermissionMetadata">
+            <p class="Person">{[{ user.name }]} {[{ user.lastname }]} | {[{ user.username }]}</p>
+
+            <div class="PermissionControls">
+                <a ng-if="permission.notAssigned" ng-click="permission.assign($event, user.user_id)" href="" class="BasicSubmitButton  Assign">Assign</a>
+                <a ng-if="permission.assigned" ng-click="permission.remove($event, user.user_id)" href="" class="BasicSubmitButton  Assign">Remove</a>
+
+                <label ng-if="permission.notAssigned" class="Status  NotAssigned">Not assigned</label>
+                <label ng-if="permission.assigned" class="Status  Assigned">Assigned</label>
+            </div>
+        </section>
+    </div>
+</script>

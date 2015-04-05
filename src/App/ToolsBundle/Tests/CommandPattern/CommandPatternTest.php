@@ -105,10 +105,7 @@ class CommandPatternTest extends \PHPUnit_Framework_TestCase
     public function testValidTestCommand() {
         $content = array(
             'test_name' => 'javascript',
-            'test_solvers' => array(
-                'whitepostmail@gmail.com',
-                'zrinka@gmail.com'
-            ),
+            'test_solvers' => 'public',
             'remarks' => 'no remarks'
         );
 

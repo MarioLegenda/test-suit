@@ -574,33 +574,24 @@ body {
 .ContentSubTitle {
   color: white; }
 
-.TestRestrictions .UserTable {
-  background-color: #303133;
+.CreateTest .PermissionType {
+  width: 120px;
+  float: left;
+  margin-right: 5px; }
+  .CreateTest .PermissionType:hover {
+    cursor: pointer; }
+.CreateTest .PermissionHighlight {
+  background-color: #EC7063;
   color: white;
-  width: 300px;
-  height: 300px; }
-  .TestRestrictions .UserTable .ListTable--label {
-    width: 100%;
-    float: left;
-    padding: 10px;
-    cursor: pointer;
-    -webkit-transition: background-color 0.3s;
-    -moz-transition: background-color 0.3s;
-    -ms-transition: background-color 0.3s;
-    -o-transition: background-color 0.3s;
-    transition: background-color 0.3s; }
-    .TestRestrictions .UserTable .ListTable--label:hover {
-      background-color: #2C84EE; }
-.TestRestrictions .UserListTable {
-  float: left;
-  overflow: auto;
-  margin-right: 20px;
-  border: 1px solid white; }
-.TestRestrictions .UserAllowedTable {
-  width: 40%;
-  float: left;
-  overflow: auto;
-  border: 1px solid white; }
+  border: 1px solid #EC7063; }
+.CreateTest .Restricted {
+  width: 640px;
+  margin: 20px 0 20px 0;
+  padding: 15px;
+  border: 1px solid #2C84EE; }
+.CreateTest .FilterComponentUI {
+  padding: 0;
+  border: none; }
 
 .MainContent {
   padding: 50px 0 0 0; }
@@ -880,5 +871,36 @@ body {
       color: #EC7063;
       margin: 0 10px 0 10px;
       border: none; }
+
+.PermissionComponent {
+  width: 100%;
+  float: left;
+  border: 1px solid white;
+  margin: 0 0 10px 0; }
+  .PermissionComponent .PermissionMetadata {
+    width: 100%;
+    float: left;
+    padding: 15px; }
+    .PermissionComponent .PermissionMetadata .Person {
+      width: 100%;
+      float: left;
+      color: white;
+      font-size: 1.2em; }
+  .PermissionComponent .PermissionControls {
+    width: 100%;
+    float: left; }
+    .PermissionComponent .PermissionControls .Assign {
+      width: 100px;
+      float: left;
+      margin: 20px 0 0 0; }
+    .PermissionComponent .PermissionControls .Status {
+      width: 100px;
+      float: right;
+      font-size: 1.2em;
+      margin: 30px 0 0 0; }
+    .PermissionComponent .PermissionControls .NotAssigned {
+      color: #EC7063; }
+    .PermissionComponent .PermissionControls .Assigned {
+      color: #5de253; }
 
 /*# sourceMappingURL=style.css.map */

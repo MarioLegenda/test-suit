@@ -27,7 +27,12 @@ class ValidTestCommand extends Command
             return $this;
         }
 
-        if( ! is_array($testMetadata['test_solvers'])) {
+        if( ! is_array($testMetadata['test_solvers']) AND $testMetadata['test_solvers'] !== 'public') {
+            $this->validity = false;
+            return $this;
+        }
+
+        if(is_array($testMetadata['test_solvers']) AND empty($testMetadata['test_solvers'])) {
             $this->validity = false;
             return $this;
         }

@@ -28,7 +28,8 @@ angular.module('suit.factories', []).factory('$', function () {
                 modifyTest: 'test-managment/modify-test',
                 updateTest: 'test-managment/update-test',
                 finishTest: 'test-managment/finish-test',
-                workspaceData: 'test-managment/workspace-data'
+                workspaceData: 'test-managment/workspace-data',
+                testPermissions: 'test-managment/get-test-permissions'
             },
             install: {
                 installment: 'installment',
@@ -248,50 +249,112 @@ angular.module('suit.factories', []).factory('$', function () {
     };
 }]).factory('List', function() {
     function List() {
-        var list = [],
-            index = 0;
-
-        this.add = function(object, compareWith) {
-            if(list.length === 0) {
-                list[0] = object;
-                return list;
-            }
-
-            var itemExists = false;
-            for(var i = 0; i < list.length; i++) {
-                var item = list[i];
-
-                if(item[compareWith] === object[compareWith]) {
-                    itemExists = true;
-                }
-            }
-
-            if( ! itemExists) {
-                list[list.length] = object;
-            }
-
-            return list;
-        };
-
-        this.remove = function(object, compareWith) {
-            for(var i = 0; i < list.length; i++) {
-                var item = list[i];
-
-                if(item[compareWith] === object[compareWith]) {
-                    list.splice(i, 1);
-                    break;
-                }
-            }
-
-            return list;
-        };
-
-        this.clear = function() {
-
-        };
+        this.add = null;
+        this.remove = null;
     }
 
-    return new List();
+    List.prototype.list = [];
+    List.prototype.index = 0;
+
+    List.prototype.clear = function() {
+        this.list = [];
+        this.index = [];
+    };
+
+    List.prototype.all = function() {
+        return this.list;
+    };
+
+    List.prototype.isEmpty = function() {
+        return this.list.length === 0;
+    };
+
+    List.prototype.hasEntry = function(value) {
+        for(var i = 0; i < this.list.length; i++) {
+            if(value === this.list[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    function ListFactory() {
+        var list = new List();
+
+        this.createSimple = function() {
+            list.add = function (value) {
+                if(this.hasEntry(value)) {
+                    return;
+                }
+
+                this.list[this.list.length] = value;
+            };
+
+            list.remove = function (value) {
+                for (var i = 0; i < this.list.length; i++) {
+                    if (this.list[i] === value) {
+                        this.list.splice(i, 1);
+                    }
+                }
+            };
+
+            list.multipleAdd = function(multiArr) {
+                for(var i = 0; i < multiArr.length; i++) {
+                    if( ! this.hasEntry(multiArr[i])) {
+                        this.list[this.list.length] = multiArr[i];
+                    }
+                }
+            };
+
+            return list;
+        };
+
+        this.createComplex = function() {
+            list.add = function (object, compareWith) {
+                var list = new List();
+
+                if (list.length === 0) {
+                    list[0] = object;
+                    return list;
+                }
+
+                var itemExists = false;
+                for (var i = 0; i < list.length; i++) {
+                    var item = list[i];
+
+                    if (item[compareWith] === object[compareWith]) {
+                        itemExists = true;
+                    }
+                }
+
+                if (!itemExists) {
+                    list[list.length] = object;
+                }
+
+                return list;
+            };
+
+            list.remove = function (object, compareWith) {
+                for (var i = 0; i < list.length; i++) {
+                    var item = list[i];
+
+                    if (item[compareWith] === object[compareWith]) {
+                        list.splice(i, 1);
+                        break;
+                    }
+                }
+
+                return this;
+            };
+        };
+
+        this.include = function(obj) {
+            ListFactory.prototype = obj;
+        }
+    }
+
+    return new ListFactory();
 }).factory('Test', ['$http', 'Path', function($http, Path) {
 
     function Test() {
@@ -319,14 +382,10 @@ angular.module('suit.factories', []).factory('$', function () {
             });
         };
 
-        this.modifyTest = function(data, type) {
+        this.modifyTest = function(data) {
             return $http({
                 method: 'POST',
-                url: ( function() {
-                    return (type === 'create') ?
-                        Path.namespace('test.createTestUrl').construct() :
-                        Path.namespace('test.modifyTest').construct();
-                } () ),
+                url: Path.namespace('test.modifyTest').construct(),
                 data: data
             });
         };
@@ -368,6 +427,14 @@ angular.module('suit.factories', []).factory('$', function () {
             });
         };
 
+        this.getTestPermissions = function(testControlId) {
+            return $http({
+                method: 'POST',
+                url: Path.namespace('test.testPermissions').construct(),
+                data: {test_control_id: testControlId}
+            });
+        };
+
         this.workspaceData = function(id) {
             return $http({
                 method: 'POST',
@@ -387,7 +454,7 @@ angular.module('suit.factories', []).factory('$', function () {
             return $http({
                 method: 'POST',
                 url: Path.namespace('test.getBasicTestById').construct(),
-                data: {id : id}
+                data: {test_control_id : id}
             });
         }
     }

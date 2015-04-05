@@ -74,10 +74,14 @@ app_authorized_deleteQuestion:
     defaults: { _controller: AppAuthorizedBundle:Workspace:deleteQuestion }
     methods: [POST]
 
-
 app_authorized_getTest:
     path: /test-managment/get-test
     defaults: { _controller: AppAuthorizedBundle:Workspace:getTest }
+    methods: [POST]
+
+app_authorized_getPermissions:
+    path: /test-managment/get-test-permissions
+    defaults: { _controller: AppAuthorizedBundle:Test:getTestPermissions }
     methods: [POST]
 
 app_authorized_getTestsBasic:

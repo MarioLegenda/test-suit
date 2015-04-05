@@ -188,12 +188,88 @@ angular.module('suit.directives.components', [])
             });
         }
     }
-}).directive('filter', [function() {
+}).directive('permission', [function() {
     return {
         restrict: 'E',
         replace: true,
-        templateUrl: 'userFilter.html',
+        templateUrl: 'permission.html',
         controller: function($scope) {
+        },
+        link: function($scope, elem, attrs) {
+            $scope.permission = {
+                assigned: (function() {
+                    if(typeof attrs.userId === 'undefined') {
+                        return false;
+                    }
+
+                    return $scope.newTest.directiveQuery.isAssigned(attrs.userId) === true;
+                } () ),
+                notAssigned: (function() {
+                    if(typeof attrs.userId === 'undefined') {
+                        return false;
+                    }
+
+                    return $scope.newTest.directiveQuery.isAssigned(attrs.userId) === false;
+                } () ),
+                assign: function($event, userId) {
+                    $event.preventDefault();
+
+                    $scope.$emit('action-assign-user', {
+                        user_id: userId
+                    });
+
+                    this.assigned = true;
+                    this.notAssigned = false;
+                },
+                remove: function($event, userId) {
+                    $scope.$emit('action-remove-user', {
+                        user_id: userId
+                    });
+
+                    this.notAssigned = true;
+                    this.assigned = false;
+                }
+            };
+        }
+    }
+}]).directive('restrictedPermission', [function() {
+
+}]).directive('filter', [function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'filter.html',
+        controller: function($scope) {
+
+            $scope.menus = {
+                filterUsername: false,
+                filterPersonal: false,
+
+                toggle: function ($event, type) {
+                    $scope.directiveData.username = '';
+                    $scope.directiveData.name = '';
+                    $scope.directiveData.lastname = '';
+                    if (!this.hasOwnProperty(type)) {
+                        throw Error('ManagmentMenu: Wrong type ' + type);
+                    }
+
+                    this[type] = !this[type];
+                    var menus = ['filterUsername', 'filterPersonal'];
+                    menus.splice(menus.indexOf(type), 1);
+
+                    for (var i = 0; i < menus.length; i++) {
+                        this[menus[i]] = false;
+                    }
+                }
+            }
+        },
+        link: function($scope, elem, attrs) {
+            var showOnStart = attrs.showOnStart;
+
+            if(typeof showOnStart !== 'undefined') {
+                $scope.menus[showOnStart] = true;
+            }
+
             var decideEvnObject = function(type) {
                 var eventObj = {
                     filterType: null,
@@ -236,38 +312,19 @@ angular.module('suit.directives.components', [])
                 },
 
                 interaction: function($event, type) {
-                    var eventObj = decideEvnObject(type);
+                    var eventObj = decideEvnObject(type),
+                        minStrLen = attrs.minimalWordLength;
 
-                    if(this[type].length >= 0) {
+                    if(typeof minStrLen !== 'undefined') {
+                        if(this[type].length > parseInt(minStrLen)) {
+                            $scope.$emit('action-user-filter', eventObj);
+                        }
+                    }
+                    else if(this[type].length >= 0) {
                         $scope.$emit('action-user-filter', eventObj);
                     }
                 }
             };
-
-            $scope.menus = {
-                filterUsername: false,
-                filterPersonal: false,
-
-                toggle: function ($event, type) {
-                    $scope.directiveData.username = '';
-                    $scope.directiveData.name = '';
-                    $scope.directiveData.lastname = '';
-                    if (!this.hasOwnProperty(type)) {
-                        throw Error('ManagmentMenu: Wrong type ' + type);
-                    }
-
-                    this[type] = !this[type];
-                    var menus = ['filterUsername', 'filterPersonal'];
-                    menus.splice(menus.indexOf(type), 1);
-
-                    for (var i = 0; i < menus.length; i++) {
-                        this[menus[i]] = false;
-                    }
-                }
-            }
-        },
-        link: function($scope, elem, attrs) {
-
         }
     }
 }]).directive('listingComponent', ['$compile', 'CompileCommander', function($compile, CompileCommander) {
