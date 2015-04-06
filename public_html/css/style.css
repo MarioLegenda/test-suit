@@ -115,6 +115,14 @@ a {
     .FormRow .BasicSubmitButton:active {
       background-color: #EC7063;
       border: 1px solid #EC7063; }
+  .FormRow .LeftAligned {
+    float: left; }
+  .FormRow .RightAligned {
+    float: right; }
+  .FormRow .ButtonSpacing {
+    margin: 10px 0 10px 0; }
+  .FormRow .BlueHighlight {
+    border: 1px solid #2C84EE; }
   .FormRow .CheckboxSection {
     width: 100%;
     float: left;
@@ -499,6 +507,11 @@ body {
     margin: 15px 160px 0 0 !important; }
   .MainContent .CreateUserError {
     left: 650px; }
+
+.Expandable {
+  width: 100%;
+  overflow: auto;
+  position: relative; }
 
 .Expandable--info {
   padding: 50px 10px 10px 10px; }
@@ -902,5 +915,27 @@ body {
       color: #EC7063; }
     .PermissionComponent .PermissionControls .Assigned {
       color: #5de253; }
+
+.AbsoluteInfoBox {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 50px 0 50px 0; }
+  .AbsoluteInfoBox .Box {
+    display: block;
+    width: 100%;
+    height: 600px; }
+  .AbsoluteInfoBox .InfoLabel {
+    display: block;
+    width: 100%;
+    float: left;
+    color: white;
+    font-size: 1.2em;
+    text-align: center;
+    padding: 5px 5px 5px 5px; }
 
 /*# sourceMappingURL=style.css.map */

@@ -1,0 +1,11 @@
+<script type="text/ng-template" id="assignedTestListing.html">
+    <div class="MainContent  ContentCentered  OverflowContainer  AssignedTestsMain">
+        <h2 class="ContentSubTitle">Assigned Tests</h2>
+        <listing-component
+                ng-if="directiveData.loaded"
+                listing="directiveData.users"
+                directive-type="{[{ directiveData.directiveType }]}"
+                show-load-more="directiveData.loadMore">
+        </listing-component>
+    </div>
+</script>

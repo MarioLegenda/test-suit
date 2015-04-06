@@ -1,5 +1,10 @@
-.Expandable--info {
+.Expandable {
+  width:100%;
+  overflow:auto;
+  position:relative;
+}
 
+.Expandable--info {
   padding:50px 10px 10px 10px;
 
   .Expandable--click {

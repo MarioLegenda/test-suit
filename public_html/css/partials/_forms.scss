@@ -120,6 +120,22 @@
     }
   }
 
+  .LeftAligned {
+    float:left;
+  }
+
+  .RightAligned {
+    float:right;
+  }
+
+  .ButtonSpacing {
+    margin:10px 0 10px 0;
+  }
+
+  .BlueHighlight {
+    border:1px solid $blueLight;
+  }
+
   .CheckboxSection {
     width:100%;
     float:left;

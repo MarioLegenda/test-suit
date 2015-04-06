@@ -13,13 +13,15 @@
             <link rel="stylesheet" href="{{ asset("css/style.css") }}">
         {% endblock %}
 
-        {{ include('user-list.html.twig') }}
         {{ include('global-errors.html.twig') }}
         {{ include('submit-directive.html.twig') }}
         {{ include('create-user.html.twig') }}
         {{ include('managment-menu.html.twig') }}
         {{ include('create-test.html.twig') }}
-        {{ include('test-list.html.twig') }}
+
+        {{ include('listings/user-list.html.twig') }}
+        {{ include('listings/test-list.html.twig') }}
+        {{ include('listings/assigned-test-list.html.twig') }}
 
         {{ include('blocks/text-answer-block.html.twig') }}
         {{ include('blocks/code-answer-block.html.twig') }}
@@ -29,11 +31,16 @@
         {{ include('blocks/workspace.html.twig') }}
         {{ include('blocks/workspace-builder.html.twig') }}
         {{ include('blocks/workspace-modifier.html.twig') }}
+
         {{ include('components/listing-component.html.twig') }}
         {{ include('components/filter.html.twig') }}
-        {{ include('user-row.html.twig') }}
-        {{ include('permission.html.twig') }}
-        {{ include('test-row.html.twig') }}
+        {{ include('components/absolute-info-box.html.twig') }}
+
+        {{ include('rows/user-row.html.twig') }}
+        {{ include('rows/test-row.html.twig') }}
+        {{ include('rows/assigned-test-row.html.twig') }}
+        {{ include('rows/permission-row.html.twig') }}
+
         {{ include('help.html.twig') }}
 
     </head>

@@ -18,7 +18,7 @@
         </div>
 
         <div ng-if="menus.testMenu" class="MenuBlock">
-            <p class="MenuChoice  AwayLeft"><span class="MenuChoice--icon  fa fa-mortar-board fa-3x"></span><span class="MenuChoice--text">Assigned tests</span></p>
+            <p ng-click="managment.toggle($event, 'assignedTests')" class="MenuChoice  AwayLeft"><span class="MenuChoice--icon  fa fa-mortar-board fa-3x"></span><span class="MenuChoice--text">Assigned tests</span></p>
             {% if model.isInRole('ROLE_USER_MANAGER') or model.isInRole('ROLE_TEST_CREATOR') %}
                 <p ng-click="managment.toggle($event, 'createTest')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-file-o fa-3x"></span><span class="MenuChoice--text">Create test</span></p>
                 <p ng-click="managment.toggle($event, 'testList')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-edit fa-3x"></span><span class="MenuChoice--text">Manage tests</span></p>
@@ -31,6 +31,7 @@
             <user-listing ng-if="managment.listUsers"></user-listing>
             <test-creation ng-if="managment.createTest"></test-creation>
             <test-listing ng-if="managment.testList"></test-listing>
+            <assigned-tests-listing ng-if="managment.assignedTests"></assigned-tests-listing>
             <workspace ng-if="managment.workspace" test-control-id="{[{ importance.testControlId }]}"></workspace>
             <help ng-if="managment.helpMenu"></help>
         </div>

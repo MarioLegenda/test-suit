@@ -1,5 +1,7 @@
 <script type="text/ng-template" id="testRow.html">
     <section class="Expandable">
+        <absolute-info-box></absolute-info-box>
+
         <a href=""  ng-click="directiveData.expandSection($event)" class="Expandable--click">
             <span class="Expandable--item  Expandable--testName">{[{ t.test_name }]}</span>
             <span class="Expandable--item  Expandable--created">Created: {[{ t.created }]}</span>
@@ -23,9 +25,9 @@
                 <p class="InfoSection--text">{[{ t.remarks }]}</p>
             </div>
 
-            <div class="InfoSection  InfoSection--expand">
-                <h2 class="InfoSection--title">Visibility</h2>
-                <label ng-repeat="visibility in t.visibility" class="InfoSection--text  InfoSection--rowAligned">{[{ visibility }]}</label>
+            <div class="FormRow  InfoSection  InfoSection--expand">
+                <h2 class="InfoSection--title">Permissions</h2>
+                <a ng-click="directiveData.absoluteInfoBox(t.test_id)" href="#" class="BasicSubmitButton  LeftAligned  ButtonSpacing  BlueHighlight">View permitted users</a>
             </div>
 
             <div class="ModificationActions">

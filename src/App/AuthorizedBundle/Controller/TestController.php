@@ -107,6 +107,61 @@ class TestController extends ContainerAware
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
      */
+    public function deleteTestAction() {
+        $doctrine = $this->container->get('doctrine');
+        $request = $this->container->get('request');
+        $security = $this->container->get('security.context');
+
+        $content = (array)json_decode($request->getContent());
+
+        $context = new CommandContext();
+        $context->addParam('id-content', $content);
+
+        $command = CommandFactory::construct('generic-id-check')->getCommand();
+
+        if( ! $command->execute($context)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
+
+        try {
+            $testRepo = new TestRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
+
+            $testRepo->deleteTestById($content['id']);
+        }
+        catch(\Exception $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
+
+        $user = $security->getToken()->getUser();
+        $userRepo = new UserRepository(new Parameters(array(
+            'doctrine' => $doctrine
+        )));
+        $basicTestInfo = $testRepo->getBasicTestInformation($user->getUserId(), $userRepo);
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('tests', $basicTestInfo);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
+
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     */
     public function modifyTestAction() {
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
@@ -248,7 +303,6 @@ class TestController extends ContainerAware
      */
     public function getTestBasicAction() {
         $doctrine = $this->container->get('doctrine');
-        $security = $this->container->get('security.context');
         $request = $this->container->get('request');
 
         $content = (array)json_decode($request->getContent());
@@ -284,58 +338,10 @@ class TestController extends ContainerAware
         return $response->sendResponse(200, "OK");
     }
 
-    /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
-     */
-    public function deleteTestAction() {
+    public function getAssignedTestsInfo() {
         $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
-        $security = $this->container->get('security.context');
 
-        $content = (array)json_decode($request->getContent());
-
-        $context = new CommandContext();
-        $context->addParam('id-content', $content);
-
-        $command = CommandFactory::construct('generic-id-check')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
-            $content = new ResponseParameters();
-            $content->addParameter("error", 'Invalid request from the client');
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse();
-        }
-
-        try {
-            $testRepo = new TestRepository(new Parameters(array(
-                'doctrine' => $doctrine
-            )));
-
-            $testRepo->deleteTestById($content['id']);
-        }
-        catch(\Exception $e) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", array($e->getMessage()));
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse();
-        }
-
-        $user = $security->getToken()->getUser();
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
-        $basicTestInfo = $testRepo->getBasicTestInformation($user->getUserId(), $userRepo);
-
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('tests', $basicTestInfo);
-
-        $response = new AdaptedResponse();
-        $response->setContent($responseParameters);
-        return $response->sendResponse(200, "OK");
 
     }
 } 

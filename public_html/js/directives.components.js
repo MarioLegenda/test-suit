@@ -1,6 +1,38 @@
 "use strict";
 
 angular.module('suit.directives.components', [])
+    .directive('absoluteInfoBox', [function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: 'absoluteInfoBox.html',
+            scope: {},
+            controller: function($scope) {
+                $scope.infoBox = {
+                    listingData: [
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com',
+                        'whitepostmail@gmail.com'
+                    ]
+                }
+            },
+            link: function($scope, elem, attrs) {
+                $scope.$on('action-populate-info-box', function($event, data) {
+                    $scope.infoBox.listingData = data.listingData;
+                    elem.show();
+                });
+            }
+        }
+    }])
     .directive('actionGlobalError', function() {
         return {
             restrict: 'E',
@@ -486,8 +518,23 @@ angular.module('suit.directives.components', [])
                 },
                 workspace: function(testId) {
                     $scope.$emit('action-workspace', {testId: testId});
+                },
+                absoluteInfoBox: function(testId) {
+                    $scope.$broadcast('action-populate-info-box', {test_id: testId});
                 }
             }
+        }
+    }
+}]).directive('assignedTestRow', [function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'assignedTestRow.html',
+        controller: function($scope) {
+
+        },
+        link: function($scope, elem, attrs) {
+
         }
     }
 }]);
