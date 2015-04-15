@@ -1,0 +1,24 @@
+{
+    "name": "mario-legenda/entity-to-array",
+    "description": "Transforms Doctrine entities to arrays with different configuration",
+    "keywords": [
+        "php"
+    ],
+    "homepage": "https://github.com/MarioLegenda/entity-to-array",
+    "type": "utility",
+    "license": "MIT",
+    "version": "0.0.1",
+    "authors": [
+        {
+            "name": "Mario Škrlec",
+            "email": "whitepostmail@gmail.com",
+            "homepage": "https://github.com/MarioLegenda"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-0": {"EntityToArray\\": "src/"}
+    }
+}

@@ -2635,5 +2635,135 @@
             "configuration",
             "distribution"
         ]
+    },
+    {
+        "name": "mario-legenda/entity-to-array",
+        "version": "0.0.1",
+        "version_normalized": "0.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/MarioLegenda/entity-to-array.git",
+            "reference": "4ad392df778014b157dc1aa6958a81bda1df345a"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/MarioLegenda/entity-to-array/zipball/4ad392df778014b157dc1aa6958a81bda1df345a",
+            "reference": "4ad392df778014b157dc1aa6958a81bda1df345a",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "time": "2015-04-06 11:03:59",
+        "type": "utility",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "EntityToArray\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mario Škrlec",
+                "email": "whitepostmail@gmail.com",
+                "homepage": "https://github.com/MarioLegenda"
+            }
+        ],
+        "description": "Transforms Doctrine entities to arrays with different configuration",
+        "homepage": "https://github.com/MarioLegenda/entity-to-array",
+        "keywords": [
+            "php"
+        ]
+    },
+    {
+        "name": "mario-legenda/php-strong-types",
+        "version": "0.0.1",
+        "version_normalized": "0.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/MarioLegenda/php-strong-types.git",
+            "reference": "7f402c60703448bede20b27b8213467ceb753982"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/MarioLegenda/php-strong-types/zipball/7f402c60703448bede20b27b8213467ceb753982",
+            "reference": "7f402c60703448bede20b27b8213467ceb753982",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "time": "2015-03-30 10:52:23",
+        "type": "utility",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "StrongType\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mario Škrlec",
+                "email": "whitepostmail@gmail.com",
+                "homepage": "https://github.com/MarioLegenda/php-strong-types",
+                "role": "Developer"
+            }
+        ],
+        "description": "Provides strongly typed object of String, Integer, Float and ArrayType",
+        "homepage": "https://github.com/MarioLegenda",
+        "keywords": [
+            "php"
+        ]
+    },
+    {
+        "name": "mario-legenda/request-content-evaluator",
+        "version": "dev-master",
+        "version_normalized": "9999999-dev",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/MarioLegenda/request-content-evaluator.git",
+            "reference": "e1bc292409d31f5ddcddc64cc8024a127c0113ba"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/MarioLegenda/request-content-evaluator/zipball/e1bc292409d31f5ddcddc64cc8024a127c0113ba",
+            "reference": "e1bc292409d31f5ddcddc64cc8024a127c0113ba",
+            "shasum": ""
+        },
+        "require": {
+            "mario-legenda/php-strong-types": "0.0.1",
+            "php": ">=5.3.0"
+        },
+        "time": "2015-04-15 12:32:39",
+        "type": "utility",
+        "installation-source": "source",
+        "autoload": {
+            "psr-0": {
+                "RCE\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Mario Škrlec",
+                "email": "whitepostmail@gmail.com",
+                "homepage": "https://github.com/MarioLegenda"
+            }
+        ],
+        "homepage": "https://github.com/MarioLegenda/request-content-evaluator",
+        "keywords": [
+            "php"
+        ]
     }
 ]

@@ -28,10 +28,3 @@ $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 $response->send();
 $kernel->terminate($request, $response);
-
-/**
- * - napravit sustav logiranja pogrešaka i gracefull izlaženja iz istih
- *
- *
- *
- */

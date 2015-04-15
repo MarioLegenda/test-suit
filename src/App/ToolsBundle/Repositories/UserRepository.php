@@ -7,6 +7,7 @@ use App\ToolsBundle\Entity\Role;
 use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
+use EntityToArray\EntityToArray;
 
 use Doctrine\ORM\Query;
 
@@ -52,6 +53,31 @@ class UserRepository extends Repository
         $ui['permitions'] = $roles;
 
         return $ui;
+    }
+
+    public function getUsersById(array $userIds) {
+        $qb = $this->em->createQueryBuilder();
+        $result = $qb->select(array('u'))
+            ->from('AppToolsBundle:User', 'u')
+            ->where($qb->expr()->in('u.user_id', $userIds))
+            ->getQuery()
+            ->getResult();
+
+        $eta = new EntityToArray($result, array(
+            'getName',
+            'getLastname',
+            'getUsername',
+            'getLogged'
+        ));
+        $users = $eta
+            ->config(array(
+                'multidimensional' => true,
+                'methodName-keys' => true,
+                'only-names' => true
+            ))
+            ->toArray();
+
+        return $users;
     }
 
     public function getUserByUsername($username) {
@@ -142,8 +168,8 @@ class UserRepository extends Repository
             ->getQuery()
             ->getResult(Query::HYDRATE_ARRAY);
 
-        if(empty($result)) {
-            return null;
+        if(empty($result) OR $result === null) {
+            return array();
         }
 
         return $result;

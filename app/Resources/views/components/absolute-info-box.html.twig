@@ -1,19 +1,17 @@
 <script type="text/ng-template" id="absoluteInfoBox.html">
     <div class="AbsoluteInfoBox">
         <div class="Box">
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
-            <label class="InfoLabel">whitepostmail@gmail.com</label>
+            <a ng-click="infoBox.close($event)" href="#" class="CloseButton"><span class="fa fa-close fa-2x"></span></a>
+            <table class="InfoTable">
+                <tr class="Row  MainRow">
+                    <th class="Column  ColumnHeading" ng-repeat="box in infoBox.boxes">{[{ box }]}</th>
+                </tr>
+
+                <tr class="Row" ng-repeat="items in infoBox.listingData">
+                    <td class="Column" ng-repeat="sgn in infoBox.signature">{[{ infoBox.showItem(items, sgn) }]}</td>
+                </tr>
+
+            </table>
         </div>
     </div>
 </script>

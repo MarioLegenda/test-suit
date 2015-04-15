@@ -172,10 +172,7 @@ class TestRepository extends Repository
 
             $temp['test_id'] = $res->getTestControlId();
             $temp['test_name'] = $res->getTestName();
-            /*$temp['visibility'] = $userRepo->getUsernamesById($res->getVisibility());
-            if($temp['visibility'] === null) {
-                $temp['visibility'] = array("public");
-            }*/
+            $temp['permissions'] = $this->getPermittedUsers($res->getTestControlId());
             $temp['user']['username'] = $res->getUser()->getUsername();
             $temp['url'] = '/test-managment/create-test/' . URLify::filter($res->getTestName()). '/' . $res->getTestControlId();
             $temp['modify_url'] = '/test-managment/modify-test/' . URLify::filter($res->getTestName()). '/' . $res->getTestControlId();

@@ -174,7 +174,6 @@ img {
   width: 100%; }
 
 body {
-  overflow-x: hidden;
   background-color: #424242; }
 
 .Global {
@@ -223,7 +222,6 @@ body {
   border: 1px solid white; }
   .Expandable .Expandable--click {
     width: 100%;
-    height: 46px;
     float: left;
     display: block;
     padding: 15px;
@@ -241,9 +239,6 @@ body {
       background-color: #2C84EE !important; }
 
 .Expandable--info {
-  position: absolute;
-  top: 46px;
-  left: 0;
   width: 100%;
   float: left;
   padding: 10px; }
@@ -514,6 +509,7 @@ body {
   position: relative; }
 
 .Expandable--info {
+  display: none;
   padding: 50px 10px 10px 10px; }
   .Expandable--info .Expandable--click .Expandable--testName {
     margin: 0 5px 0 0; }
@@ -923,19 +919,37 @@ body {
   left: 0;
   z-index: 1000;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 50px 0 50px 0; }
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 46px 0 50px 0; }
+  .AbsoluteInfoBox .CloseButton {
+    width: 36px;
+    float: right;
+    color: white;
+    font-size: 1.2em;
+    text-align: right;
+    margin: 10px 50px 0 0; }
+    .AbsoluteInfoBox .CloseButton:hover {
+      color: #EC7063; }
   .AbsoluteInfoBox .Box {
     display: block;
     width: 100%;
-    height: 600px; }
-  .AbsoluteInfoBox .InfoLabel {
-    display: block;
+    float: left;
+    padding: 5px;
+    padding-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.8); }
+  .AbsoluteInfoBox .InfoTable {
     width: 100%;
     float: left;
-    color: white;
-    font-size: 1.2em;
-    text-align: center;
-    padding: 5px 5px 5px 5px; }
+    margin: 50px 0 0 0; }
+    .AbsoluteInfoBox .InfoTable .Row {
+      color: white; }
+    .AbsoluteInfoBox .InfoTable .Column {
+      text-align: center;
+      padding: 10px; }
+    .AbsoluteInfoBox .InfoTable .ColumnHeading {
+      padding: 10px;
+      font-size: 1.2em; }
+    .AbsoluteInfoBox .InfoTable .MainRow {
+      border-bottom: 1px solid white; }
 
 /*# sourceMappingURL=style.css.map */

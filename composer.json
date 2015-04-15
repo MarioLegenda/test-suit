@@ -21,7 +21,9 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "phpunit/phpunit": "4.4.*",
         "jbroadway/urlify": "1.0.3-stable",
-        "ircmaxell/random-lib": "1.1.0"
+        "ircmaxell/random-lib": "1.1.0",
+        "mario-legenda/entity-to-array": "0.0.1",
+        "mario-legenda/request-content-evaluator": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

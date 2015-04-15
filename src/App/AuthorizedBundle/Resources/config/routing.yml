@@ -99,3 +99,8 @@ app_authorized_workspaceData:
     defaults: { _controller: AppAuthorizedBundle:Workspace:workspaceData }
     methods: [POST]
 
+app_authorized_getPermittedUsers:
+    path: /test-managment/get-permitted-users
+    defaults: { _controller: AppAuthorizedBundle:Test:getPermittedUsers }
+    methods: [POST]
+

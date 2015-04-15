@@ -2,9 +2,6 @@
 
 namespace App\AuthorizedBundle\Controller;
 
-use App\ToolsBundle\Helpers\Command\CommandContext;
-use App\ToolsBundle\Helpers\Command\CommandFactory;
-use App\ToolsBundle\Helpers\Command\Filters\Exists;
 use App\ToolsBundle\Helpers\Factories\DoctrineEntityFactory;
 use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\Observer\Exceptions\ObserverException;
@@ -14,10 +11,18 @@ use App\ToolsBundle\Helpers\AdaptedResponse;
 
 use App\ToolsBundle\Repositories\TestRepository;
 use App\ToolsBundle\Repositories\UserRepository;
+use RCE\Filters\BeInteger;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Doctrine\ORM\Query;
 use RandomLib;
+
+use RCE\Builder\Builder;
+use RCE\ContentEval;
+use RCE\Filters\Exist;
+use RCE\Filters\BeString;
+use RCE\Filters\BeArray;
+use RCE\Filters\OptionalExists;
 
 class TestController extends ContainerAware
 {
@@ -30,12 +35,14 @@ class TestController extends ContainerAware
 
         $content = (array)json_decode($request->getContent(), true);
 
-        $context = new CommandContext();
-        $context->addParam('create-test-content', $content);
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_name'), new BeString('test_name')),
+            $builder->expr()->hasTo(new Exist('test_solvers')),
+            $builder->expr()->hasTo(new Exist('remarks'))
+        );
 
-        $command = CommandFactory::construct('valid-test')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $responseParameters = new ResponseParameters();
             $responseParameters->addParameter('errors', 'Invalid request from the client');
 
@@ -114,12 +121,12 @@ class TestController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $context = new CommandContext();
-        $context->addParam('id-content', $content);
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('id'), new BeInteger('id'))
+        );
 
-        $command = CommandFactory::construct('generic-id-check')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $content = new ResponseParameters();
             $content->addParameter("error", 'Invalid request from the client');
 
@@ -168,12 +175,14 @@ class TestController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $context = new CommandContext();
-        $context->addParam('create-test-content', $content);
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_name'), new BeString('test_name')),
+            $builder->expr()->hasTo(new Exist('test_solvers')),
+            $builder->expr()->hasTo(new Exist('remarks'))
+        );
 
-        $command = CommandFactory::construct('valid-test')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $content = new ResponseParameters();
             $content->addParameter("errors", 'Invalid request from the client');
 
@@ -223,15 +232,12 @@ class TestController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $context = new CommandContext();
-        $context->addParam('filters', array(
-            new Exists('test_control_id')
-        ));
-        $context->addParam('evaluate-data', $content);
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
+        );
 
-        $command = CommandFactory::construct('configurable')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $content = new ResponseParameters();
             $content->addParameter("errors", 'Invalid request from the client');
 
@@ -307,15 +313,12 @@ class TestController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $context = new CommandContext();
-        $context->addParam('filters', array(
-            new Exists('test_control_id')
-        ));
-        $context->addParam('evaluate-data', $content);
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
+        );
 
-        $command = CommandFactory::construct('configurable')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $content = new ResponseParameters();
             $content->addParameter("errors", 'Invalid request from the client');
 
@@ -338,10 +341,48 @@ class TestController extends ContainerAware
         return $response->sendResponse(200, "OK");
     }
 
-    public function getAssignedTestsInfo() {
+    public function getPermittedUsersAction() {
         $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
 
+        $content = (array)json_decode($request->getContent());
 
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('user_ids'), new BeArray('user_ids'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+
+        try {
+            $userRepo = new UserRepository(new Parameters(array(
+                'doctrine' => $doctrine
+            )));
+
+            $users = $userRepo->getUsersById($content['user_ids']);
+        }
+        catch(\Exception $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        $content = new ResponseParameters();
+        $content->addParameter('users', $users);
+
+        $response = new AdaptedResponse();
+        $response->setContent($content);
+        return $response->sendResponse(200, 'OK');
     }
 } 

@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module('suit.directives.components', [])
-    .directive('absoluteInfoBox', [function() {
+    .directive('absoluteInfoBox', ['$timeout', function($timeout) {
         return {
             restrict: 'E',
             replace: true,
@@ -9,27 +9,56 @@ angular.module('suit.directives.components', [])
             scope: {},
             controller: function($scope) {
                 $scope.infoBox = {
-                    listingData: [
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com',
-                        'whitepostmail@gmail.com'
-                    ]
+                    boxes: [],
+                    signature: [],
+                    listingData: [],
+                    showItem: function(items, signature) {
+                        if(items[signature].hasOwnProperty('date')) {
+                            var d, date;
+
+                            d = new Date(items[signature].date);
+                            date = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+
+                            return date;
+                        }
+                        return items[signature];
+                    }
                 }
             },
             link: function($scope, elem, attrs) {
                 $scope.$on('action-populate-info-box', function($event, data) {
+                    $scope.infoBox.boxes = data.boxes;
+                    $scope.infoBox.signature = data.signature;
                     $scope.infoBox.listingData = data.listingData;
-                    elem.show();
+
+                    $timeout(function() {
+                        var parH, elemH;
+
+                        parH = elem.parent().outerHeight();
+                        elemH = elem.outerHeight();
+
+                        if(elemH <= parH) {
+                            elem.css({
+                                height: (parH - 2) + 'px'
+                            });
+                        }
+                        else if(elemH > parH) {
+                            elem.css({
+                                height: elemH + 'px'
+                            });
+                        }
+
+                        elem.show();
+                    }, 300);
                 });
+
+                $scope.infoBox.close = function($event) {
+                    $event.preventDefault();
+                    elem.css({
+                        height: 'auto'
+                    });
+                    elem.hide();
+                }
             }
         }
     }])
@@ -393,7 +422,7 @@ angular.module('suit.directives.components', [])
 
             }
         };
-}]).directive('userRow', ['User', '$timeout', 'Animator', function(User, $timeout, Animator) {
+}]).directive('userRow', ['User', 'Toggle', function(User, Toggle) {
     return {
         restrict: 'E',
         replace: true,
@@ -401,79 +430,48 @@ angular.module('suit.directives.components', [])
         controller: function($scope) {
         },
         link: function($scope, elem, attrs) {
+            var clicked = false;
             $scope.directiveData = {
                 userInfo: {},
                 expandSection: function($event, user_id) {
+                    $event.preventDefault();
                     var promise,
-                        userInfo,
-                        clickedElem = $($event.currentTarget),
-                        parentElem = clickedElem.parent();
+                        userInfo;
 
-                    if(typeof $scope.directiveData.userInfo[user_id] === 'undefined') {
-                        promise = User.getUsersById(user_id);
+                    if (clicked === false) {
+                        if (typeof $scope.directiveData.userInfo[user_id] === 'undefined') {
+                            promise = User.getUsersById(user_id);
 
-                        promise.then(function (data, status, headers, config) {
-                            userInfo = data.data.user;
-                            $scope.directiveData.userInfo[userInfo.user_id] = userInfo;
-                            $timeout(function() {
-                                Animator.heightToggle({
-                                    mainElem: parentElem,
-                                    clicked: clickedElem,
-                                    fromElem: parentElem.find('.Expandable--info'),
-                                    downCallback: function (definition) {
-                                        definition.mainElem.css({
-                                            border: '1px solid #2C84EE'
-                                        });
-
-                                        definition.clicked.css({
-                                            backgroundColor: '#2C84EE'
-                                        });
-                                    },
-                                    upCallback: function (definition) {
-                                        definition.mainElem.css({
-                                            border: '1px solid white'
-                                        });
-
-                                        definition.clicked.css({
-                                            backgroundColor: 'transparent'
-                                        });
-                                    }
+                            promise.then(function (data, status, headers, config) {
+                                userInfo = data.data.user;
+                                $scope.directiveData.userInfo[userInfo.user_id] = userInfo;
+                                elem.find('.Expandable--info').show();
+                                elem.find('.Expandable--click').css({
+                                    backgroundColor: '#2C84EE'
                                 });
-                            }, 200);
-                        });
-                    }
-                    else {
-                        $timeout(function() {
-                            Animator.heightToggle({
-                                mainElem: parentElem,
-                                clicked: clickedElem,
-                                fromElem: parentElem.find('.Expandable--info'),
-                                downCallback: function (definition) {
-                                    definition.mainElem.css({
-                                        border: '1px solid #2C84EE'
-                                    });
-
-                                    definition.clicked.css({
-                                        backgroundColor: '#2C84EE'
-                                    });
-                                },
-                                upCallback: function (definition) {
-                                    definition.mainElem.css({
-                                        border: '1px solid white'
-                                    });
-
-                                    definition.clicked.css({
-                                        backgroundColor: 'transparent'
-                                    });
-                                }
+                                clicked = true;
                             });
-                        }, 200);
+                        }
+                        else {
+                            elem.find('.Expandable--info').show();
+                            elem.find('.Expandable--click').css({
+                                backgroundColor: '#2C84EE'
+                            });
+                            clicked = true;
+                        }
+                    }
+                    else if (clicked === true) {
+                        elem.find('.Expandable--info').hide();
+                        elem.find('.Expandable--click').css({
+                            backgroundColor: '#424242'
+                        });
+                        clicked = false;
                     }
                 }
-            }
+            };
         }
     }
-}]).directive('testRow', ['$timeout', 'Animator', function($timeout, Animator) {
+}]).directive('testRow', ['Test', 'Toggle', function(Test, Toggle) {
     return {
         restring: 'E',
         replace: true,
@@ -481,33 +479,28 @@ angular.module('suit.directives.components', [])
         controller: function($scope) {
         },
         link: function($scope, elem, attrs) {
+            Toggle.create('testRow',{
+                enter: function() {
+                    this.elem.find('.Expandable--info').show();
+                    this.elem.find('.Expandable--click').css({
+                        backgroundColor: '#2C84EE'
+                    });
+                },
+                exit: function() {
+                    this.elem.find('.Expandable--info').hide();
+                    this.elem.find('.Expandable--click').css({
+                        backgroundColor: '#424242'
+                    });
+                }
+            });
+
             $scope.directiveData = {
                 expandSection: function($event) {
                     var clickedElem = $($event.currentTarget),
                         parentElem = clickedElem.parent();
 
-                    Animator.heightToggle({
-                        mainElem: parentElem,
-                        clicked: clickedElem,
-                        fromElem: parentElem.find('.Expandable--info'),
-                        downCallback: function (definition) {
-                            definition.mainElem.css({
-                                border: '1px solid #2C84EE'
-                            });
-
-                            definition.clicked.css({
-                                backgroundColor: '#2C84EE'
-                            });
-                        },
-                        upCallback: function (definition) {
-                            definition.mainElem.css({
-                                border: '1px solid white'
-                            });
-
-                            definition.clicked.css({
-                                backgroundColor: 'transparent'
-                            });
-                        }
+                    Toggle.toggle('testRow', {
+                        elem: elem
                     });
                 },
                 deleteTest: function(testId) {
@@ -519,8 +512,24 @@ angular.module('suit.directives.components', [])
                 workspace: function(testId) {
                     $scope.$emit('action-workspace', {testId: testId});
                 },
-                absoluteInfoBox: function(testId) {
-                    $scope.$broadcast('action-populate-info-box', {test_id: testId});
+                absoluteInfoBox: function($event, permissions) {
+                    $event.preventDefault();
+
+                    var promise = Test.getPermittedUsers({
+                        user_ids: permissions.assigned_users
+                    });
+
+                    promise.then(function(data, status, headers, config) {
+                        var users = data.data.users;
+
+                        $scope.$broadcast('action-populate-info-box', {
+                            boxes: ['Name', 'Lastname', 'Username', 'Created'],
+                            signature: ['name', 'lastname', 'username', 'logged'],
+                            listingData: users
+                        });
+                    }, function(data, status, headers, config) {
+                        console.log('Something went wrong', data);
+                    });
                 }
             }
         }

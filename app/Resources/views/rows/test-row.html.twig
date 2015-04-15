@@ -1,6 +1,7 @@
 <script type="text/ng-template" id="testRow.html">
     <section class="Expandable">
-        <absolute-info-box></absolute-info-box>
+
+        <absolute-info-box ng-if="t.permissions.permission == 'restricted'"></absolute-info-box>
 
         <a href=""  ng-click="directiveData.expandSection($event)" class="Expandable--click">
             <span class="Expandable--item  Expandable--testName">{[{ t.test_name }]}</span>
@@ -27,7 +28,8 @@
 
             <div class="FormRow  InfoSection  InfoSection--expand">
                 <h2 class="InfoSection--title">Permissions</h2>
-                <a ng-click="directiveData.absoluteInfoBox(t.test_id)" href="#" class="BasicSubmitButton  LeftAligned  ButtonSpacing  BlueHighlight">View permitted users</a>
+                <a ng-click="directiveData.absoluteInfoBox($event, t.permissions)" ng-if="t.permissions.permission == 'restricted'" href="#" class="BasicSubmitButton  LeftAligned  ButtonSpacing  BlueHighlight">View permitted users</a>
+                <span ng-if="t.permissions.permission == 'public'" class="InfoSection--text">Public</span>
             </div>
 
             <div class="ModificationActions">

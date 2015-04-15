@@ -29,7 +29,8 @@ angular.module('suit.factories', []).factory('$', function () {
                 updateTest: 'test-managment/update-test',
                 finishTest: 'test-managment/finish-test',
                 workspaceData: 'test-managment/workspace-data',
-                testPermissions: 'test-managment/get-test-permissions'
+                testPermissions: 'test-managment/get-test-permissions',
+                getPermittedUsers: 'test-managment/get-permitted-users'
             },
             install: {
                 installment: 'installment',
@@ -447,6 +448,14 @@ angular.module('suit.factories', []).factory('$', function () {
             return $http({
                 method: 'POST',
                 url: Path.namespace('test.getBasicTests').construct()
+            });
+        };
+
+        this.getPermittedUsers = function(userIds) {
+            return $http({
+                method: 'POST',
+                url: Path.namespace('test.getPermittedUsers').construct(),
+                data: userIds
             });
         };
 

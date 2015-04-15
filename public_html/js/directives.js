@@ -7,9 +7,20 @@ angular.module("suite.app", [
     'suit.factories'])
     .config([
         '$interpolateProvider',
-        '$provide',
-        function ($interpolateProvider, $provide) {
+        '$filterProvider',
+        function ($interpolateProvider, $filterProvider) {
             $interpolateProvider.startSymbol('{[{').endSymbol('}]}');
+
+            $filterProvider.register('dateParse', function(dateString){
+                return function() {
+                    var d, date;
+
+                    d = new Date(dateString);
+                    date = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+
+                    return date;
+                };
+            });
         }]);
 
 
@@ -112,6 +123,9 @@ angular.module('suit.directives.actions', [])
                     }
                 }
             };
+
+            $scope.newTest.assignedList.clear();
+            $scope.newTest.removedList.clear();
 
             $scope.$on('action-preload-test', function(event, data) {
                 $scope.newTest.preloaded = true;
@@ -948,6 +962,18 @@ angular.module('suit.directives.actions', [])
 
             var pagination = Pagination.init(1, 10);
 
+            var promise = Test.getBasicTests();
+            promise.then(function(data, status, headers, config) {
+                var tests = data.data.tests;
+                $scope.directiveData.tests = tests;
+                $scope.directiveData.loaded = true;
+                if (tests.length < pagination.constant.end) {
+                    $scope.directiveData.loadMore = false;
+                }
+            }, function(data, status, headers, config) {
+                console.log('Something bad happend', data, status);
+            });
+
             $scope.$on('action-load-more', function (event, data) {
                 var promise = Test.getPaginatedUsers(pagination.nextPagination());
 
@@ -977,18 +1003,6 @@ angular.module('suit.directives.actions', [])
                 }, function(data, status, headers, config) {
                     console.log('Something bad happend', data, status);
                 });
-            });
-
-            var promise = Test.getBasicTests();
-            promise.then(function(data, status, headers, config) {
-                var tests = data.data.tests;
-                $scope.directiveData.tests = data.data.tests;
-                $scope.directiveData.loaded = true;
-                if (tests.length < pagination.constant.end) {
-                    $scope.directiveData.loadMore = false;
-                }
-            }, function(data, status, headers, config) {
-                console.log('Something bad happend', data, status);
             });
         },
         link: function(scope, elem, attrs) {

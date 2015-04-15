@@ -3,8 +3,6 @@
 namespace App\AuthorizedBundle\Controller;
 
 use App\ToolsBundle\Helpers\AdaptedResponse;
-use App\ToolsBundle\Helpers\Command\CommandContext;
-use App\ToolsBundle\Helpers\Command\CommandFactory;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
 use App\ToolsBundle\Helpers\Factories\DoctrineEntityFactory;
 use App\ToolsBundle\Helpers\Factory\Parameters;
@@ -14,9 +12,17 @@ use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 use App\ToolsBundle\Repositories\UserRepository;
 use App\ToolsBundle\Repositories\FilterRepository;
 
+use RCE\Filters\BeInteger;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
+
+use RCE\Builder\Builder;
+use RCE\ContentEval;
+use RCE\Filters\Exist;
+use RCE\Filters\BeString;
+use RCE\Filters\BeArray;
+use RCE\Filters\OptionalExists;
 
 class UserController extends ContainerAware
 {
@@ -29,12 +35,18 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent(), true);
 
-        $context = new CommandContext();
-        $context->addParam('filtering-content', $content);
+        $builder = new Builder($content);
 
-        $command = CommandFactory::construct('user-filter')->getCommand();
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('filterType'), new BeString('filterType')),
+            $builder->expr()->hasTo(new Exist('key'), new BeString('key')),
+            $builder->expr()->hasTo(new OptionalExists(array(
+                'username' => new BeString('username'),
+                'personal' => new BeArray('personal')
+            )))
+        );
 
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $responseParameters = new ResponseParameters();
             $responseParameters->addParameter('errors', 'Invalid request from the client');
 
@@ -48,8 +60,8 @@ class UserController extends ContainerAware
                 'doctrine' => $doctrine
             )));
 
-            $filterRepo->assignFilter($command->getType());
-            $filterRepo->runFilter($command->getPureContent());
+            $filterRepo->assignFilter($content['filterType']);
+            $filterRepo->runFilter($content[$content['key']]);
             $users = $filterRepo->getRepositoryData();
         }
         catch(\Exception $e) {
@@ -109,12 +121,13 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $context = new CommandContext();
-        $context->addParam('pagination-content', $content);
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('start'), new BeInteger('start')),
+            $builder->expr()->hasTo(new Exist('end'), new BeInteger('end'))
+        );
 
-        $command = CommandFactory::construct('user-pagination')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $responseParameters = new ResponseParameters();
             $responseParameters->addParameter('errors', 'Invalid request from the client');
 
@@ -155,12 +168,13 @@ class UserController extends ContainerAware
 
         $content = (array)json_decode($request->getContent());
 
-        $context = new CommandContext();
-        $context->addParam('id-content', $content);
+        $builder = new Builder($content);
 
-        $command = CommandFactory::construct('generic-id-check')->getCommand();
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('id'), new BeInteger('id'))
+        );
 
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $content = new ResponseParameters();
             $content->addParameter("error", 'Invalid request from the client');
 
@@ -201,14 +215,25 @@ class UserController extends ContainerAware
         $request = $this->container->get('request');
         $doctrine = $this->container->get('doctrine');
 
-        $formValues = (array)json_decode($request->getContent());
+        $formValues = (array)json_decode($request->getContent(), true);
 
-        $context = new CommandContext();
-        $context->addParam('valid-user-content', $formValues);
+        $builder = new Builder($formValues);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('name'), new BeString('name')),
+            $builder->expr()->hasTo(new Exist('lastname'), new BeString('lastname')),
+            $builder->expr()->hasTo(new Exist('username'), new BeString('username')),
+            $builder->expr()->hasTo(new Exist('userPassword'), new BeString('userPassword')),
+            $builder->expr()->hasTo(new Exist('userPassRepeat'), new BeString('userPassRepeat')),
+            $builder->expr()->hasTo(new Exist('userPermissions'), new BeArray('userPermissions')),
+            $builder->expr()->hasTo(new Exist('fields')),
+            $builder->expr()->hasTo(new Exist('programming_languages')),
+            $builder->expr()->hasTo(new Exist('tools')),
+            $builder->expr()->hasTo(new Exist('years_of_experience')),
+            $builder->expr()->hasTo(new Exist('future_plans')),
+            $builder->expr()->hasTo(new Exist('description'))
+        );
 
-        $command = CommandFactory::construct('valid-user')->getCommand();
-
-        if( ! $command->execute($context)->isValid()) {
+        if( ! ContentEval::builder($builder)->isValid()) {
             $content = new ResponseParameters();
             $content->addParameter("errors", array("Some form values are invalid. Refresh the current page and try again"));
 
