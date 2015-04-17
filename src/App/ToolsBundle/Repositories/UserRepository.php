@@ -7,9 +7,13 @@ use App\ToolsBundle\Entity\Role;
 use App\ToolsBundle\Entity\UserInfo;
 use App\ToolsBundle\Entity\User;
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
+use App\ToolsBundle\Repositories\Query\Connection;
+use App\ToolsBundle\Repositories\Query\Parameters;
+use App\ToolsBundle\Repositories\Query\Query;
 use EntityToArray\EntityToArray;
 
-use Doctrine\ORM\Query;
+use App\ToolsBundle\Repositories\Query\QueryHolder;
+use StrongType\String;
 
 class UserRepository extends Repository
 {
@@ -18,6 +22,42 @@ class UserRepository extends Repository
     private $roles = array();
 
     public function getUserInfoById($id) {
+        $conn = new Connection($this->em->getConnection());
+        $sql = new String(
+            'SELECT
+                u.user_id,
+                u.fields,
+                u.programming_languages,
+                u.tools,
+                u.years_of_experience,
+                u.future_plans,
+                u.description
+            FROM user_info AS u
+            WHERE u.user_id = 5');
+
+        $query = new Query($sql);
+
+        $qh = new QueryHolder($conn, $query);
+
+        $params = new Parameters();
+        $params->attach(':user_id', (int)$id, \PDO::PARAM_INT);
+
+        //$statement = $qh->prepare()->bind($params)->statement();
+        $statement = $qh->prepare()->statement();
+
+        $result = $statement->fetchAll();
+
+        var_dump($result);
+        die('kreten');
+
+
+
+
+
+
+
+
+
         $qb = $this->em->createQueryBuilder();
         $userInfos = $qb->select(
             'ui.user_id',
@@ -31,7 +71,7 @@ class UserRepository extends Repository
             ->where($qb->expr()->eq('ui.user_id', ':user_id'))
             ->setParameter(':user_id', $id)
             ->getQuery()
-            ->getResult(QUERY::HYDRATE_ARRAY);
+            ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
         if(empty($userInfos)) {
             return null;
@@ -43,7 +83,7 @@ class UserRepository extends Repository
             ->where($qb->expr()->eq('r.user_id', ':user_id'))
             ->setParameter(':user_id', $id)
             ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
         if(empty($roles)) {
             return null;
@@ -138,7 +178,7 @@ class UserRepository extends Repository
             ->andWhere('u.user_id IN (:ids)')
             ->setParameter(':ids', $userIds)
             ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
         if(empty($result) OR $result === null) {
             return null;
@@ -166,7 +206,7 @@ class UserRepository extends Repository
             ->setParameter(':from', $from)
             ->setParameter(':to', $to)
             ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
 
         if(empty($result) OR $result === null) {
             return array();

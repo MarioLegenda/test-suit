@@ -192,7 +192,7 @@ class UserController extends ContainerAware
         }
         catch(\Exception $e) {
             $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('generic-error', 'No user infos were found or something bad happend');
+            $responseParameters->addParameter('generic-error', $e->getMessage());
 
             $response = new AdaptedResponse();
             $response->setContent($responseParameters);
