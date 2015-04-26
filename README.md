@@ -4,27 +4,23 @@ Test suit is still in development, so please, report any bugs.
 
 #####Installation
 
+Requires:
+    PHP >= 5.3.3
+    MySql >= 5.0
+
 After cloning, open command line tool of your choosing and navigate to the directory where Test suit is installed. After that, do the following steps...
 
 **Configuration**
 
-Open file parameters.yml in /app/config/parameters.yml and write your database_user and database_password
-
-
-
+Open file parameters.yml in `/app/config/parameters.yml` and write your `database_user` and `database_password`.
+Default `database_name` is `suit` but you can change it if you wish.
 
 **Create the database**
 
-Execute command `php app/console doctrine:database:create`
+Navigate to directory where Test suit is installed and execute command `php app/console doctrine:database:create`
+which will create the database.
 
-
-
-
-**Create the tables**
-
-Execute command `php app/console doctrine:schema:update --force`
-
-That is it.
+On first usage, you will have to create the first user. After you create the first user, login as that user and start using Test suit.
 
 Test suit will work with either `localhost` or a domain that you create. Also (for Symfony2 users), you can run the application in development environment with `localhost/test-suite/public_html/app_dev.php`. Either choice will work.
 
