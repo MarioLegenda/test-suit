@@ -19,29 +19,30 @@ class PermissionObserver implements Observer
     public function update(Observable $observable) {
         $this->establishPermission();
 
-        if($this->permission !== 'public' AND $this->permission !== 'restricted') {
-            return false;
+        if($this->permission === 'public' OR $this->permission === 'restricted') {
+            $observable->setStatus($this->permission);
+            return true;
         }
 
-        $observable->setStatus($this->permission);
+        return false;
     }
 
     private function establishPermission() {
         if(count($this->assignatedTests) === 1) {
             $at = $this->assignatedTests[0];
 
-            $userId = $at->getUserId();
-            $isPublic = $at->getPublicTest();
+            $userId = (int)$at['user_id'];
+            $isPublic = (int)$at['public_test'];
 
-            if($userId === null AND $isPublic === 1) {
+            if(($userId === null OR $userId === 0) AND $isPublic === 1) {
                 $this->permission = 'public';
                 return true;
             }
         }
 
         foreach($this->assignatedTests as $at) {
-            $userId = $at->getUserId();
-            $isPublic = $at->getPublicTest();
+            $userId = (int)$at['user_id'];
+            $isPublic = (int)$at['public_test'];
 
             if($userId === null OR $isPublic === 1) {
                 return false;

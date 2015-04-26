@@ -137,7 +137,6 @@ angular.module('suit.directives.components', [])
 
                     if($scope.action.awaiting === true && $scope.action.finished === true) {
                         if($scope.action.redirect === true) {
-                            console.log($scope.action.url);
                             if(({}).toString.call($scope.action.url).match(/\s([a-zA-Z]+)/)[1].toLowerCase() !== 'string') {
                                 throw new Error('If provided, url il actionSubmit directive has to be a url string')
                             }
@@ -262,6 +261,8 @@ angular.module('suit.directives.components', [])
                     if(typeof attrs.userId === 'undefined') {
                         return false;
                     }
+
+
 
                     return $scope.newTest.directiveQuery.isAssigned(attrs.userId) === true;
                 } () ),
@@ -440,7 +441,7 @@ angular.module('suit.directives.components', [])
 
                     if (clicked === false) {
                         if (typeof $scope.directiveData.userInfo[user_id] === 'undefined') {
-                            promise = User.getUsersById(user_id);
+                            promise = User.getUserInfoById(user_id);
 
                             promise.then(function (data, status, headers, config) {
                                 userInfo = data.data.user;
@@ -479,6 +480,12 @@ angular.module('suit.directives.components', [])
         controller: function($scope) {
         },
         link: function($scope, elem, attrs) {
+            $scope.testRow = {
+                test: JSON.parse(attrs.test)
+            };
+
+            console.log($scope.testRow.test);
+
             Toggle.create('testRow',{
                 enter: function() {
                     this.elem.find('.Expandable--info').show();
@@ -507,7 +514,12 @@ angular.module('suit.directives.components', [])
                     $scope.$emit('action-delete-test', {id: testId});
                 },
                 changeMetadata: function(testId) {
-                    $scope.$emit('action-test-metadata-change', {testId: testId});
+                    $scope.$emit('action-test-metadata-change', {
+                        testId: testId,
+                        test_name: $scope.testRow.test.test_name,
+                        remarks: $scope.testRow.test.remarks,
+                        permission: $scope.testRow.test.permission
+                    });
                 },
                 workspace: function(testId) {
                     $scope.$emit('action-workspace', {testId: testId});
@@ -516,7 +528,7 @@ angular.module('suit.directives.components', [])
                     $event.preventDefault();
 
                     var promise = Test.getPermittedUsers({
-                        user_ids: permissions.assigned_users
+                        test_control_id: $scope.testRow.test.test_id
                     });
 
                     promise.then(function(data, status, headers, config) {

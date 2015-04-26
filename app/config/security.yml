@@ -32,6 +32,6 @@ security:
     access_control:
         - { path: ^/suit-up$ , roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/install$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/install/sign-up$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/install/install-test-suit$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/installment$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, role: [ROLE_TEST_CREATOR, ROLE_TEST_SOLVER, ROLE_USER_MANAGER] }

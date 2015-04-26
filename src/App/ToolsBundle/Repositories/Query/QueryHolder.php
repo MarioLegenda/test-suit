@@ -4,45 +4,41 @@ namespace App\ToolsBundle\Repositories\Query;
 
 
 use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
+use App\ToolsBundle\Repositories\Query\Statement\Contracts\AtomicInsertInterface;
+use App\ToolsBundle\Repositories\Query\Statement\Contracts\InsertStatementInterface;
+use App\ToolsBundle\Repositories\Query\Statement\Statement;
 
 class QueryHolder
 {
     private $conn;
-    private $query;
 
     private $statement;
 
-    public function __construct(Connection $conn, Query $query) {
-        $this->conn = $conn->conn();
-        $this->query = $query;
+    public function __construct(Connection $conn) {
+        $this->conn = $conn;
     }
 
-    public function prepare() {
-        $this->statement = $this->conn->prepare($this->query->getQuery());
+    public function prepare(Statement $statement) {
+        $statement->prepare($this->conn->getConnection());
+        $this->statement = $statement;
+
         return $this;
     }
 
-    public function statement() {
+    public function getStatement() {
         return $this->statement;
     }
 
-    public function bind(Parameters $params) {
-        if($params->areEmpty()) {
-            throw new RepositoryException(get_class($this) . ': parameters supplied to the QueryHolder::bind() cannot be empty');
-        }
-
-        while($params->valid()) {
-            $parameter = $params->current();
-
-            $this->statement->bindValue(
-                $parameter->param(),
-                $parameter->value(),
-                $parameter->dataType()
-            );
-
-            $params->next();
-        }
-
+    public function execute() {
+        $this->statement->execute($this->conn->getConnection());
         return $this;
+    }
+
+    public function bind() {
+        return $this;
+    }
+
+    public function getResult() {
+        return $this->statement->getResult();
     }
 } 

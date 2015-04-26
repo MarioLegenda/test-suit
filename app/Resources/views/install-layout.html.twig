@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>Test Suit | Installation</title>
+    <title>{% block title %}{% endblock %}</title>
 
     <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css'>
@@ -30,7 +30,9 @@
         <script type="text/javascript" src="{{ asset("bower_components/angular/angular.min.js") }}"></script>
         <script type="text/javascript" src="{{ asset("js/directives.js") }}"></script>
         <script type="text/javascript" src="{{ asset("js/directives.components.js") }}"></script>
-        <script type="text/javascript" src="{{ asset("js/factories.js") }}"></script>
+        <script type="text/javascript" src="{{ asset("js/factories/data-handlers.js") }}"></script>
+        <script type="text/javascript" src="{{ asset("js/factories/rest.js") }}"></script>
+        <script type="text/javascript" src="{{ asset("js/factories/helpers.js") }}"></script>
         <script type="text/javascript" src="{{ asset("js/install.js") }}"></script>
     {% endblock %}
 </body>

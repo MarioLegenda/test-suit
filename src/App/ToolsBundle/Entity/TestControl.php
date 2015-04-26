@@ -33,11 +33,6 @@ class TestControl
      */
     private $test_name;
 
-    /**
-     * @ORM\Column(type="text", nullable=false)
-     * @Assert\NotBlank(message = "If test visibility is not public, then at least one user has to be provided as the one who can solve the test")
-     * @Assert\NotNull(message = "If test visibility is not public, then at least one user has to be provided as the one who can solve the test")
-     */
     private $visibility;
 
     /**

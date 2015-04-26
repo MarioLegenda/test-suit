@@ -1,0 +1,70 @@
+/*
+Error: Undefined variable: "$mainColor".
+        on line 8 of css/modules/install.scss
+
+3:   background-size: cover;
+4:   -webkit-background-size: cover;
+5:   -moz-background-size: cover;
+6:   -o-background-size: cover;
+7:   background-attachment: fixed;
+8:   background-color: $mainColor;
+9: }
+10: 
+11: .GlobalInstall {
+12: }
+13: 
+
+Backtrace:
+css/modules/install.scss:8
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/script/tree/variable.rb:49:in `_perform'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/script/tree/node.rb:50:in `perform'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:394:in `visit_prop'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/base.rb:36:in `visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/stack.rb:79:in `block in with_base'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/stack.rb:115:in `with_frame'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/stack.rb:79:in `with_base'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:158:in `visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:430:in `block (2 levels) in visit_rule'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:430:in `map'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:430:in `block in visit_rule'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:428:in `visit_rule'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/base.rb:36:in `visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/stack.rb:79:in `block in with_base'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/stack.rb:115:in `with_frame'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/stack.rb:79:in `with_base'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:158:in `visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/base.rb:52:in `map'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/base.rb:52:in `visit_children'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:167:in `block in visit_children'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:166:in `visit_children'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/base.rb:36:in `block in visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:186:in `visit_root'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/base.rb:36:in `visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:157:in `visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/visitors/perform.rb:8:in `visit'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/root_node.rb:36:in `css_tree'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/tree/root_node.rb:29:in `render_with_sourcemap'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/engine.rb:368:in `_render_with_sourcemap'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/engine.rb:285:in `render_with_sourcemap'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/plugin/compiler.rb:490:in `update_stylesheet'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/plugin/compiler.rb:215:in `block in update_stylesheets'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/plugin/compiler.rb:209:in `each'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/plugin/compiler.rb:209:in `update_stylesheets'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/plugin/compiler.rb:470:in `on_file_changed'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/lib/sass/plugin/compiler.rb:328:in `block in watch'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/vendor/listen/lib/listen/listener.rb:252:in `call'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/vendor/listen/lib/listen/listener.rb:252:in `on_change'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/vendor/listen/lib/listen/listener.rb:290:in `block in initialize_adapter'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/vendor/listen/lib/listen/adapters/polling.rb:48:in `call'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/vendor/listen/lib/listen/adapters/polling.rb:48:in `poll_changed_directories'
+c:/Ruby193/lib/ruby/gems/1.9.1/gems/sass-3.4.11/vendor/listen/lib/listen/adapter.rb:299:in `block in start_poller'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: Undefined variable: \"$mainColor\".\A         on line 8 of css/modules/install.scss\A \A 3:   background-size: cover;\A 4:   -webkit-background-size: cover;\A 5:   -moz-background-size: cover;\A 6:   -o-background-size: cover;\A 7:   background-attachment: fixed;\A 8:   background-color: $mainColor;\A 9: }\A 10: \A 11: .GlobalInstall {\A 12: }\A 13: "; }

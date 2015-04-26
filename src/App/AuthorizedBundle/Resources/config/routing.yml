@@ -4,8 +4,8 @@ app_authorized_home:
     methods: [GET]
 
 app_authorized_saveUser:
-    path: /user-managment/save-user
-    defaults: { _controller: AppAuthorizedBundle:User:saveUser }
+    path: /user-managment/create-user
+    defaults: { _controller: AppAuthorizedBundle:User:createUser }
     methods: [POST]
 
 app_authorized_allUsers:
@@ -46,11 +46,9 @@ app_authorized_modifyTest:
     methods: [POST]
 
 app_authorized_saveTest:
-    path: /test-managment/save-test/{testControlId}
+    path: /test-managment/save-test
     defaults: { _controller: AppAuthorizedBundle:Workspace:saveTest }
     methods: [POST]
-    requirements:
-        testControlId: \d+
 
 app_authorized_saveTest:
     path: /test-managment/save-test/{testControlId}
@@ -84,14 +82,19 @@ app_authorized_getPermissions:
     defaults: { _controller: AppAuthorizedBundle:Test:getTestPermissions }
     methods: [POST]
 
-app_authorized_getTestsBasic:
-    path: /test-managment/get-tests-basic
-    defaults: { _controller: AppAuthorizedBundle:Test:getTestsBasic }
+app_authorized_getPermissionType:
+    path: /test-managment/get-permission-type
+    defaults: { _controller: AppAuthorizedBundle:Test:getPermissionType }
     methods: [POST]
 
-app_authorized_getTestBasic:
-    path: /test-managment/get-test-basic
-    defaults: { _controller: AppAuthorizedBundle:Test:getTestBasic }
+app_authorized_getAssignedUsersIds:
+    path: /test-managment/get-assigned-users-ids
+    defaults: { _controller: AppAuthorizedBundle:Test:getAssignedUsersIds }
+    methods: [POST]
+
+app_authorized_getTestsBasic:
+    path: /test-managment/get-tests-listing
+    defaults: { _controller: AppAuthorizedBundle:Test:getTestsListing }
     methods: [POST]
 
 app_authorized_workspaceData:
@@ -101,6 +104,6 @@ app_authorized_workspaceData:
 
 app_authorized_getPermittedUsers:
     path: /test-managment/get-permitted-users
-    defaults: { _controller: AppAuthorizedBundle:Test:getPermittedUsers }
+    defaults: { _controller: AppAuthorizedBundle:Test:getPermittedTestUsers }
     methods: [POST]
 

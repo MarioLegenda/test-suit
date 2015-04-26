@@ -21,7 +21,6 @@ class TestControlFactory implements ConcreteFactoryInterface
         $testControl = new TestControl();
         $testControl->setIdentifier($generator->generateString(32));
         $testControl->setTestName($this->data['test_name']);
-        $testControl->setVisibility($this->data['test_solvers']);
         $testControl->setRemarks($this->data['remarks']);
         $testControl->setIsFinished(0);
 

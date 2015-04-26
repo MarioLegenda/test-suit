@@ -2,38 +2,43 @@
 
 namespace App\PublicBundle\Controller;
 
-use App\PublicBundle\Models\InstallModel;
+use App\ToolsBundle\Repositories\Query\Connection;
 use App\ToolsBundle\Helpers\InstallHelper;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
 class UnAuthController extends ContainerAware
 {
+    private $connection;
+
+    public function __construct() {
+        $this->connection = new Connection(array(
+            'driver' => 'mysql',
+            'host' => '127.0.0.1',
+            'dbname' => 'suit',
+            'user' => 'root',
+            'password' => 'digital1986',
+            'persistant' => true
+        ));
+    }
+
     public function authAction() {
         $securityContext = $this->container->get('security.context');
         if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
             $router = $this->container->get('router');
 
-            return new RedirectResponse($router->generate('app_authorized_home'), 302);
+            return new RedirectResponse($router->generate('app_authorized_home'));
         }
 
-        $doctrine = $this->container->get('doctrine');
-        $request = $this->container->get('request');
+        $installHelper = new InstallHelper($this->connection);
 
-        /**
-        1. Check if database exists. If it doesn't, procedd immediately to installment
-         */
+        if( ! $installHelper->isAppInstalled()) {
+            $router = $this->container->get('router');
 
-        $em = $doctrine->getManager();
-        $installHelper = new InstallHelper($em);
-
-        // provjerava da li je baza i tablica napravljena te provjerava da li postoje upisani useri
-        if( ! $installHelper->isAppInstalled() OR ! $installHelper->doesAppHasAdmin()) {
-            $templating = $this->container->get('templating');
-
-            return $templating->renderResponse('AppPublicBundle:Login:uninstalled.html.twig');
+            return new RedirectResponse($router->generate('app_install_test_suit'), 302);
         }
 
         /*$options = [
@@ -43,6 +48,8 @@ class UnAuthController extends ContainerAware
         var_dump(password_hash('sashapopara', PASSWORD_BCRYPT, $options));
 die();*/
 
+
+        $request = $this->container->get('request');
 
         $session = $request->getSession();
         $templating = $this->container->get('templating');

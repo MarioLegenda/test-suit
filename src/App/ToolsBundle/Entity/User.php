@@ -146,14 +146,6 @@ class User extends GenericEntity implements UserInterface, \Serializable, \JsonS
         return $this->logged;
     }
 
-    public function setAssignedTests(array $assignedTests) {
-        $this->assignedTests = $assignedTests;
-    }
-
-    public function getAssignedTests() {
-        return $this->assignedTests;
-    }
-
     public function setUserInfo(UserInfo $userInfo) {
         $this->user_info = $userInfo;
     }

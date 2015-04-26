@@ -8,26 +8,28 @@ angular.module('suit.factories')
 
             var namespaces = {
                 user: {
-                    saveUrl: 'user-managment/save-user',
-                    allUsersUrl: 'user-managment/user-list',
+                    createUser: 'user-managment/create-user',
                     userInfo: 'user-managment/user-info',
                     paginatedUsers: 'user-managment/user-list-paginated',
                     userFilter: 'user-managment/user-filter'
                 },
                 test: {
-                    createTestUrl: 'test-managment/create-test',
-                    saveTestUrl: 'test-managment/save-test/',
-                    getTestUrl: 'test-managment/get-test',
-                    getBasicTests: 'test-managment/get-tests-basic',
+                    assignedUsersIds: 'test-managment/get-assigned-users-ids',
+                    createTest: 'test-managment/create-test',
+                    getTestsListing: 'test-managment/get-tests-listing',
+                    getPermissionType: 'test-managment/get-permission-type',
                     getBasicTestById: 'test-managment/get-test-basic',
                     deleteTest: 'test-managment/delete-test',
-                    deleteQuestion: 'test-managment/delete-question',
-                    modifyTest: 'test-managment/modify-test',
-                    updateTest: 'test-managment/update-test',
-                    finishTest: 'test-managment/finish-test',
-                    workspaceData: 'test-managment/workspace-data',
-                    testPermissions: 'test-managment/get-test-permissions',
+                    modifyTest: 'test-managment/create-test',
                     getPermittedUsers: 'test-managment/get-permitted-users'
+                },
+                workspace: {
+                    workspaceData: 'test-managment/workspace-data',
+                    finishTest: 'test-managment/finish-test',
+                    getTest: 'test-managment/get-test',
+                    saveTest: 'test-managment/save-test',
+                    updateTest: 'test-managment/update-test',
+                    deleteQuestion: 'test-managment/delete-question'
                 },
                 install: {
                     installment: 'installment',
@@ -64,8 +66,8 @@ angular.module('suit.factories')
                 domain = $location.protocol() + '://' + $location.host() + ':' + $location.port();
                 path = $location.absUrl().slice(domain.length);
 
-                if (/install\/sign-up/.test(path)) {
-                    path = path.replace(/install\/sign-up/, '');
+                if (/install\/install-test-suit/.test(path)) {
+                    path = path.replace(/install\/install-test-suit/, '');
                 }
 
                 if (/app_dev.php\/?/.test(path)) {
@@ -445,7 +447,15 @@ angular.module('suit.factories')
 
                     config[name].faze = false;
                 }
-            }
+            };
+
+            this.isEntered = function() {
+                return faze;
+            };
+
+            this.isExited = function() {
+                return faze;
+            };
         }
 
         return new Toggle();

@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS public_tests (public_tests_id INT NOT NULL AUTO_INCREMENT, test_control_id INT NOT NULL, PRIMARY KEY (public_tests_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
+CREATE TABLE IF NOT EXISTS restricted_tests (restricted_tests_id INT NOT NULL AUTO_INCREMENT, user_id INT NOT NULL, test_control_id INT NOT NULL, PRIMARY KEY (restricted_tests_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
+CREATE TABLE IF NOT EXISTS roles (role_id INT NOT NULL AUTO_INCREMENT, user_id INT NOT NULL, role CHAR(18) NOT NULL, PRIMARY KEY (role_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
+CREATE TABLE IF NOT EXISTS tests (test_id INT NOT NULL AUTO_INCREMENT, test_control_id INT NOT NULL, test_serialized TEXT NOT NULL, PRIMARY KEY (test_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
+CREATE TABLE IF NOT EXISTS test_control (test_control_id INT NOT NULL AUTO_INCREMENT, user_id INT NOT NULL, test_name VARCHAR(255) NOT NULL, identifier CHAR(32) NOT NULL, visibility CHAR(10) NOT NULL, isFinished SMALLINT NOT NULL, remarks VARCHAR(255) NULL, created DATETIME NOT NULL, PRIMARY KEY (test_control_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
+CREATE TABLE IF NOT EXISTS users (user_id INT NOT NULL AUTO_INCREMENT, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, name VARCHAR(255) NOT NULL, lastname VARCHAR(255) NOT NULL, logged DATETIME NOT NULL, PRIMARY KEY (user_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
+CREATE TABLE IF NOT EXISTS user_info (user_info_id INT NOT NULL AUTO_INCREMENT, user_id INT NOT NULL, fields VARCHAR(1024) NULL, programming_languages VARCHAR(1024) NULL, tools VARCHAR(1024) NULL, years_of_experience SMALLINT NULL, future_plans VARCHAR(1024) NULL, description VARCHAR(1024) NULL, PRIMARY KEY (user_info_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB
+ALTER TABLE public_tests ADD CONSTRAINT fk_tc_to_public_tests FOREIGN KEY(test_control_id) REFERENCES test_control(test_control_id)
+ALTER TABLE restricted_tests ADD CONSTRAINT fk_tc_to_restricted_tests FOREIGN KEY(test_control_id) REFERENCES test_control(test_control_id)
+ALTER TABLE roles ADD CONSTRAINT fk_roles_to_users FOREIGN KEY (user_id) REFERENCES users(user_id)
+ALTER TABLE user_info ADD CONSTRAINT fk_user_info_to_users FOREIGN KEY (user_id) REFERENCES users(user_id)
+ALTER TABLE tests ADD CONSTRAINT fk_test_to_test_control FOREIGN KEY (test_control_id) REFERENCES test_control(test_control_id)
+ALTER TABLE test_control ADD CONSTRAINT fk_test_control_to_users FOREIGN KEY (user_id) REFERENCES users(user_id)

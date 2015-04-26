@@ -3,21 +3,13 @@
 namespace App\ToolsBundle\Repositories;
 
 
-use App\ToolsBundle\Helpers\Factory\ParameterInterface;
-use App\ToolsBundle\Helpers\Factory\Parameters;
+use App\ToolsBundle\Repositories\Query\Connection;
 
-abstract class Repository implements ParameterInterface
+abstract class Repository
 {
-    protected $doctrine;
-    protected $em;
-    protected $security;
+    protected $connection;
 
-    public function __construct(Parameters $parameters) {
-        $this->doctrine = $parameters->getParameter('doctrine');
-        $this->em = $this->doctrine->getManager();
-
-        if($parameters->getParameter('security') !== null) {
-            $this->security = $parameters->getParameter('security');
-        }
+    public function __construct(Connection $conn) {
+        $this->connection = $conn;
     }
 } 

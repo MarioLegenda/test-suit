@@ -1,25 +1,9 @@
 {% extends "::install-layout.html.twig" %}
 
+{% block title %}Test suit | Installation{% endblock %}
+
 {% block content %}
     <div class="Container">
-        <div class="InstallInformation" ng-controller="inst.informationCtrl">
-            <div class="InstallInformation--paragraph">
-                Test suit has to be installed before using it. Installation requires for you to
-                create the first user. This user will be created with maximum priviledges.
-                Please, insure that you issued the command
-            </div>
-
-            <div class="InstallInformation--paragraph">
-                <span class="InsideLink">php app/console doctrine:schema:create</span>
-            </div>
-
-            <div class="InstallInformation--paragraph">
-                before you create the first user.
-            </div>
-
-            <button class="InstallInformation--continueButton" ng-click="showForm()">Continue</button>
-        </div>
-
         <div class="FormPosition  InstallForm" ng-controller="inst.InstallFormCtrl">
             {{ include('submit-directive.html.twig') }}
             <form name="insForm" action="" method="POST" novalidate="novalidate">
@@ -72,7 +56,7 @@
                     <label class="FormRow--label  BasicLabel  InstallLabel" for="pass_repeat">Confirm password</label>
                     <input type="password" class="FormRow--field  BasicField  InstallField" name="pass_repeat" ng-model="administrator.userPassRepeat" ng-minlength="8" required>
 
-                    <div class="FormError  BasicError InstallError"
+                    <div class="FormError  BasicError  InstallError"
                          ng-show="theForm.notExists('pass_repeat') || theForm.notEquals('password', 'pass_repeat')">
                         <p>Given passwords have to match</p>
                     </div>

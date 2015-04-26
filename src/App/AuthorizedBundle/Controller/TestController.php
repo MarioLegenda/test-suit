@@ -9,9 +9,11 @@ use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
 use App\ToolsBundle\Helpers\AdaptedResponse;
 
+use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
+use App\ToolsBundle\Repositories\Query\Exception\QueryException;
 use App\ToolsBundle\Repositories\TestRepository;
 use App\ToolsBundle\Repositories\UserRepository;
-use RCE\Filters\BeInteger;
+use App\ToolsBundle\Repositories\Query\Connection;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Doctrine\ORM\Query;
@@ -22,24 +24,40 @@ use RCE\ContentEval;
 use RCE\Filters\Exist;
 use RCE\Filters\BeString;
 use RCE\Filters\BeArray;
-use RCE\Filters\OptionalExists;
+use RCE\Filters\BeInteger;
 
 class TestController extends ContainerAware
 {
+    private $connection;
+
+    public function __construct() {
+        $this->connection = new Connection(array(
+            'driver' => 'mysql',
+            'host' => '127.0.0.1',
+            'dbname' => 'suit',
+            'user' => 'root',
+            'password' => 'digital1986',
+            'persistant' => true
+        ));
+    }
+
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
+     * Route: /test-managment/create-test
+     *
+     * Client:
+     *     Method: Test.createTest()
+     *     Namespace: test.createTest
      */
     public function createTestAction() {
         $request = $this->container->get('request');
-        $doctrine = $this->container->get('doctrine');
 
         $content = (array)json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
         $builder->build(
-            $builder->expr()->hasTo(new Exist('test_name'), new BeString('test_name')),
-            $builder->expr()->hasTo(new Exist('test_solvers')),
-            $builder->expr()->hasTo(new Exist('remarks'))
+            $builder->expr()->hasTo(new Exist('scenario'), new BeArray('scenario'))
         );
 
         if( ! ContentEval::builder($builder)->isValid()) {
@@ -51,7 +69,22 @@ class TestController extends ContainerAware
             return $response->sendResponse(400, "BAD");
         }
 
-        $testControl = DoctrineEntityFactory::initiate('TestControl')->with($content)->create();
+        $builder = new Builder($content['scenario']);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('condition'), new BeString('condition')),
+            $builder->expr()->hasTo(new Exist('data'), new BeArray('data'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('errors', 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        $testControl = DoctrineEntityFactory::initiate('TestControl')->with($content['scenario']['data'])->create();
 
         $toValidate = array($testControl);
         $errors = ConvenienceValidator::init($toValidate, $this->container->get('validator'))->getErrors();
@@ -65,30 +98,19 @@ class TestController extends ContainerAware
             return $response->sendResponse(400, "BAD");
         }
 
-        $testControl->setUser($this->container->get('security.context')->getToken()->getUser());
-
         try {
-            $em = $doctrine->getManager();
-            $em->persist($testControl);
-            $em->flush();
-        } catch(\Exception $e) {
+
+            $content['scenario']['data']['user_id'] = $this->container->get('security.context')->getToken()->getUser()->getUserId();
+            $testRepo = new TestRepository($this->connection);
+            $testRepo->createTest($content);
+        }
+        catch(QueryException $e) {
             $content = new ResponseParameters();
             $content->addParameter("errors", array($e->getMessage()));
 
             $response = new AdaptedResponse();
             $response->setContent($content);
             return $response->sendResponse(400, "BAD");
-        }
-
-        try {
-            $testRepo = new TestRepository(new Parameters(array(
-                'doctrine' => $doctrine
-            )));
-
-            $testRepo->createAssignedTests(
-                $testControl->getTestControlId(),
-                $content['test_solvers']
-            );
         }
         catch(\Exception $e) {
             $content = new ResponseParameters();
@@ -99,23 +121,24 @@ class TestController extends ContainerAware
             return $response->sendResponse(400, "BAD");
         }
 
-        $currentTest = $testRepo->getTestByIdentifier($testControl->getIdentifier());
-
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('success', true);
-        $redirectUrl = '/test-managment/create-test/' . \URLify::filter($currentTest['test_name']) . '/' . $currentTest['test_control_id'];
-        $responseParameters->addParameter('redirectUrl', $redirectUrl);
+        $content = new ResponseParameters();
+        $content->addParameter("success", true);
 
         $response = new AdaptedResponse();
-        $response->setContent($responseParameters);
+        $response->setContent($content);
         return $response->sendResponse(200, "OK");
     }
 
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
+     * Route: /test-managment/delete-test
+     *
+     * Client:
+     *     Method: Test.deleteTest()
+     *     Namespace: test.deleteTest
      */
     public function deleteTestAction() {
-        $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
         $security = $this->container->get('security.context');
 
@@ -123,7 +146,7 @@ class TestController extends ContainerAware
 
         $builder = new Builder($content);
         $builder->build(
-            $builder->expr()->hasTo(new Exist('id'), new BeInteger('id'))
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
         );
 
         if( ! ContentEval::builder($builder)->isValid()) {
@@ -136,11 +159,19 @@ class TestController extends ContainerAware
         }
 
         try {
-            $testRepo = new TestRepository(new Parameters(array(
-                'doctrine' => $doctrine
-            )));
+            $testRepo = new TestRepository($this->connection);
+            $testRepo->deleteTestSuitById($content['test_control_id']);
 
-            $testRepo->deleteTestById($content['id']);
+            $user = $security->getToken()->getUser();
+            $basicTestInfo = $testRepo->getTestsList($user->getUserId());
+        }
+        catch(QueryException $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
         }
         catch(\Exception $e) {
             $content = new ResponseParameters();
@@ -150,12 +181,6 @@ class TestController extends ContainerAware
             $response->setContent($content);
             return $response->sendResponse();
         }
-
-        $user = $security->getToken()->getUser();
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
-        $basicTestInfo = $testRepo->getBasicTestInformation($user->getUserId(), $userRepo);
 
         $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('tests', $basicTestInfo);
@@ -168,67 +193,13 @@ class TestController extends ContainerAware
 
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
-     */
-    public function modifyTestAction() {
-        $request = $this->container->get('request');
-        $doctrine = $this->container->get('doctrine');
-
-        $content = (array)json_decode($request->getContent());
-
-        $builder = new Builder($content);
-        $builder->build(
-            $builder->expr()->hasTo(new Exist('test_name'), new BeString('test_name')),
-            $builder->expr()->hasTo(new Exist('test_solvers')),
-            $builder->expr()->hasTo(new Exist('remarks'))
-        );
-
-        if( ! ContentEval::builder($builder)->isValid()) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", 'Invalid request from the client');
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse();
-        }
-
-        try {
-            $testRepo = new TestRepository(new Parameters(array(
-                'doctrine' => $doctrine
-            )));
-
-            $testRepo->updateTestById($content['test_control_id'], $content);
-        }
-        catch(ObserverException $e) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", $e->getMessage());
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse(400, 'BAD');
-        }
-        catch(\Exception $e) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", $e->getMessage());
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse(400, 'BAD');
-        }
-
-        $content = new ResponseParameters();
-        $content->addParameter('success', true);
-
-        $response = new AdaptedResponse();
-        $response->setContent($content);
-        return $response->sendResponse(200, 'OK');
-    }
-
-    /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
+     * Route: /test-managment/get-test-permissions
+     *
+     * NOT FINISHED
      */
     public function getTestPermissionsAction() {
         $request = $this->container->get('request');
-        $doctrine = $this->container->get('doctrine');
 
         $content = (array)json_decode($request->getContent());
 
@@ -280,35 +251,13 @@ class TestController extends ContainerAware
 
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
+     * Route: /test-managment/get-permission-type
+     *     Client:
+     *          Method: Test.getTestPermissionType
+     *          Namespace: test.getPermissionType
      */
-    public function getTestsBasicAction() {
-        $doctrine = $this->container->get('doctrine');
-        $security = $this->container->get('security.context');
-
-        $testRepo = new TestRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
-
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
-
-        $userId = $security->getToken()->getUser()->getUserId();
-        $basicTestInfo = $testRepo->getBasicTestInformation($userId, $userRepo);
-
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('tests', $basicTestInfo);
-
-        $response = new AdaptedResponse();
-        $response->setContent($responseParameters);
-        return $response->sendResponse(200, "OK");
-    }
-
-    /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
-     */
-    public function getTestBasicAction() {
-        $doctrine = $this->container->get('doctrine');
+    public function getPermissionTypeAction() {
         $request = $this->container->get('request');
 
         $content = (array)json_decode($request->getContent());
@@ -327,29 +276,78 @@ class TestController extends ContainerAware
             return $response->sendResponse();
         }
 
-        $testRepo = new TestRepository(new Parameters(array(
-            'doctrine' => $doctrine
-        )));
-        $basicTestInfo = $testRepo->getBasicTestInformationById($content['test_control_id']);
+        try {
+            $testRepo = new TestRepository($this->connection);
 
+            $permission = $testRepo->getPermissionTypeByTestId($content['test_control_id']);
+        }
+        catch(ObserverException $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $e->getMessage()  . $e->getTraceAsString());
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+        catch(\Exception $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $e->getMessage() . $e->getTraceAsString());
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        $content = new ResponseParameters();
+        $content->addParameter('permission', $permission);
+
+        $response = new AdaptedResponse();
+        $response->setContent($content);
+        return $response->sendResponse(200, 'OK');
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
+     * Route: /test-managment/get-tests-listing
+     *     Client:
+     *         Method: Test.getTestsListing()
+     *         Namespace: test.getTestsListing
+     */
+    public function getTestsListingAction() {
+        $security = $this->container->get('security.context');
+
+        $testRepo = new TestRepository($this->connection);
+        $userRepo = new UserRepository($this->connection);
+
+        $userId = $security->getToken()->getUser()->getUserId();
+        $basicTestInfo = $testRepo->getTestsList($userId, $userRepo);
 
         $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('test', $basicTestInfo);
+        $responseParameters->addParameter('tests', $basicTestInfo);
 
         $response = new AdaptedResponse();
         $response->setContent($responseParameters);
         return $response->sendResponse(200, "OK");
     }
 
-    public function getPermittedUsersAction() {
-        $doctrine = $this->container->get('doctrine');
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
+     * Route: /test-managment/get-permitted-users
+     *
+     * Client:
+     *     Method: Test.getPermittedUsers()
+     *     Namespace: test.getPermittedUsers
+     */
+    public function getPermittedTestUsersAction() {
         $request = $this->container->get('request');
 
         $content = (array)json_decode($request->getContent());
 
         $builder = new Builder($content);
         $builder->build(
-            $builder->expr()->hasTo(new Exist('user_ids'), new BeArray('user_ids'))
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
         );
 
         if( ! ContentEval::builder($builder)->isValid()) {
@@ -363,11 +361,9 @@ class TestController extends ContainerAware
 
 
         try {
-            $userRepo = new UserRepository(new Parameters(array(
-                'doctrine' => $doctrine
-            )));
+            $testRepo = new TestRepository($this->connection);
 
-            $users = $userRepo->getUsersById($content['user_ids']);
+            $restrictedUsers = $testRepo->getRestrictedTestsByTestControlId($content['test_control_id']);
         }
         catch(\Exception $e) {
             $content = new ResponseParameters();
@@ -379,7 +375,57 @@ class TestController extends ContainerAware
         }
 
         $content = new ResponseParameters();
-        $content->addParameter('users', $users);
+        $content->addParameter('users', $restrictedUsers);
+
+        $response = new AdaptedResponse();
+        $response->setContent($content);
+        return $response->sendResponse(200, 'OK');
+    }
+
+
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
+     * Route: /test-managment/get-assigned-users-ids
+     *     Client:
+     *         Method: Test.getAssignedTestUsersIds()
+     *         Namespace: test.assignedUsersIds
+     */
+    public function getAssignedUsersIdsAction() {
+        $request = $this->container->get('request');
+
+        $content = (array)json_decode($request->getContent());
+
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        try {
+            $userRepo = new UserRepository($this->connection);
+
+            $ids = $userRepo->getAssignedUsersByTestId($content['test_control_id']);
+        }
+        catch(\Exception $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        $content = new ResponseParameters();
+        $content->addParameter('ids', $ids);
 
         $response = new AdaptedResponse();
         $response->setContent($content);

@@ -128,35 +128,36 @@ angular.module('suit.directives.actions', [])
             $scope.newTest.removedList.clear();
 
             $scope.$on('action-preload-test', function(event, data) {
+
+                $scope.initialData = {
+                    test_control_id: data.testId,
+                    test_name: data.test_name,
+                    remarks: data.remarks,
+                    permition: data.permission
+                };
+
                 $scope.newTest.preloaded = true;
                 $scope.newTest.test_control_id = data.testId;
-                var promise;
+                $scope.newTest.test_name = data.test_name;
+                $scope.newTest.remarks = data.remarks;
 
-                promise = Test.getBasicTestById($scope.newTest.test_control_id);
+                if(data.permission === 'public') {
+                    $scope.newTest.highlighting.restricted = false;
+                    $scope.newTest.highlighting.public = true;
+                    return;
+                }
 
-                promise.then(function(data, status, headers, config) {
-                    $scope.newTest.test_name = data.data.test.test_name
-                    $scope.newTest.remarks = data.data.test.remarks;
-                }, function(data, status, headers, config) {
-                    console.log('Something bad has happend', data);
-                });
+                if(data.permission === 'restricted') {
+                    var promise = Test.getAssignedTestUsersIds($scope.newTest.test_control_id);
 
-                promise = Test.getTestPermissions($scope.newTest.test_control_id);
-
-                promise.then(function(data, status, headers, config) {
-                    var permissions = data.data.test_permittions;
-
-                    if(permissions.permission === 'public') {
-                        $scope.newTest.highlighting.public = true;
-                    }
-                    else if(permissions.permission === 'restricted') {
+                    promise.then(function(data, status, headers, config) {
                         $scope.newTest.highlighting.restricted = true;
                         $scope.newTest.highlighting.public = false;
-                        $scope.newTest.assignedList.multipleAdd(permissions.assigned_users);
-                    }
-                }, function(data, status, headers, config) {
-                    console.log('Something went wrong', data);
-                });
+                        $scope.newTest.assignedList.multipleAdd(data.data.ids);
+                    }, function(data, status, headers, config) {
+                        console.log('Something went wrong', data);
+                    });
+                }
             });
 
             $scope.$on('action-assign-user', function(event, data) {
@@ -170,21 +171,35 @@ angular.module('suit.directives.actions', [])
         link: function($scope, elem, attrs) {
             $scope.newTest.submit = function($event) {
                 $event.preventDefault();
-                var promise;
-
+                var promise, scenario = {};
                 if($scope.newTest.theForm.isValidForm()) {
                     if($scope.newTest.preloaded === false) {
-                        promise = Test.createTest({
-                            test_name: $scope.newTest.test_name,
-                            test_solvers: ( function() {
-                                if($scope.newTest.assignedList.isEmpty()) {
-                                    return "public";
-                                }
+                        scenario = {
+                            scenario: {
+                                condition: ( function() {
+                                    if($scope.newTest.assignedList.isEmpty()) {
+                                        return 'create-public-test';
+                                    }
 
-                                return $scope.newTest.assignedList.all();
-                            } () ),
-                            remarks: $scope.newTest.remarks
-                        });
+                                    if( ! $scope.newTest.assignedList.isEmpty()) {
+                                        return 'create-restricted-test'
+                                    }
+                                } () ),
+                                data: {
+                                    test_name: $scope.newTest.test_name,
+                                    remarks: $scope.newTest.remarks,
+                                    test_solvers: ( function() {
+                                        if( ! $scope.newTest.assignedList.isEmpty()) {
+                                            return $scope.newTest.assignedList.all();
+                                        }
+
+                                        return null;
+                                    } () )
+                                }
+                            }
+                        };
+
+                        promise = Test.createTest(scenario);
 
                         promise.then(function(data, status, headers, config) {
                             $scope.$emit('action-create-test', {});
@@ -193,18 +208,43 @@ angular.module('suit.directives.actions', [])
                         })
                     }
                     else if($scope.newTest.preloaded === true) {
-                        promise = Test.modifyTest({
-                            test_control_id: $scope.newTest.test_control_id,
-                            test_name: $scope.newTest.test_name,
-                            test_solvers: ( function() {
-                                if($scope.newTest.assignedList.isEmpty()) {
-                                    return "public";
-                                }
+                        var isPublic = $scope.newTest.assignedList.isEmpty();
 
-                                return $scope.newTest.assignedList.all();
-                            } () ),
-                            remarks: $scope.newTest.remarks
-                        });
+                        scenario = {
+                            scenario: {
+                                condition: ( function() {
+                                    if(isPublic && $scope.initialData.permition === 'restricted') {
+                                        return 'restricted-to-public';
+                                    }
+
+                                    if(isPublic && $scope.initialData.permition === 'public') {
+                                        return 'public-to-public';
+                                    }
+
+                                    if( ! isPublic && $scope.initialData.permition === 'public') {
+                                        return 'public-to-restricted';
+                                    }
+
+                                    if( ! isPublic && $scope.initialData.permition === 'restricted') {
+                                        return 'restricted-to-restricted';
+                                    }
+                                } () ),
+                                data: {
+                                    test_control_id: $scope.newTest.test_control_id,
+                                    test_name: $scope.newTest.test_name,
+                                    remarks: $scope.newTest.remarks,
+                                    test_solvers: ( function() {
+                                        if($scope.newTest.assignedList.isEmpty()) {
+                                            return false;
+                                        }
+
+                                        return $scope.newTest.assignedList.all();
+                                    } () )
+                                }
+                            }
+                        };
+
+                        promise = Test.modifyTest(scenario);
 
                         promise.then(function(data, status, headers, config) {
                             $scope.$emit('action-create-test', {});
@@ -315,7 +355,7 @@ angular.module('suit.directives.actions', [])
                             awaiting: true
                         });
 
-                        var promise = User.save($scope.user);
+                        var promise = User.createUser($scope.user);
 
                         promise.then(function (data, status, headers, config) {
                             $scope.$emit('action-user-created', {});
@@ -353,14 +393,14 @@ angular.module('suit.directives.actions', [])
 
             }
         }
-}).directive('workspaceBuilder', ['$timeout', 'Test', 'DataShepard', 'RangeIterator', function($timeout, Test, DataShepard, RangeIterator) {
+}).directive('workspaceBuilder', ['$timeout', 'Test', 'Workspace', 'DataShepard', 'RangeIterator', function($timeout, Test, Workspace, DataShepard, RangeIterator) {
         return {
             restrict: 'A',
             replace: true,
             controller: function($scope) {
             },
             link: function($scope, elem, attrs) {
-                $scope.currentTestId = parseInt(attrs.currentTestId);
+                $scope.currentTestId = parseInt(attrs.testControlId);
                 $scope.dataShepard = DataShepard;
 
                 $scope.controller = {
@@ -370,7 +410,7 @@ angular.module('suit.directives.actions', [])
                     rangeIterator: null
                 };
 
-                var workspacePromise = Test.workspaceData($scope.currentTestId);
+                var workspacePromise = Workspace.workspaceData($scope.currentTestId);
 
                 workspacePromise.then(function(data, status, headers, config) {
                     $scope.controller = {
@@ -379,7 +419,7 @@ angular.module('suit.directives.actions', [])
                         testId: parseInt(data.data.test.min)
                     };
                 }).then(function() {
-                    var testPromise = Test.getTest($scope.controller.testId, $scope.currentTestId);
+                    var testPromise = Workspace.getTest($scope.controller.testId, $scope.currentTestId);
 
                     testPromise.then(function(data, status, headers, config) {
                         if(data.status === 205) {
@@ -392,7 +432,6 @@ angular.module('suit.directives.actions', [])
                             return;
                         }
 
-                        var test = data.data.test;
                         $scope.dataShepard.syncCurrentId();
                         $scope.controller.rangeIterator = RangeIterator.initIterator(data.data.range);
 
@@ -411,7 +450,7 @@ angular.module('suit.directives.actions', [])
                         $scope.builder[menus[i]] = false;
                     }
 
-                    var workspacePromise = Test.workspaceData($scope.currentTestId);
+                    var workspacePromise = Workspace.workspaceData($scope.currentTestId);
 
                     workspacePromise.then(function(data, status, headers, config) {
                         $scope.controller = {
@@ -420,7 +459,7 @@ angular.module('suit.directives.actions', [])
                             testId: parseInt(data.data.test.min)
                         };
 
-                        var testPromise = Test.getTest($scope.controller.testId, $scope.currentTestId);
+                        var testPromise = Workspace.getTest($scope.controller.testId, $scope.currentTestId);
 
                         testPromise.then(function(data, status, headers, config) {
                             if(data.status === 205) {
@@ -493,11 +532,11 @@ angular.module('suit.directives.actions', [])
                     var change = eventData.change,
                         id = eventData.id;
 
-                    var deletePromise = Test.deleteQuestion(id);
+                    var deletePromise = Workspace.deleteQuestion(id);
 
                     deletePromise.then(function(data, status, headers, config) {
                         $scope.dataShepard.clearHeard().clearCounter();
-                        var workspacePromise = Test.workspaceData($scope.currentTestId);
+                        var workspacePromise = Workspace.workspaceData($scope.currentTestId);
 
                         workspacePromise.then(function(data, status, headers, config) {
                             $scope.controller = {
@@ -506,7 +545,7 @@ angular.module('suit.directives.actions', [])
                                 testId: parseInt(data.data.test.min)
                             };
 
-                            var testPromise = Test.getTest($scope.controller.testId, $scope.currentTestId);
+                            var testPromise = Workspace.getTest($scope.controller.testId, $scope.currentTestId);
 
                             testPromise.then(function(data, status, headers, config) {
                                 if(data.status === 205) {
@@ -550,7 +589,7 @@ angular.module('suit.directives.actions', [])
                 });
             }
         }
-}]).directive('builderModifier', ['$', '$compile', 'DataMediator', 'Test', 'CompileCommander', '$timeout', function($, $compile, DataMediator, Test, CompileCommander, $timeout) {
+}]).directive('builderModifier', ['$', '$compile', 'DataMediator', 'Test', 'Workspace', 'CompileCommander', '$timeout', function($, $compile, DataMediator, Test, Workspace, CompileCommander, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -616,7 +655,7 @@ angular.module('suit.directives.actions', [])
                 'background-color': '#2C84EE'
             });
 
-            var testPromise = Test.getTest($scope.currentTestId, null);
+            var testPromise = Workspace.getTest($scope.currentTestId, null);
 
             testPromise.then(function(data, status, headers, config) {
                 var test = data.data.test,
@@ -666,7 +705,7 @@ angular.module('suit.directives.actions', [])
                     });
 
                     $scope.dataShepard.arangeBlockIds();
-                    var promise = Test.updateTest($scope.currentTestId, $scope.dataShepard.all());
+                    var promise = Workspace.updateTest($scope.currentTestId, $scope.dataShepard.all());
 
                     promise.then(function (data, status, headers, config) {
                         $scope.$broadcast('await-next', {
@@ -699,7 +738,7 @@ angular.module('suit.directives.actions', [])
             };
         }
     }
-}]).directive('builderCreator', ['$', '$compile', 'DataMediator', 'Test', 'CompileCommander', function($, $compile, DataMediator, Test, CompileCommander) {
+}]).directive('builderCreator', ['$', '$compile', 'DataMediator', 'Test', 'Workspace', 'CompileCommander', function($, $compile, DataMediator, Test, Workspace, CompileCommander) {
     return {
         restrict: 'E',
         replace: true,
@@ -755,7 +794,6 @@ angular.module('suit.directives.actions', [])
                     $scope.dataShepard.next();
                 },
                 builderChange: function($event, builder) {
-                    console.log($scope.dataShepard.all());
                     $scope.$emit('action-builder-change', {
                         change: builder
                     });
@@ -796,7 +834,10 @@ angular.module('suit.directives.actions', [])
 
                     scope.dataShepard.arangeBlockIds();
 
-                    var promise = Test.saveTest(scope.currentTestId, scope.dataShepard.all());
+                    var promise = Workspace.saveTest({
+                        test_control_id: scope.currentTestId,
+                        data: scope.dataShepard.all()
+                    });
 
                     promise.then(function (data, status, headers, config) {
                         scope.$broadcast('await-next', {
@@ -828,7 +869,7 @@ angular.module('suit.directives.actions', [])
                         awaiting: true
                     });
 
-                    var finishPromise = Test.finishTest(scope.currentTestId);
+                    var finishPromise = Workspace.finishTest(scope.currentTestId);
                     finishPromise.then(function(data, status, headers, config) {
                         scope.$emit('action-test-finished', {});
                     }, function(data, status, headers, config) {
@@ -904,7 +945,7 @@ angular.module('suit.directives.actions', [])
                 $scope.managment.toggle({}, 'createTest');
                 $timeout(function() {
                     $scope.$broadcast('action-preload-test', data);
-                }, 1000);
+                }, 500);
             });
 
             $scope.$on('action-user-created', function(event, data) {
@@ -962,7 +1003,7 @@ angular.module('suit.directives.actions', [])
 
             var pagination = Pagination.init(1, 10);
 
-            var promise = Test.getBasicTests();
+            var promise = Test.getTestsListing();
             promise.then(function(data, status, headers, config) {
                 var tests = data.data.tests;
                 $scope.directiveData.tests = tests;

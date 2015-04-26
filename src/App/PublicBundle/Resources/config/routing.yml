@@ -1,9 +1,9 @@
-app_signUp:
-    path: /install/sign-up
-    defaults: { _controller: AppPublicBundle:Install:signUp }
+app_install_test_suit:
+    path: /install/install-test-suit
+    defaults: { _controller: AppPublicBundle:Install:installTestSuit }
     methods: [GET]
 
 app_install:
     path: /installment
-    defaults: { _controller: AppPublicBundle:Install:install}
+    defaults: { _controller: AppPublicBundle:Install:install }
     methods: [POST]

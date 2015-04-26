@@ -312,42 +312,6 @@ body {
   margin: 0 auto;
   margin-top: 50px; }
 
-.InstallInformation {
-  width: 800px;
-  left: 260px;
-  position: absolute; }
-  .InstallInformation .InstallInformation--paragraph {
-    width: 100%;
-    margin: 0 0 15px 0;
-    line-height: 1.5em;
-    letter-spacing: 0.05em;
-    font-size: 1.2em;
-    color: white; }
-  .InstallInformation .InsideLink {
-    color: #EC7063; }
-  .InstallInformation .InstallInformation--continueButton {
-    width: 150px;
-    float: right;
-    display: block;
-    border: 1px solid white;
-    background-color: transparent;
-    font-family: 'Open Sans Condensed', cursive;
-    color: white;
-    font-size: 1.5em;
-    margin: 15px 0 0 0;
-    padding: 10px;
-    -webkit-transition: background-color 0.4s, border 0.4s;
-    -moz-transition: background-color 0.4s, border 0.4s;
-    -ms-transition: background-color 0.4s, border 0.4s;
-    -o-transition: background-color 0.4s, border 0.4s;
-    transition: background-color 0.4s, border 0.4s; }
-    .InstallInformation .InstallInformation--continueButton:active {
-      background-color: #EC7063;
-      border: 1px solid #EC7063; }
-    .InstallInformation .InstallInformation--continueButton:hover {
-      background-color: #EC7063;
-      border: 1px solid #EC7063; }
-
 .Install__Title {
   font-family: 'Dancing Script', cursive;
   font-size: 7em;
@@ -383,23 +347,20 @@ body {
     border: 1px solid #EC7063; }
 
 .FormPosition {
-  width: 800px;
-  position: absolute;
-  top: 0;
-  left: 0; }
+  width: 800px; }
   .FormPosition .InstallSubmit {
     margin: 15px 160px 0 0; }
 
 .InstallForm {
-  left: 1280px; }
+  margin: 0 auto; }
   .InstallForm .ActionMoveRight {
     margin-right: 160px; }
   .InstallForm .ActionDecision {
     width: 100%;
     float: left;
     text-align: left; }
-  .InstallForm .InstallError {
-    left: 650px; }
+  .InstallForm .FormError {
+    margin-left: 100px; }
 
 .LoginForm {
   width: 800px;

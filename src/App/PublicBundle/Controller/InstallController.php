@@ -3,93 +3,128 @@
 namespace App\PublicBundle\Controller;
 
 
+use App\ToolsBundle\Entity\Role;
 use App\ToolsBundle\Entity\User;
-use App\ToolsBundle\Helpers\BadAjaxResponse;
-use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\InstallHelper;
 use App\ToolsBundle\Helpers\ResponseParameters;
-use App\ToolsBundle\Helpers\BadAjaxRequest;
 use App\ToolsBundle\Helpers\GoodAjaxRequest;
-use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
+use App\ToolsBundle\Repositories\Query\Connection;
+use App\ToolsBundle\Helpers\ConvenienceValidator;
+use App\ToolsBundle\Helpers\AdaptedResponse;
+
+use App\ToolsBundle\Repositories\Query\Exception\QueryException;
+use App\ToolsBundle\Repositories\Query\QueryHolder;
 use App\ToolsBundle\Repositories\UserRepository;
-
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class InstallController extends ContainerAware
 {
-    public function signUpAction() {
-        $doctrine = $this->container->get('doctrine');
+    private $connection;
 
-        $em = $doctrine->getManager();
-        $installHelper = new InstallHelper($em);
+    public function __construct() {
+        $this->connection = new Connection(array(
+            'driver' => 'mysql',
+            'host' => '127.0.0.1',
+            'dbname' => 'suit',
+            'user' => 'root',
+            'password' => 'digital1986',
+            'persistant' => true
+        ));
+    }
 
-        if($installHelper->isAppInstalled() AND $installHelper->doesAppHasAdmin()) {
-            $router = $this->container->get('router');
+    public function installTestSuitAction() {
+        $installHelper = new InstallHelper($this->connection);
 
-            return new RedirectResponse($router->generate('suit-up'), 302);
+        if( ! $installHelper->isAppInstalled()) {
+            $templating = $this->container->get('templating');
+
+            return $templating->renderResponse('AppPublicBundle:Installation:installation.html.twig');
         }
 
-        $templating = $this->container->get('templating');
-        return $templating->renderResponse('AppPublicBundle:Installation:installation.html.twig');
+        $router = $this->container->get('router');
+
+        return new RedirectResponse($router->generate('login'), 302);
     }
 
     public function installAction() {
-        $request = $this->container->get('request');
-        $doctrine = $this->container->get('doctrine');
-        $em = $doctrine->getManager();
-        $encoder = $this->container->get('security.password_encoder');
+        $installHelpers = new InstallHelper($this->connection);
 
-        $installHelpers = new InstallHelper($em);
+        if($installHelpers->isAppInstalled()) {
+            $responseParams = new ResponseParameters();
+            $responseParams->addParameter("error", "Invalid request from the client");
 
-        if( $installHelpers->isAppInstalled() AND $installHelpers->doesAppHasAdmin() ) {
-            $router = $this->container->get('router');
-
-            return new RedirectResponse($router->generate('app_authorized_home'), 302);
+            $response = new AdaptedResponse();
+            $response->setContent($responseParams);
+            return $response->sendResponse();
         }
 
-
-        $formValues = (array)json_decode($request->getContent());
+        $request = $this->container->get('request');
+        $content = (array)json_decode($request->getContent());
 
         $user = new User();
-        $user->setName($formValues['name']);
-        $user->setLastname($formValues['lastname']);
-        $user->setUsername($formValues['username']);
-        $user->setPassword($formValues['userPassword']);
-        $user->setPassRepeat($formValues['userPassRepeat']);
+        $user->setName($content['name']);
+        $user->setLastname($content['lastname']);
+        $user->setUsername($content['username']);
+        $user->setPassword($content['userPassword']);
+        $user->setPassRepeat($content['userPassRepeat']);
 
-        $validator = $this->container->get('validator');
-        $constraintVioliationList = $validator->validate($user);
+        $errors = ConvenienceValidator::init(array($user), $this->container->get('validator'))->getErrors();
 
-        if(count($constraintVioliationList) > 0) {
-            $errors = array();
-            for($i = 0; $i < count($constraintVioliationList); $i++) {
-                $errors["errors"][] = $constraintVioliationList->get($i)->getMessage();
-            }
+        if($errors !== null) {
+            $responseParams = new ResponseParameters();
+            $responseParams->addParameter("errors", $errors);
 
-            return BadAjaxResponse::init(null, $errors)->getResponse();
+            $response = new AdaptedResponse();
+            $response->setContent($responseParams);
+            return $response->sendResponse();
         }
 
 
+        $encoder = $this->container->get('security.password_encoder');
+        $content['userPassword'] = $encoder->encodePassword($user, $user->getPassword());
 
-        $userRepo = new UserRepository(new Parameters(array(
-            'doctrine' => $doctrine,
-            'security' => $encoder
-        )));
         try {
-            $userRepo->createUser($user, array('ROLE_USER_MANAGER', 'ROLE_TEST_CREATOR', 'ROLE_TEST_SOLVER'));
-            $userRepo->saveUser();
-        } catch(RepositoryException $e) {
-            return BadAjaxResponse::init('Something went wrong. Please, refresh the page and try again')->getResponse();
-        } catch(\Exception $e) {
-            return BadAjaxResponse::init('Something went wrong. Please, refresh the page and try again')->getResponse();
+            $installHelpers->createTables();
+
+            $content['fields'] = '';
+            $content['programming_languages'] = '';
+            $content['tools'] = '';
+            $content['years_of_experience'] = '';
+            $content['future_plans'] = '';
+            $content['description'] = '';
+
+            $content['userPermissions'] = array(
+                'ROLE_TEST_SOLVER' => true,
+                'ROLE_TEST_CREATOR' => true,
+                'ROLE_USER_MANAGER' => true
+            );
+
+            $userRepo = new UserRepository($this->connection);
+            $userRepo->createUser($content);
+        }
+        catch(QueryException $e) {
+            $responseParams = new ResponseParameters();
+            $responseParams->addParameter("error", $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParams);
+            return $response->sendResponse();
+        }
+        catch(\Exception $e) {
+            $responseParams = new ResponseParameters();
+            $responseParams->addParameter("error", $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParams);
+            return $response->sendResponse();
         }
 
-        $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('success', true);
-        return GoodAjaxRequest::init($responseParameters)->getResponse();
+        $responseParams = new ResponseParameters();
+        $responseParams->addParameter("success", true);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParams);
+        return $response->sendResponse(200, "OK");
     }
 } 
