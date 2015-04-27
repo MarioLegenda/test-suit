@@ -2,9 +2,6 @@
 
 namespace App\ToolsBundle\Helpers;
 
-
-use App\ToolsBundle\Helpers\Exceptions\GenericException;
-
 class EntityToArray
 {
     private $entityMethods = array();

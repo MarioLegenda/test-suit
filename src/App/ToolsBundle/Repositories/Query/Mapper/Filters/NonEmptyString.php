@@ -2,8 +2,6 @@
 
 namespace App\ToolsBundle\Repositories\Query\Mapper\Filters;
 
-
-
 class NonEmptyString implements FilterInterface
 {
     private $value;

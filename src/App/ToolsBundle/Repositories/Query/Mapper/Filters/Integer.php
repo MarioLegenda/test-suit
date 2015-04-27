@@ -2,7 +2,6 @@
 
 namespace App\ToolsBundle\Repositories\Query\Mapper\Filters;
 
-
 class Integer implements FilterInterface
 {
     private $value;

@@ -2,10 +2,6 @@
 
 namespace App\ToolsBundle\Repositories\Query;
 
-
-use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
-use App\ToolsBundle\Repositories\Query\Statement\Contracts\AtomicInsertInterface;
-use App\ToolsBundle\Repositories\Query\Statement\Contracts\InsertStatementInterface;
 use App\ToolsBundle\Repositories\Query\Statement\Statement;
 
 class QueryHolder

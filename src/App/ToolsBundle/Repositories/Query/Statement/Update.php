@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mario
- * Date: 22.4.2015.
- * Time: 14:08
- */
 
 namespace App\ToolsBundle\Repositories\Query\Statement;
-
 
 use App\ToolsBundle\Repositories\Query\Statement\Contracts\TransactionInterface;
 use App\ToolsBundle\Repositories\Query\Statement\Contracts\UpdateStatementInterface;

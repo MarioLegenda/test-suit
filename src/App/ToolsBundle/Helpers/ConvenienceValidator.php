@@ -2,8 +2,6 @@
 
 namespace App\ToolsBundle\Helpers;
 
-use Symfony\Component\HttpFoundation\Response;
-
 class ConvenienceValidator
 {
     public static $instance;

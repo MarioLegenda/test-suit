@@ -2,7 +2,6 @@
 
 namespace App\ToolsBundle\Repositories;
 
-
 use App\ToolsBundle\Repositories\Query\Connection;
 
 abstract class Repository

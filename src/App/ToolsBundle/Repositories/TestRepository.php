@@ -11,7 +11,6 @@ use App\ToolsBundle\Repositories\Query\Parameters\Parameters;
 use App\ToolsBundle\Repositories\Query\Query;
 
 use App\ToolsBundle\Repositories\Query\Statement\Delete;
-use App\ToolsBundle\Repositories\Query\Statement\Insert;
 use App\ToolsBundle\Repositories\Query\Statement\Select;
 use App\ToolsBundle\Repositories\Query\Statement\Update;
 use App\ToolsBundle\Repositories\Scenario\Condition;
@@ -19,7 +18,6 @@ use App\ToolsBundle\Repositories\Scenario\ScenarioFactory;
 use StrongType\String;
 
 use RandomLib;
-use URLify;
 
 class TestRepository extends Repository
 {

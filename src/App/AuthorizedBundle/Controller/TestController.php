@@ -3,13 +3,11 @@
 namespace App\AuthorizedBundle\Controller;
 
 use App\ToolsBundle\Helpers\Factories\DoctrineEntityFactory;
-use App\ToolsBundle\Helpers\Factory\Parameters;
 use App\ToolsBundle\Helpers\Observer\Exceptions\ObserverException;
 use App\ToolsBundle\Helpers\ResponseParameters;
 use App\ToolsBundle\Helpers\ConvenienceValidator;
 use App\ToolsBundle\Helpers\AdaptedResponse;
 
-use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
 use App\ToolsBundle\Repositories\Query\Exception\QueryException;
 use App\ToolsBundle\Repositories\TestRepository;
 use App\ToolsBundle\Repositories\UserRepository;
@@ -189,64 +187,6 @@ class TestController extends ContainerAware
         $response->setContent($responseParameters);
         return $response->sendResponse(200, "OK");
 
-    }
-
-    /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
-     *
-     * Route: /test-managment/get-test-permissions
-     *
-     * NOT FINISHED
-     */
-    public function getTestPermissionsAction() {
-        $request = $this->container->get('request');
-
-        $content = (array)json_decode($request->getContent());
-
-        $builder = new Builder($content);
-        $builder->build(
-            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
-        );
-
-        if( ! ContentEval::builder($builder)->isValid()) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", 'Invalid request from the client');
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse();
-        }
-
-        try {
-            $testRepo = new TestRepository(new Parameters(array(
-                'doctrine' => $doctrine
-            )));
-
-            $permittedUsers = $testRepo->getPermittedUsers($content['test_control_id']);
-        }
-        catch(ObserverException $e) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", $e->getMessage());
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse(400, 'BAD');
-        }
-        catch(\Exception $e) {
-            $content = new ResponseParameters();
-            $content->addParameter("errors", $e->getMessage());
-
-            $response = new AdaptedResponse();
-            $response->setContent($content);
-            return $response->sendResponse(400, 'BAD');
-        }
-
-        $content = new ResponseParameters();
-        $content->addParameter('test_permittions', $permittedUsers);
-
-        $response = new AdaptedResponse();
-        $response->setContent($content);
-        return $response->sendResponse(200, 'OK');
     }
 
     /**

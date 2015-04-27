@@ -2,7 +2,6 @@
 
 namespace App\ToolsBundle\Helpers;
 
-
 class ResponseParameters implements \JsonSerializable
 {
     private $responseParameters = array();

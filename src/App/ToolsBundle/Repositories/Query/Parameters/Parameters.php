@@ -2,9 +2,6 @@
 
 namespace App\ToolsBundle\Repositories\Query\Parameters;
 
-
-use App\ToolsBundle\Repositories\Exceptions\RepositoryException;
-
 class Parameters implements \Iterator, \Countable
 {
     private $parameters = array();

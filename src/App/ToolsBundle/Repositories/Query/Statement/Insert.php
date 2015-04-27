@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Mario
- * Date: 19.4.2015.
- * Time: 16:09
- */
 
 namespace App\ToolsBundle\Repositories\Query\Statement;
 

@@ -18,6 +18,9 @@ use StrongType\String;
 
 class UserRepository extends Repository
 {
+    /**
+     * Controller: UserController::createUserAction()
+     */
     public function createUser(array $userArray) {
         $qh = new QueryHolder($this->connection);
 
@@ -90,6 +93,9 @@ class UserRepository extends Repository
         $qh->prepare(new Insert($roleQuery))->bind()->execute();
     }
 
+    /**
+     * No controller: called within UserRepository::createUser()
+     */
     private function createUserInfo(array $userInfo, $userId) {
         $qh = new QueryHolder($this->connection);
 
@@ -245,62 +251,6 @@ class UserRepository extends Repository
         return true;
     }
 
-    public function getAllUsers() {
-        $qb = $this->em->createQueryBuilder();
-        $result = $qb->select(array('u'))
-            ->from('AppToolsBundle:User', 'u')
-            ->innerJoin('u.roles', 'r', $qb->expr()->eq('u.user_id', 'r.user_id'))
-            ->orderBy('u.logged', 'DESC')
-            ->getQuery()
-            ->getResult();
-
-        if(empty($result)) {
-            return null;
-        }
-
-        $users = array();
-        foreach($result as $user) {
-            $temp = array();
-
-            $temp['user_id'] = $user->getUserId();
-            $temp['username'] = $user->getUsername();
-            $temp['name'] = $user->getName();
-            $temp['lastname'] = $user->getLastname();
-            $temp['logged'] = $user->getLogged();
-
-            $roles = $user->getRoles();
-
-            foreach($roles as $role) {
-                $temp['role'] = strtolower(substr($role->getRole(), 5));
-            }
-
-            $users[] = $temp;
-        }
-
-        return $users;
-    }
-
-    public function getUsernamesById(array $userIds) {
-        $qb = $this->em->createQueryBuilder();
-        $result = $qb->select('u.username')
-            ->from('AppToolsBundle:User', 'u')
-            ->andWhere('u.user_id IN (:ids)')
-            ->setParameter(':ids', $userIds)
-            ->getQuery()
-            ->getResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
-
-        if(empty($result) OR $result === null) {
-            return null;
-        }
-
-        $numIndexed = array();
-        for($i = 0; $i < count($result); $i++) {
-            $numIndexed[] = $result[$i]['username'];
-        }
-
-        return $numIndexed;
-    }
-
     public function getPaginatedUsers($from, $to) {
         $qh = new QueryHolder($this->connection);
 
@@ -325,32 +275,5 @@ class UserRepository extends Repository
         $result = $qh->prepare(new Select($userQuery))->bind()->execute()->getResult();
 
         return $result[0];
-    }
-
-    public function modifyUser($id, array $userArray) {
-        $user = $this->em->getRepository('AppToolsBundle:User')->find($id);
-        $encodedPassword = $this->security->encodePassword($user, $userArray['userPassword']);
-
-        $user->setName($userArray['name']);
-        $user->setLastname($userArray['lastname']);
-        $user->setUsername($userArray['username']);
-        $user->setPassword($userArray['userPassword']);
-
-        $qb = $this->em->createQueryBuilder();
-        $userInfo = $qb->select(array('ui'))
-            ->from('AppToolsBundle:UserInfo', 'ui')
-            ->where($qb->expr()->eq('ui.user_id', ':user_id'))
-            ->setParameter(':user_id', $id)
-            ->getQuery()
-            ->getResult();
-
-        if(empty($userInfo) OR $userInfo === null) {
-            return null;
-        }
-
-        $user->setUserInfo($userInfo);
-        $userInfo->setUser($user);
-
-
     }
 } 

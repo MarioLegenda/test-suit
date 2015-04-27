@@ -2,7 +2,6 @@
 
 namespace App\ToolsBundle\Repositories\Query\Mapper\Filters;
 
-
 use App\ToolsBundle\Repositories\Query\Mapper\Exceptions\MapperException;
 
 class Filter

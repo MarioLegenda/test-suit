@@ -3,12 +3,10 @@
 namespace App\AuthorizedBundle\Controller;
 
 use App\AuthorizedBundle\Models\HomeModel;
-use App\ToolsBundle\Helpers\AppLogger;
 use App\ToolsBundle\Helpers\ResponseParameters;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\Finder\Finder;
 
 use RandomLib;
 
