@@ -200,7 +200,7 @@ class TestController extends ContainerAware
     public function getPermissionTypeAction() {
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent());
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
         $builder->build(
@@ -274,6 +274,66 @@ class TestController extends ContainerAware
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
      *
+     * Route: /test-managment/get-permitted-tests
+     *     Client:
+     *         Method: Test.getPaginatedPermittedTests()
+     *         Namespace: test.getPermittedTests
+     */
+    public function getPermittedTestsAction() {
+        $request = $this->container->get('request');
+
+        $content = json_decode($request->getContent(), true);
+
+        $builder = new Builder($content);
+
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('start'), new BeInteger('start')),
+            $builder->expr()->hasTo(new Exist('end'), new BeInteger('end'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse();
+        }
+
+        try {
+            $testRepo = new TestRepository($this->connection);
+
+            $userId = $this->container->get('security.token_storage')->getToken()->getUser()->getUserId();
+            $tests = $testRepo->getPermittedTestsByUserId($userId);
+        }
+        catch(QueryException $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+        catch(\Exception $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", $e->getMessage() . $e->getTraceAsString());
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        $content = new ResponseParameters();
+        $content->addParameter('tests', $tests);
+
+        $response = new AdaptedResponse();
+        $response->setContent($content);
+        return $response->sendResponse(200, 'OK');
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_CREATOR')")
+     *
      * Route: /test-managment/get-permitted-users
      *
      * Client:
@@ -334,7 +394,7 @@ class TestController extends ContainerAware
     public function getAssignedUsersIdsAction() {
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent());
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
         $builder->build(

@@ -335,14 +335,14 @@ class WorkspaceController extends ContainerAware
      *     Namespace: workspace.finishTest
      */
     public function finishTestAction() {
-        $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent(), true);
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
         $builder->build(
-            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id')),
+            $builder->expr()->hasTo(new Exist('status'), new BeInteger('status'))
         );
 
         if( ! ContentEval::builder($builder)->isValid()) {
@@ -357,7 +357,7 @@ class WorkspaceController extends ContainerAware
         $testRepo = new WorkspaceRepository($this->connection);
 
         try {
-            $testRepo->finishTest($content['test_control_id']);
+            $testRepo->finishTest($content);
         } catch(\Exception $e) {
             $content = new ResponseParameters();
             $content->addParameter("errors", array($e->getMessage()));

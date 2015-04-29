@@ -31,18 +31,6 @@ angular.module('suit.factories')
                     url: Path.namespace('user.userFilter').construct(),
                     data: filterData
                 });
-            },
-
-            getUserByUsername: function(username) {
-
-            },
-
-            deleteUserById: function(id) {
-
-            },
-
-            deleteUserByUsername: function(username) {
-
             }
         };
     }])
@@ -119,6 +107,14 @@ angular.module('suit.factories')
                     data: userIds
                 });
             };
+
+            this.getPaginatedPermittedTests = function(pagination) {
+                return $http({
+                    method: 'POST',
+                    url: Path.namespace('test.getPermittedTests').construct(),
+                    data: pagination
+                });
+            }
         }
 
         return new Test();
@@ -134,11 +130,14 @@ angular.module('suit.factories')
                 });
             };
 
-            this.finishTest = function(id) {
+            this.finishTest = function(id, status) {
                 return $http({
                     method: 'POST',
                     url: Path.namespace('workspace.finishTest').construct(),
-                    data: {test_control_id: id}
+                    data: {
+                        test_control_id: id,
+                        status: status
+                    }
                 });
             };
 

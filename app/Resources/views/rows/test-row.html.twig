@@ -15,10 +15,14 @@
                 <p class="InfoSection--text">{[{ testRow.test.user.name }]} {[{ testRow.test.user.lastname }]}</p>
             </div>
 
-            <div class="InfoSection">
+            <div class="InfoSection  FormRow">
                 <h2 class="InfoSection--title">Status</h2>
-                <p ng-if="testRow.test.finished == 0" class="InfoSection--text  InfoSection--highlightNotOk">Not finished</p>
-                <p ng-if="testRow.test.finished == 1" class="InfoSection--text  InfoSection--highlightOk">Finished</p>
+                <p ng-if="testRow.test.finished == 0" class="InfoSection--text  InfoSection--highlightNotOk">
+                    Not finished <a ng-click="directiveData.finishTest($event, 1)" href="#" class="FinishTestButton  BasicSubmitButton  RightAligned  ButtonSpacing  BlueHighlight">Finish</a>
+                </p>
+                <p ng-if="testRow.test.finished == 1" class="InfoSection--text  InfoSection--highlightOk">
+                    Finished <a ng-click="directiveData.finishTest($event, 0)" href="#" class="FinishTestButton  BasicSubmitButton  RightAligned  ButtonSpacing  BlueHighlight">Unfinish</a>
+                </p>
             </div>
 
             <div class="InfoSection  InfoSection--expand">

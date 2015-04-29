@@ -96,11 +96,15 @@ class TestRepository extends Repository
 
 
         $assignedTestDltSql = new String('
-            DELETE FROM assigned_tests WHERE test_control_id = :test_control_id
+            DELETE FROM restricted_tests WHERE test_control_id = :test_control_id
         ');
 
         $testsDltSql = new String('
             DELETE FROM tests WHERE test_control_id = :test_control_id
+        ');
+
+        $testsDltSql = new String('
+            DELETE FROM public_tests WHERE test_control_id = :test_control_id
         ');
 
         $testControlDltSql = new String('
@@ -233,6 +237,41 @@ class TestRepository extends Repository
         $params->attach(':test_control_id', $testControlId, \PDO::PARAM_INT);
 
         $query = new Query($restrictedUsersSql, array($params));
+
+        $result = $qh->prepare(new Select($query))->bind()->execute()->getResult();
+
+        if(empty($result[0])) {
+            return array();
+        }
+
+        return $result[0];
+    }
+
+    public function getPermittedTestsByUserId($userId) {
+        $qh = new QueryHolder($this->connection);
+
+        $permittedTestsSql = new String('
+          SELECT DISTINCT
+            t.test_control_id,
+            t.visibility,
+            t.test_name,
+            t.remarks,
+            DATE_FORMAT(t.created, \'%M %d, %Y\') AS created,
+            u.username,
+            u.name,
+            u.lastname
+          FROM test_control AS t
+          INNER JOIN restricted_tests AS rt
+          INNER JOIN public_tests AS p
+          INNER JOIN users AS u
+          ON rt.user_id = :user_id
+          WHERE rt.user_id = u.user_id AND t.isFinished = 1
+        ');
+
+        $params = new Parameters();
+        $params->attach(':user_id', $userId, \PDO::PARAM_INT);
+
+        $query = new Query($permittedTestsSql, array($params));
 
         $result = $qh->prepare(new Select($query))->bind()->execute()->getResult();
 

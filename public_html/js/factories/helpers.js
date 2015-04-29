@@ -21,7 +21,8 @@ angular.module('suit.factories')
                     getBasicTestById: 'test-managment/get-test-basic',
                     deleteTest: 'test-managment/delete-test',
                     modifyTest: 'test-managment/create-test',
-                    getPermittedUsers: 'test-managment/get-permitted-users'
+                    getPermittedUsers: 'test-managment/get-permitted-users',
+                    getPermittedTests: 'test-managment/get-permitted-tests'
                 },
                 workspace: {
                     workspaceData: 'test-managment/workspace-data',

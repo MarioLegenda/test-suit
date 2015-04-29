@@ -47,6 +47,8 @@
       text-align: center;
       font-size:1.2em;
 
+      background-color: #303133;
+
       @include transition(background-color 0.3s);
     }
 
@@ -83,7 +85,7 @@
   }
 }
 
-.UserManagmentMain, .TestListManagment {
+.UserManagmentMain, .TestListManagment, .PermittedTestsListing {
 
   padding:50px 0 0 0;
 
@@ -100,7 +102,6 @@
 }
 
 .Listing {
-
   .LoadMore {
     display:block;
     width:100%;

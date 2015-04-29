@@ -22,7 +22,7 @@
             {% if model.isInRole('ROLE_USER_MANAGER') or model.isInRole('ROLE_TEST_CREATOR') %}
                 <p ng-click="managment.toggle($event, 'createTest')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-file-o fa-3x"></span><span class="MenuChoice--text">Create test</span></p>
                 <p ng-click="managment.toggle($event, 'testList')" class="MenuChoice"><span class="MenuChoice--icon  fa fa-edit fa-3x"></span><span class="MenuChoice--text">Manage tests</span></p>
-                <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-info fa-3x"></span><span class="MenuChoice--text">Test info</span></p>
+                <p class="MenuChoice"><span class="MenuChoice--icon  fa fa-trophy fa-3x"></span><span class="MenuChoice--text">Solved tests</span></p>
             {% endif %}
         </div>
 

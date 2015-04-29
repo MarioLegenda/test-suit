@@ -162,15 +162,16 @@ class WorkspaceRepository extends Repository
      * Called by:
      *     - WorkspaceController::finishTestAction()
      */
-    public function finishTest($test_control_id) {
+    public function finishTest(array $content) {
         $qh = new QueryHolder($this->connection);
 
         $finishSql = new String('
-            UPDATE test_control SET isFinished = 1 WHERE test_control_id = :test_control_id
+            UPDATE test_control SET isFinished = :is_finished WHERE test_control_id = :test_control_id
         ');
 
         $parameters = new Parameters();
-        $parameters->attach(':test_control_id', $test_control_id, \PDO::PARAM_INT);
+        $parameters->attach(':test_control_id', $content['test_control_id'], \PDO::PARAM_INT);
+        $parameters->attach(':is_finished', $content['status'], \PDO::PARAM_INT);
 
         $updateQuery = new Query($finishSql, array($parameters));
 

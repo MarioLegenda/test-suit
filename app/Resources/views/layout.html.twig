@@ -23,14 +23,16 @@
         {{ include('listings/test-list.html.twig') }}
         {{ include('listings/assigned-test-list.html.twig') }}
 
-        {{ include('blocks/text-answer-block.html.twig') }}
-        {{ include('blocks/code-answer-block.html.twig') }}
-        {{ include('blocks/text-question-block.html.twig') }}
-        {{ include('blocks/select-block.html.twig') }}
-        {{ include('blocks/code-block.html.twig') }}
-        {{ include('blocks/workspace.html.twig') }}
-        {{ include('blocks/workspace-builder.html.twig') }}
-        {{ include('blocks/workspace-modifier.html.twig') }}
+        {{ include('blocks/buildingBlocks/text-answer-block.html.twig') }}
+        {{ include('blocks/buildingBlocks/code-answer-block.html.twig') }}
+        {{ include('blocks/buildingBlocks/text-question-block.html.twig') }}
+        {{ include('blocks/buildingBlocks/select-block.html.twig') }}
+        {{ include('blocks/buildingBlocks/code-block.html.twig') }}
+        {{ include('blocks/buildingBlocks/workspace.html.twig') }}
+        {{ include('blocks/buildingBlocks/workspace-builder.html.twig') }}
+        {{ include('blocks/buildingBlocks/workspace-modifier.html.twig') }}
+
+        {{ include('blocks/solvingBlocks/workspace.html.twig') }}
 
         {{ include('components/listing-component.html.twig') }}
         {{ include('components/filter.html.twig') }}

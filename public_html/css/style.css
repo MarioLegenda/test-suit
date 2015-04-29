@@ -246,6 +246,12 @@ body {
     width: 40%;
     float: left;
     margin: 10px 60px 20px 0; }
+    .Expandable--info .InfoSection .FinishTestButton {
+      width: 80px;
+      font-size: 1em;
+      padding: 0;
+      margin: 0;
+      margin-right: 100px; }
     .Expandable--info .InfoSection .InfoSection--title {
       width: 100%;
       float: left;
@@ -493,6 +499,7 @@ body {
       color: white;
       text-align: center;
       font-size: 1.2em;
+      background-color: #303133;
       -webkit-transition: background-color 0.3s;
       -moz-transition: background-color 0.3s;
       -ms-transition: background-color 0.3s;
@@ -511,11 +518,11 @@ body {
   position: relative;
   color: white; }
 
-.UserManagmentMain, .TestListManagment {
+.UserManagmentMain, .TestListManagment, .PermittedTestsListing {
   padding: 50px 0 0 0; }
-  .UserManagmentMain .Expandable--click .Expandable--name, .UserManagmentMain .Expandable--click .Expandable--testName, .TestListManagment .Expandable--click .Expandable--name, .TestListManagment .Expandable--click .Expandable--testName {
+  .UserManagmentMain .Expandable--click .Expandable--name, .UserManagmentMain .Expandable--click .Expandable--testName, .TestListManagment .Expandable--click .Expandable--name, .TestListManagment .Expandable--click .Expandable--testName, .PermittedTestsListing .Expandable--click .Expandable--name, .PermittedTestsListing .Expandable--click .Expandable--testName {
     margin: 0 5px 0 0; }
-  .UserManagmentMain .Expandable--click .Expandable--username, .UserManagmentMain .Expandable--click .Expandable--created, .TestListManagment .Expandable--click .Expandable--username, .TestListManagment .Expandable--click .Expandable--created {
+  .UserManagmentMain .Expandable--click .Expandable--username, .UserManagmentMain .Expandable--click .Expandable--created, .TestListManagment .Expandable--click .Expandable--username, .TestListManagment .Expandable--click .Expandable--created, .PermittedTestsListing .Expandable--click .Expandable--username, .PermittedTestsListing .Expandable--click .Expandable--created {
     float: right; }
 
 .Listing .LoadMore {

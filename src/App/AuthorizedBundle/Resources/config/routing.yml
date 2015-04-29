@@ -92,6 +92,12 @@ app_authorized_getAssignedUsersIds:
     defaults: { _controller: AppAuthorizedBundle:Test:getAssignedUsersIds }
     methods: [POST]
 
+app_authorized_getPermittedTests:
+    path: /test-managment/get-permitted-tests
+    defaults: { _controller: AppAuthorizedBundle:Test:getPermittedTests }
+    methods: [POST]
+
+
 app_authorized_getTestsBasic:
     path: /test-managment/get-tests-listing
     defaults: { _controller: AppAuthorizedBundle:Test:getTestsListing }

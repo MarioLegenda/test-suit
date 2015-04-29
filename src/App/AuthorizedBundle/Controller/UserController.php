@@ -51,7 +51,7 @@ class UserController extends ContainerAware
     public function createUserAction() {
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent(), true);
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
         $builder->build(
@@ -145,10 +145,9 @@ class UserController extends ContainerAware
      */
 
     public function filterAction() {
-        $doctrine = $this->container->get('doctrine');
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent(), true);
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
 
@@ -206,7 +205,7 @@ class UserController extends ContainerAware
     public function userPaginatedAction() {
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent());
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
         $builder->build(
@@ -257,7 +256,7 @@ class UserController extends ContainerAware
     public function userInfoAction() {
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent());
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
 

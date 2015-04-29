@@ -472,7 +472,7 @@ angular.module('suit.directives.components', [])
             };
         }
     }
-}]).directive('testRow', ['Test', 'Toggle', function(Test, Toggle) {
+}]).directive('testRow', ['Test', 'Workspace', 'Toggle', function(Test, Workspace, Toggle) {
     return {
         restring: 'E',
         replace: true,
@@ -486,7 +486,7 @@ angular.module('suit.directives.components', [])
 
             console.log($scope.testRow.test);
 
-            Toggle.create('testRow',{
+            Toggle.create($scope.testRow.test.test_id,{
                 enter: function() {
                     this.elem.find('.Expandable--info').show();
                     this.elem.find('.Expandable--click').css({
@@ -506,8 +506,17 @@ angular.module('suit.directives.components', [])
                     var clickedElem = $($event.currentTarget),
                         parentElem = clickedElem.parent();
 
-                    Toggle.toggle('testRow', {
+                    Toggle.toggle($scope.testRow.test.test_id, {
                         elem: elem
+                    });
+                },
+                finishTest: function($event, value) {
+
+                    var finishPromise = Workspace.finishTest($scope.testRow.test.test_id, parseInt(value));
+                    finishPromise.then(function(data, status, headers, config) {
+                        $scope.testRow.test.finished = parseInt(value);
+                    }, function(data, status, headers, config) {
+                        console.log(data, status);
                     });
                 },
                 deleteTest: function(testId) {
@@ -546,16 +555,46 @@ angular.module('suit.directives.components', [])
             }
         }
     }
-}]).directive('assignedTestRow', [function() {
+}]).directive('assignedTestRow', ['Toggle', function(Toggle) {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: 'assignedTestRow.html',
         controller: function($scope) {
-
         },
         link: function($scope, elem, attrs) {
+            $scope.testRow = {
+                test: JSON.parse(attrs.test)
+            };
 
+            Toggle.create($scope.testRow.test.test_control_id,{
+                enter: function() {
+                    this.elem.find('.Expandable--info').show();
+                    this.elem.find('.Expandable--click').css({
+                        backgroundColor: '#2C84EE'
+                    });
+                },
+                exit: function() {
+                    this.elem.find('.Expandable--info').hide();
+                    this.elem.find('.Expandable--click').css({
+                        backgroundColor: '#424242'
+                    });
+                }
+            });
+
+            $scope.directiveData = {
+                expandSection: function($event) {
+                    var clickedElem = $($event.currentTarget),
+                        parentElem = clickedElem.parent();
+
+                    Toggle.toggle($scope.testRow.test.test_control_id, {
+                        elem: elem
+                    });
+                },
+                solveTest: function(testControlId) {
+                    console.log(testControlId);
+                }
+            }
         }
     }
 }]);

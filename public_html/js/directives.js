@@ -383,11 +383,14 @@ angular.module('suit.directives.actions', [])
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: 'workspace.html',
+            templateUrl: 'buildingWorkspace.html',
             scope: {
                 testControlId: '@testControlId'
             },
             controller: function ($scope) {
+                $scope.workspace = {
+                    testName: ''
+                }
             },
             link: function ($scope, elem, attrs) {
 
@@ -413,6 +416,9 @@ angular.module('suit.directives.actions', [])
                 var workspacePromise = Workspace.workspaceData($scope.currentTestId);
 
                 workspacePromise.then(function(data, status, headers, config) {
+
+                    $scope.workspace.testName = data.data.test.test_name;
+
                     $scope.controller = {
                         minId: parseInt(data.data.test.min),
                         maxId: parseInt(data.data.test.max),
@@ -473,7 +479,6 @@ angular.module('suit.directives.actions', [])
                                 return;
                             }
 
-                            var test = data.data.test;
                             $scope.dataShepard.syncCurrentId();
                             $scope.dataShepard.clearHeard();
                             $scope.controller.rangeIterator = RangeIterator.initIterator(data.data.range);
@@ -861,6 +866,7 @@ angular.module('suit.directives.actions', [])
                 }
             };
 
+            // za brisanje
             scope.finished = {
                 submit: function($event) {
                     $event.preventDefault();
@@ -1112,20 +1118,32 @@ angular.module('suit.directives.actions', [])
                 });
             }
         }
-}]).directive('assignedTestsListing', ['Pagination', function(Pagination) {
+}]).directive('assignedTestsListing', ['Pagination', 'Test', function(Pagination, Test) {
     return {
         restrict: 'E',
         replace: true,
         templateUrl: 'assignedTestListing.html',
         controller: function($scope) {
             $scope.directiveData = {
-                users: [],
+                tests: [],
                 loaded: false,
                 directiveType: 'assigned-test-row',
                 loadMore: true
             };
 
             var pagination = Pagination.init(1, 10);
+            var promise = Test.getPaginatedPermittedTests(pagination.currentPagination());
+
+            promise.then(function(data, status, headers, config) {
+                $scope.directiveData.tests = data.data.tests;
+                $scope.directiveData.loaded = true;
+
+                if (data.data.tests.length < pagination.constant.end) {
+                    $scope.directiveData.loadMore = false;
+                }
+            }, function(data, status, headers, config) {
+                console.log('Something went wrong', data);
+            });
         },
         link: function($scope, elem, attrs) {
 

@@ -1,4 +1,25 @@
 <script type="text/ng-template" id="assignedTestRow.html">
     <section class="Expandable">
+        <a href=""  ng-click="directiveData.expandSection($event)" class="Expandable--click">
+            <span class="Expandable--item  Expandable--testName">{[{ testRow.test.test_name }]}</span>
+            <span class="Expandable--item  Expandable--created">Created: {[{ testRow.test.created }]}</span>
+        </a>
+
+        <div class="Expandable--info  TestManagment--info">
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Created by</h2>
+                <p class="InfoSection--text">{[{ testRow.test.username }]}</p>
+                <p class="InfoSection--text">{[{ testRow.test.name }]} {[{ testRow.test.lastname }]}</p>
+            </div>
+
+            <div class="InfoSection  InfoSection--expand">
+                <h2 class="InfoSection--title">Remarks</h2>
+                <p class="InfoSection--text">{[{ testRow.test.remarks }]}</p>
+            </div>
+
+            <div class="ModificationActions">
+                <a ng-click="directiveData.solveTest(testRow.test.test_control_id)" href="" class="ModifyAction--action  ModifyAction--change">Solve</a>
+            </div>
+        </div>
     </section>
 </script>
