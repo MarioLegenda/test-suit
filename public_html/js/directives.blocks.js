@@ -312,4 +312,68 @@ angular.module('suit.directives.blocks', [])
                 });
             }
         }
-    });
+    }).directive('questionCodeBlock', [function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                data: '=data'
+            },
+            templateUrl: 'question.codeQuestionBlock.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    data: $scope.data
+                };
+
+                $scope.directiveData.data.answer = true;
+            },
+            link: function($scope, elem, attrs) {
+
+                var editor = ace.edit(elem.find('.AceEditor').get(0));
+                var session = editor.getSession();
+
+                editor.getSession().setMode("ace/mode/javascript");
+                editor.renderer.setShowGutter(true);
+                editor.setFontSize(18);
+                editor.setHighlightActiveLine(true);
+                editor.setWrapBehavioursEnabled(true);
+                editor.setReadOnly(true);
+                editor.setOption('firstLineNumber', 1);
+                editor.setValue($scope.directiveData.data.data);
+            }
+        }
+    }]).directive('questionTextBlock', [function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                data: '=data'
+            },
+            templateUrl: 'question.textQuestionBlock.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    data: $scope.data
+                };
+            }
+        }
+    }]).directive('answerRadioBlock', [function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                data: '=data'
+            },
+            templateUrl: 'answer.radioQuestionBlock.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    data: $scope.data,
+                    answer: function(index, answer) {
+                        $scope.data.answer = {
+                            index: index,
+                            answer: answer
+                        };
+                    }
+                };
+            }
+        }
+    }]);

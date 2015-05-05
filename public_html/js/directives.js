@@ -357,7 +357,7 @@ angular.module('suit.directives.actions', [])
 
                         var promise = User.createUser($scope.user);
 
-                        promise.then(function (data, status, headers, config) {
+                        promise.then(function(data, status, headers, config) {
                             $scope.$emit('action-user-created', {});
                         }, function (data, status, headers, config) {
                             $scope.$broadcast('await-create-user', {
@@ -379,7 +379,7 @@ angular.module('suit.directives.actions', [])
 
         }
     }
-}).directive('workspace', function() {
+}).directive('buildingWorkspace', ['$timeout', function($timeout) {
         return {
             restrict: 'E',
             replace: true,
@@ -390,13 +390,13 @@ angular.module('suit.directives.actions', [])
             controller: function ($scope) {
                 $scope.workspace = {
                     testName: ''
-                }
+                };
             },
             link: function ($scope, elem, attrs) {
 
             }
         }
-}).directive('workspaceBuilder', ['$timeout', 'Test', 'Workspace', 'DataShepard', 'RangeIterator', function($timeout, Test, Workspace, DataShepard, RangeIterator) {
+}]).directive('workspaceCreationBuilder', ['$timeout', 'Workspace', 'DataShepard', 'RangeIterator', function($timeout, Workspace, DataShepard, RangeIterator) {
         return {
             restrict: 'A',
             replace: true,
@@ -594,7 +594,7 @@ angular.module('suit.directives.actions', [])
                 });
             }
         }
-}]).directive('builderModifier', ['$', '$compile', 'DataMediator', 'Test', 'Workspace', 'CompileCommander', '$timeout', function($, $compile, DataMediator, Test, Workspace, CompileCommander, $timeout) {
+}]).directive('builderModifier', ['$', '$compile', 'DataMediator', 'Workspace', 'CompileCommander', '$timeout', function($, $compile, DataMediator, Workspace, CompileCommander, $timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -743,7 +743,7 @@ angular.module('suit.directives.actions', [])
             };
         }
     }
-}]).directive('builderCreator', ['$', '$compile', 'DataMediator', 'Test', 'Workspace', 'CompileCommander', function($, $compile, DataMediator, Test, Workspace, CompileCommander) {
+}]).directive('builderCreator', ['$', '$compile', 'DataMediator', 'Workspace', 'CompileCommander', function($, $compile, DataMediator, Workspace, CompileCommander) {
     return {
         restrict: 'E',
         replace: true,
@@ -885,7 +885,177 @@ angular.module('suit.directives.actions', [])
             };
         }
     }
-}]).directive('managmentMenu', ['$', '$timeout', function($, $timeout) {
+}]).directive('testSolvingWorkspace', [function() {
+    return {
+        restrict: 'E',
+        replace: true,
+        templateUrl: 'solvingWorkspace.html',
+        scope: {
+            testControlId: '@testControlId'
+        },
+        controller: function ($scope) {
+            $scope.workspace = {
+                testName: ''
+            };
+        },
+        link: function ($scope, elem, attrs) {
+
+        }
+    }
+}]).directive('workspaceSolvingBuilder', ['$timeout', 'Answer', 'DataShepard', 'RangeIterator', function($timeout, Answer, DataShepard, RangeIterator) {
+    return {
+        restrict: 'A',
+        replace: false,
+        controller: function($scope) {
+        },
+        link: function($scope, elem, attrs) {
+            $scope.testControlId = parseInt(attrs.testControlId);
+
+            $scope.controller = {
+                answerControlId: null,
+                rangeIterator: null,
+                initTestSolver: false
+            };
+
+            var workspacePromise = Answer.initialAnswerData($scope.testControlId);
+
+            workspacePromise.then(function(data, status, headers, config) {
+                $scope.workspace.testName = data.data.test.test_name;
+
+                $scope.controller.rangeIterator = RangeIterator.initIterator(data.data.test.range);
+                $scope.controller.answerControlId = data.data.test.answer_control_id;
+                $scope.controller.initTestSolver = true;
+            });
+        }
+    }
+}]).directive('testSolver', ['$timeout', '$compile', 'Answer', 'Workspace', 'AnswerCompiler', 'DataMediator', function($timeout, $compile, Answer, Workspace, AnswerCompiler, DataMediator) {
+    return {
+        restrict: 'E',
+        replace: true,
+        scope: {
+            testControlId: '@testControlId',
+            answerControlId: '@answerControlId',
+            range: '=testRange'
+        },
+        templateUrl: 'testSolver.html',
+        controller: function ($scope) {
+            $scope.directiveData = {
+                current: $scope.range.currentCounter(),
+                answer_id: null,
+                blocks: []
+            };
+
+
+            DataMediator.addMediateData('action-next-question', {
+                message: 'Please wait...',
+                submitProp: 'next',
+                userSpecificClasses: 'Button  NextButton  ActionMoveRight',
+                awaitClasses: 'AwaitRight',
+                textValue: 'Next question',
+                awaitEvent: 'await-next'
+            });
+
+            DataMediator.addMediateData('action-previous-question', {
+                message: 'Please wait...',
+                submitProp: 'previous',
+                userSpecificClasses: 'Button  PreviousButton  ActionMoveRight',
+                awaitClasses: 'AwaitRight',
+                textValue: 'Previous question',
+                awaitEvent: 'await-previous'
+            });
+
+
+            DataMediator.addMediateData('action-finish-testing', {
+                message: 'Please wait...',
+                submitProp: 'finish',
+                userSpecificClasses: 'Button FinishButton  ActionMoveLeft',
+                awaitClasses: 'AwaitLeft',
+                textValue: 'Finish test',
+                awaitEvent: 'await-finish'
+            });
+        },
+        link: function($scope, elem, attrs) {
+            $scope.actions = {
+                mainPromise: null,
+
+                onLoadAction: function(current) {
+                    this.mainPromise = Answer.getAnswer(current);
+
+                    this.mainPromise.then(function(data, status, headers, config) {
+
+                        elem.find('.ActionArea').before("<div class='SolvingBlocks'></div>");
+
+                        $scope.directiveData.answer_id = data.data.answer.answers_id;
+                        $scope.directiveData.blocks = data.data.answer.answer_serialized;
+                    }, function(data, status, headers, config) {
+                        console.log("Something went wrong");
+                    });
+                },
+
+                compileAction: function() {
+                    this.mainPromise.then(function() {
+                        $scope.directiveData.blocks.forEach(function(value, index, array) {
+                            var newScope = $scope.$new();
+                            var el = AnswerCompiler
+                                .init()
+                                .setBlockType(value.blockType)
+                                .setDirectiveType(value.directiveType)
+                                .setData(value.data)
+                                .returnElement(newScope);
+
+                            elem.find('.SolvingBlocks').append(el);
+                            $compile(el)(newScope);
+
+                        }, $scope);
+                    });
+                }
+            };
+
+            $scope.next = {
+                submit: function($event) {
+                    $event.preventDefault();
+
+                    elem.find('.SolvingBlocks').remove();
+
+                    Answer.saveAnswer($scope.directiveData.answer_id, $scope.directiveData.blocks);
+
+                    $scope.range.next();
+                    $scope.directiveData.current = $scope.range.currentCounter();
+                    $scope.actions.onLoadAction($scope.range.current());
+                    $scope.actions.compileAction();
+
+                    return false;
+                }
+            };
+
+            $scope.previous = {
+                submit: function($event) {
+                    $event.preventDefault();
+
+                    elem.find('.SolvingBlocks').remove();
+
+                    $scope.range.previous();
+                    $scope.directiveData.current = $scope.range.currentCounter();
+                    $scope.actions.onLoadAction($scope.range.current());
+                    $scope.actions.compileAction();
+                    return false;
+                }
+            };
+
+            $scope.finish = {
+                submit: function($event) {
+                    $event.preventDefault();
+
+                    Answer.finishTest($scope.answerControlId);
+                    return false;
+                }
+            };
+
+            $scope.actions.onLoadAction($scope.range.current());
+            $scope.actions.compileAction();
+        }
+    }
+}]).directive('managmentMenu', ['$timeout', 'Answer', function($timeout, Answer) {
     return {
         restrict: 'E',
         replace: true,
@@ -920,8 +1090,9 @@ angular.module('suit.directives.actions', [])
                 createTest: false,
                 testList: false,
                 assignedTests: false,
-                workspace: false,
+                builderWorkspace: false,
                 helpMenu: false,
+                solvingWorkspace: false,
 
                 toggle: function($event, type) {
                     if( ! this.hasOwnProperty(type)) {
@@ -934,9 +1105,10 @@ angular.module('suit.directives.actions', [])
                         'listUsers',
                         'createTest',
                         'testList',
-                        'workspace',
+                        'builderWorkspace',
                         'helpMenu',
-                        'assignedTests'
+                        'assignedTests',
+                        'solvingWorkspace'
                     ];
 
                     menus.splice(menus.indexOf(type), 1);
@@ -959,14 +1131,14 @@ angular.module('suit.directives.actions', [])
                 $scope.managment.listUsers = true;
             });
 
-            $scope.$on('action-workspace', function(event, data) {
+            $scope.$on('action-builder-workspace', function(event, data) {
                 $scope.importance.testControlId = data.testId;
                 $scope.managment.testList = false;
-                $scope.managment.workspace = true;
+                $scope.managment.builderWorkspace = true;
             });
 
             $scope.$on('action-test-finished', function($event, data) {
-                $scope.managment.workspace = false;
+                $scope.managment.builderWorkspace = false;
                 $scope.managment.testList = true;
             });
 
@@ -974,179 +1146,20 @@ angular.module('suit.directives.actions', [])
                 $scope.managment.createTest = false;
                 $scope.managment.testList = true;
             });
-        },
-        link: function(scope, elem, attrs) {
 
-        }
-    }
-}]).directive('testListing', ['Test', 'Pagination', function(Test, Pagination) {
-    return {
-        restrict: 'E',
-        scope: true,
-        replace: true,
-        templateUrl: 'testListing.html',
-        controller: function($scope) {
-            $scope.directiveData = {
-                modify: false,
-                testInfo: {},
-                tests: [],
-                loaded: false,
-                loadMore: true,
-                directiveType: 'test-row',
-
-                deleteTest: function($event, id) {
-                    $event.preventDefault();
-
-                    var promise = Test.deleteTest(id);
-
-                    promise.then(function(data, status, headers, config) {
-                        $scope.directiveData.tests = data.data.tests;
-                    }, function(data, status, headers, config) {
-                        console.log('Something bad happend', data, status);
-                    });
-                }
-            };
-
-            var pagination = Pagination.init(1, 10);
-
-            var promise = Test.getTestsListing();
-            promise.then(function(data, status, headers, config) {
-                var tests = data.data.tests;
-                $scope.directiveData.tests = tests;
-                $scope.directiveData.loaded = true;
-                if (tests.length < pagination.constant.end) {
-                    $scope.directiveData.loadMore = false;
-                }
-            }, function(data, status, headers, config) {
-                console.log('Something bad happend', data, status);
-            });
-
-            $scope.$on('action-load-more', function (event, data) {
-                var promise = Test.getPaginatedUsers(pagination.nextPagination());
-
-                promise.then(function (data, status, headers, config) {
-                    var users = data.data.users;
-                    if (users.length < pagination.constant.end) {
-                        $('.LoadMore').remove();
-                    }
-
-                    for (var user in users) {
-                        if (users.hasOwnProperty(user)) {
-                            $scope.directiveData.users.push(users[user]);
-                        }
-                    }
-
-                    $scope.directiveData.loaded = true;
-                }, function (data, status, headers, config) {
-
-                });
-            });
-
-            $scope.$on('action-delete-test', function(event, data) {
-                var promise = Test.deleteTest(data.id);
-
-                promise.then(function(data, status, headers, config) {
-                    $scope.directiveData.tests = data.data.tests;
-                }, function(data, status, headers, config) {
-                    console.log('Something bad happend', data, status);
-                });
-            });
-        },
-        link: function(scope, elem, attrs) {
-        }
-    }
-}]).directive('userListing', ['User', 'Pagination', function(User, Pagination) {
-        return {
-            restrict: 'E',
-            replace: true,
-            templateUrl: 'userListing.html',
-            controller: function ($scope) {
-                $scope.directiveData = {
-                    users: [],
-                    loaded: false,
-                    directiveType: 'user-row',
-                    loadMore: true
-                };
-
-                var pagination = Pagination.init(1, 10);
-
-                var promise = User.getPaginatedUsers(pagination.currentPagination());
-                promise.then(function (data, status, headers, config) {
-                    var users = data.data.users;
-                    $scope.directiveData.users = users;
-                    $scope.directiveData.loaded = true;
-
-                    if (users.length < pagination.constant.end) {
-                        $scope.directiveData.loadMore = false;
-                    }
-                }, function (data, status, headers, config) {
-                    console.log('Something bad happend', data, status);
-                });
-
-                $scope.$on('action-load-more', function (event, data) {
-                    if ($scope.directiveData.loadMore === true) {
-                        var promise = User.getPaginatedUsers(pagination.nextPagination());
-
-                        promise.then(function (data, status, headers, config) {
-                            var users = data.data.users;
-                            if (users.length < pagination.constant.end) {
-                                $scope.directiveData.loadMore = false;
-                                $('.LoadMore').remove();
-                            }
-
-                            for (var user in users) {
-                                if (users.hasOwnProperty(user)) {
-                                    $scope.directiveData.users.push(users[user]);
-                                }
-                            }
-
-                            $scope.directiveData.loaded = true;
-                        }, function (data, status, headers, config) {
-
+            $scope.$on('action-solving-workspace', function($event, eventData) {
+                Answer.createAnswer(eventData.testControlId)
+                    .then(function(data, status, config, headers) {
+                        $scope.importance.testControlId = eventData.testControlId;
+                        $scope.managment.assignedTests = false;
+                        $scope.managment.solvingWorkspace = true;
+                    }, function(data, status, config, headers) {
+                        $scope.$broadcast('action-solving-error', {
+                            error: true,
+                            message: 'Error: There has been an error in Test suit. Please, refresh the page and try again. If the error occurs again, please contact whitepostmail@gmail.com'
                         });
-                    }
-                });
-
-                $scope.$on('action-user-filter', function (event, data) {
-                    var promise = User.filter(data);
-
-                    promise.then(function (data, status, headers, config) {
-                        $scope.directiveData.users = data.data.users;
-                    }, function (data, status, headers, config) {
-                        console.log(data, data.status);
                     });
-                });
-            }
-        }
-}]).directive('assignedTestsListing', ['Pagination', 'Test', function(Pagination, Test) {
-    return {
-        restrict: 'E',
-        replace: true,
-        templateUrl: 'assignedTestListing.html',
-        controller: function($scope) {
-            $scope.directiveData = {
-                tests: [],
-                loaded: false,
-                directiveType: 'assigned-test-row',
-                loadMore: true
-            };
-
-            var pagination = Pagination.init(1, 10);
-            var promise = Test.getPaginatedPermittedTests(pagination.currentPagination());
-
-            promise.then(function(data, status, headers, config) {
-                $scope.directiveData.tests = data.data.tests;
-                $scope.directiveData.loaded = true;
-
-                if (data.data.tests.length < pagination.constant.end) {
-                    $scope.directiveData.loadMore = false;
-                }
-            }, function(data, status, headers, config) {
-                console.log('Something went wrong', data);
-            });
-        },
-        link: function($scope, elem, attrs) {
-
+            })
         }
     }
 }]);

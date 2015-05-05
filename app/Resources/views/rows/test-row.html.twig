@@ -17,11 +17,16 @@
 
             <div class="InfoSection  FormRow">
                 <h2 class="InfoSection--title">Status</h2>
-                <p ng-if="testRow.test.finished == 0" class="InfoSection--text  InfoSection--highlightNotOk">
+                <p ng-if="directiveData.pendingFinished == true" class="InfoSection--text">Please, wait...</p>
+                <p ng-if="testRow.test.finished == 0 && directiveData.pendingFinished == false && directiveData.finishError.error == false" class="InfoSection--text  InfoSection--highlightNotOk">
                     Not finished <a ng-click="directiveData.finishTest($event, 1)" href="#" class="FinishTestButton  BasicSubmitButton  RightAligned  ButtonSpacing  BlueHighlight">Finish</a>
                 </p>
-                <p ng-if="testRow.test.finished == 1" class="InfoSection--text  InfoSection--highlightOk">
+                <p ng-if="testRow.test.finished == 1 && directiveData.pendingFinished == false && directiveData.finishError.error == false" class="InfoSection--text  InfoSection--highlightOk">
                     Finished <a ng-click="directiveData.finishTest($event, 0)" href="#" class="FinishTestButton  BasicSubmitButton  RightAligned  ButtonSpacing  BlueHighlight">Unfinish</a>
+                </p>
+                <p ng-if="directiveData.finishError.error == true" class="InfoSection--text  InfoSection--highlightNotOk">
+                    {[{ directiveData.finishError.message }]}
+                    <a ng-click="directiveData.resetFinishError($event)" href="#" class="FinishTestButton  BasicSubmitButton  RightAligned  ButtonSpacing  BlueHighlight">Ok</a>
                 </p>
             </div>
 
@@ -37,10 +42,14 @@
                 <span ng-if="testRow.test.permission == 'error'" class="InfoSection--text">Error: Could not determine permission. Contact whitepostmail@gmail.com</span>
             </div>
 
-            <div class="ModificationActions">
+            <div class="ModificationActions" ng-if="directiveData.actionPending == false">
                 <a ng-click="directiveData.changeMetadata(testRow.test.test_id)" href="" class="ModifyAction--action  ModifyAction--change">Change metadata</a>
                 <a ng-click="directiveData.workspace(testRow.test.test_id)" href="" class="ModifyAction--action  ModifyAction--modify">Workspace</a>
                 <a ng-click="directiveData.deleteTest(testRow.test.test_id)" href="" class="ModifyAction--action  ModifyAction--delete">Delete</a>
+            </div>
+
+            <div class="ModificationActions" ng-if="directiveData.actionPending == true">
+                <p class="ActionPending">Please, wait...</p>
             </div>
         </div>
     </section>

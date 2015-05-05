@@ -32,7 +32,8 @@
             <test-creation ng-if="managment.createTest"></test-creation>
             <test-listing ng-if="managment.testList"></test-listing>
             <assigned-tests-listing ng-if="managment.assignedTests"></assigned-tests-listing>
-            <workspace ng-if="managment.workspace" test-control-id="{[{ importance.testControlId }]}"></workspace>
+            <building-workspace ng-if="managment.builderWorkspace" test-control-id="{[{ importance.testControlId }]}"></building-workspace>
+            <test-solving-workspace ng-if="managment.solvingWorkspace" test-control-id="{[{ importance.testControlId }]}"></test-solving-workspace>
             <help ng-if="managment.helpMenu"></help>
         </div>
     </div>

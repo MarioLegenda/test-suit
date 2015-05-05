@@ -33,6 +33,10 @@
         {{ include('blocks/buildingBlocks/workspace-modifier.html.twig') }}
 
         {{ include('blocks/solvingBlocks/workspace.html.twig') }}
+        {{ include('blocks/solvingBlocks/test-solver.html.twig') }}
+        {{ include('blocks/solvingBlocks/questions/code-question-block.html.twig') }}
+        {{ include('blocks/solvingBlocks/questions/text-question-block.html.twig') }}
+        {{ include('blocks/solvingBlocks/answers/radio-answer-block.html.twig') }}
 
         {{ include('components/listing-component.html.twig') }}
         {{ include('components/filter.html.twig') }}
@@ -72,6 +76,7 @@
             <script type="text/javascript" src="{{ asset("js/directives.blocks.js") }}"></script>
             <script type="text/javascript" src="{{ asset("js/directives.components.js") }}"></script>
             <script type="text/javascript" src="{{ asset("js/directives.js") }}"></script>
+            <script type="text/javascript" src="{{ asset("js/directives.listings.js") }}"></script>
             <script type="text/javascript" src="{{ asset("js/factories/data-handlers.js") }}"></script>
             <script type="text/javascript" src="{{ asset("js/factories/rest.js") }}"></script>
             <script type="text/javascript" src="{{ asset("js/factories/helpers.js") }}"></script>

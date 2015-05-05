@@ -180,4 +180,60 @@ angular.module('suit.factories')
         }
 
         return new Workspace();
+    }])
+    .factory('Answer', ['$http', 'Path', function($http, Path) {
+        function Answer() {
+            this.createAnswer = function(testControlId) {
+                return $http({
+                    method: 'POST',
+                    url: Path.namespace('answer.createAnswer').construct(),
+                    data: {test_control_id: testControlId}
+                });
+            };
+
+            this.initialAnswerData = function(testControlId) {
+                return $http({
+                    method: 'POST',
+                    url: Path.namespace('answer.initialAnswerData').construct(),
+                    data: {test_control_id: testControlId}
+                });
+            };
+
+            this.saveAnswer = function(answerId, answerSerialized) {
+                return $http({
+                    method: 'POST',
+                    url: Path.namespace('answer.saveAnswer').construct(),
+                    data: {
+                        answer_id: answerId,
+                        answer_serialized: answerSerialized
+                    }
+                });
+            };
+
+            this.getAnswer = function(answerId) {
+                return $http({
+                    method: 'POST',
+                    url: Path.namespace('answer.getAnswer').construct(),
+                    data: {answers_id: answerId}
+                });
+            };
+
+            this.finishTest = function(answerControlId) {
+                return $http({
+                    method: 'POST',
+                    url: Path.namespace('answer.finishTest').construct(),
+                    data: {answer_control_id: answerControlId}
+                });
+            };
+
+            this.getSolvingStatus = function(testControlId) {
+                return $http({
+                    method: 'POST',
+                    url: Path.namespace('answer.getSolvingStatus').construct(),
+                    data: {test_control_id: testControlId}
+                });
+            }
+        }
+
+        return new Answer();
     }]);

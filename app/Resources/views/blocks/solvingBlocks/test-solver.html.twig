@@ -1,0 +1,21 @@
+<script type="text/ng-template" id="testSolver.html">
+    <div class="TestSolver">
+        <div class="BuilderMenu">
+            <section class="Blocks  ChoiceBlock">
+                <label class="TestNumber">{[{ directiveData.current }]}.</label>
+            </section>
+        </div>
+
+        <div class="SolvingBlocks">
+
+        </div>
+
+        <div class="ActionArea">
+                <action-submit init-key="action-next-question"></action-submit>
+
+                <action-submit init-key="action-previous-question"></action-submit>
+
+                <action-submit init-key="action-finish-testing"></action-submit>
+        </div>
+    </div>
+</script>

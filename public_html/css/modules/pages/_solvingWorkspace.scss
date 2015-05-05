@@ -1,0 +1,90 @@
+.SolvingBlocks {
+  width:100%;
+  float:left;
+
+  .Block {
+    width:100%;
+    float:left;
+  }
+}
+
+.CodeBlock {
+  width:100%;
+  float:left;
+  background-color: $mainColor;
+  color:white;
+  font-size:1.1em;
+
+  .CodeHighlight {
+    display:block;
+    width:100%;
+    float:right;
+    padding:10px;
+
+    height:300px;
+
+    font-family: monospace, serif;
+  }
+}
+
+.TextBlock {
+  margin:15px 0 15px 0;
+
+  .BlockData {
+    color:white;
+    font-size:1.4em;
+  }
+}
+
+.RadioBlock {
+
+  .BlockData {
+    width:100%;
+    float:left;
+    color:white;
+    font-size:1.4em;
+
+    .RadioRow {
+      width:100%;
+      margin:15px 0 15px 0;
+
+    }
+
+    .RadioLabel {
+      margin-left:15px;
+    }
+
+    .Radio {
+      width:17px;
+      height:17px;
+    }
+  }
+}
+
+.ActionArea {
+  .Button {
+    border:1px solid white;
+    color:white;
+    background-color: transparent;
+    font-family: "Open Sans Condensed", sans-serif;
+    font-size:1.2em;
+
+    padding:5px;
+
+    @include transition(background-color 0.4s, border 0.4s);
+
+    &:hover {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+
+    &:active {
+      background-color: $mainHoverColor;
+      border:1px solid $mainHoverColor;
+    }
+  }
+
+  .PreviousButton {
+    margin-right:5px;
+  }
+}

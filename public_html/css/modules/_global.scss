@@ -52,13 +52,19 @@ body {
   }
 }
 
-.Loading {
-  position:absolute;
-  top:50%; left:50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
+.ActionPending {
+  width:150px;
+  float:left;
+
+  padding:10px;
 
   color:white;
+  text-align: center;
+  font-size:1.2em;
+  line-height: 1.2em;
+}
+
+.ActionError {
+  width:100%;
+  color:$errorColor;
 }

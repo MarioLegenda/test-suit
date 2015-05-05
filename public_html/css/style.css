@@ -202,15 +202,18 @@ body {
     margin: 0 auto;
     margin-bottom: 50px; }
 
-.Loading {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  color: white; }
+.ActionPending {
+  width: 150px;
+  float: left;
+  padding: 10px;
+  color: white;
+  text-align: center;
+  font-size: 1.2em;
+  line-height: 1.2em; }
+
+.ActionError {
+  width: 100%;
+  color: #ff3c2b; }
 
 .Expandable {
   position: relative;
@@ -578,45 +581,45 @@ body {
   float: left;
   margin: 50px 0 50px 0; }
 
-.Builder {
+.Builder, .TestSolver {
   width: 800px;
   margin: 0 auto; }
-  .Builder .BuilderMenu {
+  .Builder .BuilderMenu, .TestSolver .BuilderMenu {
     width: 100%;
     float: left;
     margin-bottom: 100px;
     border-bottom: 1px dotted white; }
-  .Builder .Blocks {
+  .Builder .Blocks, .TestSolver .Blocks {
     width: 50%;
     float: left; }
-    .Builder .Blocks .Blocks--title {
+    .Builder .Blocks .Blocks--title, .TestSolver .Blocks .Blocks--title {
       position: relative;
       color: white;
       font-size: 1.2em;
       padding: 10px 0 10px 40px;
       margin-bottom: 20px; }
-      .Builder .Blocks .Blocks--title .Block--icon {
+      .Builder .Blocks .Blocks--title .Block--icon, .TestSolver .Blocks .Blocks--title .Block--icon {
         display: block;
         position: absolute;
         top: 7px;
         left: 0;
         width: 25px;
         height: 25px; }
-      .Builder .Blocks .Blocks--title .Question--icon {
+      .Builder .Blocks .Blocks--title .Question--icon, .TestSolver .Blocks .Blocks--title .Question--icon {
         background: url(../images/icons/question-block.png) no-repeat;
         -webkit-background-size: 100% 100%;
         -moz-background-size: 100% 100%;
         -ms-background-size: 100% 100%;
         -o-background-size: 100% 100%;
         background-size: 100% 100%; }
-      .Builder .Blocks .Blocks--title .Answer--icon {
+      .Builder .Blocks .Blocks--title .Answer--icon, .TestSolver .Blocks .Blocks--title .Answer--icon {
         background: url(../images/icons/answer-block.png) no-repeat;
         -webkit-background-size: 100% 100%;
         -moz-background-size: 100% 100%;
         -ms-background-size: 100% 100%;
         -o-background-size: 100% 100%;
         background-size: 100% 100%; }
-    .Builder .Blocks .BlockType {
+    .Builder .Blocks .BlockType, .TestSolver .Blocks .BlockType {
       width: 100px;
       height: 100px;
       float: left;
@@ -628,27 +631,27 @@ body {
       -ms-transition: background-color 0.2s;
       -o-transition: background-color 0.2s;
       transition: background-color 0.2s; }
-      .Builder .Blocks .BlockType:hover {
+      .Builder .Blocks .BlockType:hover, .TestSolver .Blocks .BlockType:hover {
         cursor: pointer;
         background-color: #2C84EE; }
-      .Builder .Blocks .BlockType .ContentCentering {
+      .Builder .Blocks .BlockType .ContentCentering, .TestSolver .Blocks .BlockType .ContentCentering {
         display: block;
         padding: 5px;
         margin-top: 10px;
         font-size: 1.2em;
         text-align: center; }
-  .Builder .ChoiceBlock {
+  .Builder .ChoiceBlock, .TestSolver .ChoiceBlock {
     width: 100%;
     float: left;
     margin: 100px 0 10px 0; }
-    .Builder .ChoiceBlock .TestNumber {
+    .Builder .ChoiceBlock .TestNumber, .TestSolver .ChoiceBlock .TestNumber {
       display: block;
       padding: 8px;
       float: left;
       font-size: 1.8em;
       color: #EC7063;
       margin-right: 25px; }
-    .Builder .ChoiceBlock .Choice--button {
+    .Builder .ChoiceBlock .Choice--button, .TestSolver .ChoiceBlock .Choice--button {
       width: 200px;
       float: left;
       padding: 10px;
@@ -662,13 +665,13 @@ body {
       -ms-transition: background-color 0.3s;
       -o-transition: background-color 0.3s;
       transition: background-color 0.3s; }
-      .Builder .ChoiceBlock .Choice--button:hover {
+      .Builder .ChoiceBlock .Choice--button:hover, .TestSolver .ChoiceBlock .Choice--button:hover {
         cursor: pointer;
         background-color: #2C84EE; }
-    .Builder .ChoiceBlock .Delete:hover:hover {
+    .Builder .ChoiceBlock .Delete:hover:hover, .TestSolver .ChoiceBlock .Delete:hover:hover {
       cursor: pointer;
       background-color: #EC7063; }
-  .Builder .BuildMenu--title {
+  .Builder .BuildMenu--title, .TestSolver .BuildMenu--title {
     color: white; }
 
 .SuitBlocks {
@@ -919,5 +922,67 @@ body {
       font-size: 1.2em; }
     .AbsoluteInfoBox .InfoTable .MainRow {
       border-bottom: 1px solid white; }
+
+.SolvingBlocks {
+  width: 100%;
+  float: left; }
+  .SolvingBlocks .Block {
+    width: 100%;
+    float: left; }
+
+.CodeBlock {
+  width: 100%;
+  float: left;
+  background-color: #303133;
+  color: white;
+  font-size: 1.1em; }
+  .CodeBlock .CodeHighlight {
+    display: block;
+    width: 100%;
+    float: right;
+    padding: 10px;
+    height: 300px;
+    font-family: monospace, serif; }
+
+.TextBlock {
+  margin: 15px 0 15px 0; }
+  .TextBlock .BlockData {
+    color: white;
+    font-size: 1.4em; }
+
+.RadioBlock .BlockData {
+  width: 100%;
+  float: left;
+  color: white;
+  font-size: 1.4em; }
+  .RadioBlock .BlockData .RadioRow {
+    width: 100%;
+    margin: 15px 0 15px 0; }
+  .RadioBlock .BlockData .RadioLabel {
+    margin-left: 15px; }
+  .RadioBlock .BlockData .Radio {
+    width: 17px;
+    height: 17px; }
+
+.ActionArea .Button {
+  border: 1px solid white;
+  color: white;
+  background-color: transparent;
+  font-family: "Open Sans Condensed", sans-serif;
+  font-size: 1.2em;
+  padding: 5px;
+  -webkit-transition: background-color 0.4s, border 0.4s;
+  -moz-transition: background-color 0.4s, border 0.4s;
+  -ms-transition: background-color 0.4s, border 0.4s;
+  -o-transition: background-color 0.4s, border 0.4s;
+  transition: background-color 0.4s, border 0.4s; }
+  .ActionArea .Button:hover {
+    background-color: #EC7063;
+    border: 1px solid #EC7063; }
+  .ActionArea .Button:active {
+    background-color: #EC7063;
+    border: 1px solid #EC7063; }
+.ActionArea .PreviousButton {
+  margin-right: 5px; }
 
 /*# sourceMappingURL=style.css.map */

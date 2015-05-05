@@ -12,13 +12,33 @@
                 <p class="InfoSection--text">{[{ testRow.test.name }]} {[{ testRow.test.lastname }]}</p>
             </div>
 
+            <div class="InfoSection">
+                <h2 class="InfoSection--title">Status</h2>
+                <p ng-if="directiveData.status.solved == true" class="InfoSection--text  InfoSection--highlightOk">
+                    Solved
+                </p>
+
+                <p ng-if="directiveData.status.solved == false" class="InfoSection--text  InfoSection--highlightNotOk">
+                    Unsolved
+                </p>
+            </div>
+
+
             <div class="InfoSection  InfoSection--expand">
                 <h2 class="InfoSection--title">Remarks</h2>
                 <p class="InfoSection--text">{[{ testRow.test.remarks }]}</p>
             </div>
 
-            <div class="ModificationActions">
+            <div class="ModificationActions" ng-if="directiveData.actionPending == false && directiveData.error.error == false">
                 <a ng-click="directiveData.solveTest(testRow.test.test_control_id)" href="" class="ModifyAction--action  ModifyAction--change">Solve</a>
+            </div>
+
+            <div class="ModificationActions" ng-if="directiveData.actionPending == true">
+                <p class="ActionPending">Please, wait...</p>
+            </div>
+
+            <div class="ModificationActions" ng-if="directiveData.error.error == true">
+                <p class="ActionPending  ActionError">{[{ directiveData.error.message }]}</p>
             </div>
         </div>
     </section>

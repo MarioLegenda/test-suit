@@ -102,7 +102,7 @@ angular.module('suit.directives.components', [])
                 var initData = DataMediator.getMediateData($scope.initKey);
 
                 if(initData === null) {
-                    throw new Error("DataMedisator: initData is not properly initialized");
+                    throw new Error("DataMediator: initData is not properly initialized");
                 }
 
                 $scope.action = {
@@ -472,7 +472,7 @@ angular.module('suit.directives.components', [])
             };
         }
     }
-}]).directive('testRow', ['Test', 'Workspace', 'Toggle', function(Test, Workspace, Toggle) {
+}]).directive('testRow', ['$timeout', 'Test', 'Workspace', 'Toggle', function($timeout, Test, Workspace, Toggle) {
     return {
         restring: 'E',
         replace: true,
@@ -483,8 +483,6 @@ angular.module('suit.directives.components', [])
             $scope.testRow = {
                 test: JSON.parse(attrs.test)
             };
-
-            console.log($scope.testRow.test);
 
             Toggle.create($scope.testRow.test.test_id,{
                 enter: function() {
@@ -502,6 +500,13 @@ angular.module('suit.directives.components', [])
             });
 
             $scope.directiveData = {
+                pendingFinished: false,
+                actionPending: false,
+                finishError: {
+                    error: false,
+                    message: ''
+                },
+
                 expandSection: function($event) {
                     var clickedElem = $($event.currentTarget),
                         parentElem = clickedElem.parent();
@@ -511,18 +516,34 @@ angular.module('suit.directives.components', [])
                     });
                 },
                 finishTest: function($event, value) {
+                    var context = this;
+                    context.pendingFinished = true;
 
                     var finishPromise = Workspace.finishTest($scope.testRow.test.test_id, parseInt(value));
                     finishPromise.then(function(data, status, headers, config) {
                         $scope.testRow.test.finished = parseInt(value);
+                        context.pendingFinished = false;
                     }, function(data, status, headers, config) {
-                        console.log(data, status);
+                        $scope.directiveData.finishError.error = true;
+                        $scope.directiveData.finishError.message = data.data.not_finished;
+                        context.pendingFinished = false;
                     });
                 },
+                resetFinishError: function($event) {
+                    $event.preventDefault();
+
+                    $scope.directiveData.finishError.error = false;
+                    $scope.directiveData.finishError.message = '';
+                    $scope.testRow.test.finished = 0;
+
+                    return false;
+                },
                 deleteTest: function(testId) {
+                    $scope.directiveData.actionPending = true;
                     $scope.$emit('action-delete-test', {id: testId});
                 },
                 changeMetadata: function(testId) {
+                    $scope.directiveData.actionPending = true;
                     $scope.$emit('action-test-metadata-change', {
                         testId: testId,
                         test_name: $scope.testRow.test.test_name,
@@ -531,7 +552,8 @@ angular.module('suit.directives.components', [])
                     });
                 },
                 workspace: function(testId) {
-                    $scope.$emit('action-workspace', {testId: testId});
+                    $scope.directiveData.actionPending = true;
+                    $scope.$emit('action-builder-workspace', {testId: testId});
                 },
                 absoluteInfoBox: function($event, permissions) {
                     $event.preventDefault();
@@ -555,7 +577,7 @@ angular.module('suit.directives.components', [])
             }
         }
     }
-}]).directive('assignedTestRow', ['Toggle', function(Toggle) {
+}]).directive('assignedTestRow', ['Toggle', 'Answer', function(Toggle, Answer) {
     return {
         restrict: 'E',
         replace: true,
@@ -583,18 +605,57 @@ angular.module('suit.directives.components', [])
             });
 
             $scope.directiveData = {
+                mainPromise: null,
+                actionPending: false,
+                error: {
+                    error: false,
+                    message: ''
+                },
+                status: {
+                    solved: null
+                },
+
                 expandSection: function($event) {
-                    var clickedElem = $($event.currentTarget),
-                        parentElem = clickedElem.parent();
+                    if(Toggle.hasEntered($scope.testRow.test.test_control_id) === false) {
+                        this.mainPromise = Answer.getSolvingStatus($scope.testRow.test.test_control_id);
+
+                        this.mainPromise.then(function(data) {
+                            $scope.directiveData.status.solved = data.data.status;
+                            
+                        }, function() {
+                            $scope.directiveData.status.solved = true;
+                        });
+                    }
+
+
+
 
                     Toggle.toggle($scope.testRow.test.test_control_id, {
                         elem: elem
                     });
                 },
                 solveTest: function(testControlId) {
-                    console.log(testControlId);
+                    this.actionPending = true;
+                    this.mainPromise.then(function() {
+                        if($scope.directiveData.status.solved === true) {
+                            $scope.directiveData.actionPending = false;
+                            $scope.directiveData.error.error = true;
+                            $scope.directiveData.error.message = "Error: You have already solved this test. Contact your administrator to grant you another try";
+
+                            return false;
+                        }
+
+                        $scope.$emit('action-solving-workspace', {
+                            testControlId: testControlId
+                        });
+                    });
                 }
-            }
+            };
+
+            $scope.$on('action-solving-error', function($event, data) {
+                $scope.directiveData.actionPending = false;
+                $scope.directiveData.error = data;
+            })
         }
     }
 }]);

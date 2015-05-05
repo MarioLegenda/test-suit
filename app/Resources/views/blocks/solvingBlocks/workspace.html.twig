@@ -2,14 +2,13 @@
     <div class="WorkspaceTemplate">
         <h1 class="ContentMainTitle">{[{ workspace.testName }]}</h1>
 
-        <div class="BuilderContent" workspace-builder test-control-id="{[{ testControlId }]}">
-
-            <builder-creator
-                    ng-if="builder.builderCreator"
-                    shepard="dataShepard"
-                    current-test-id="{[{ currentTestId }]}"
-                    range-iterator="controller.rangeIterator">
-            </builder-creator>
+        <div class="BuilderContent" workspace-solving-builder test-control-id="{[{ testControlId }]}">
+            <test-solver
+                    ng-if="controller.initTestSolver"
+                    test-control-id="{[{ testControlId }]}"
+                    answer-control-id="{[{ controller.answerControlId }]}"
+                    test-range="controller.rangeIterator">
+            </test-solver>
         </div>
     </div>
 </script>

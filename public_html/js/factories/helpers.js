@@ -32,6 +32,14 @@ angular.module('suit.factories')
                     updateTest: 'test-managment/update-test',
                     deleteQuestion: 'test-managment/delete-question'
                 },
+                answer: {
+                    createAnswer: 'test-managment/create-answer',
+                    initialAnswerData: 'test-managment/initial-answer-data',
+                    saveAnswer: 'test-managment/save-answer',
+                    getAnswer: 'test-managment/get-answer',
+                    finishTest: 'test-managment/finish-test-solving',
+                    getSolvingStatus: 'test-managment/get-solving-status'
+                },
                 install: {
                     installment: 'installment',
                     login: 'suit-up'
@@ -406,7 +414,8 @@ angular.module('suit.factories')
                     }
 
                     return false;
-                };
+                },
+                hasEntered = false;
 
             this.create = function(name, c) {
                 if( ! c.hasOwnProperty('enter')) {
@@ -437,6 +446,7 @@ angular.module('suit.factories')
                     }
 
                     config[name].faze = true;
+                    config[name].hasEntered = true;
                 }
                 else if(config[name].faze === true) {
                     if(typeof context !== 'undefined') {
@@ -450,6 +460,14 @@ angular.module('suit.factories')
                 }
             };
 
+            this.hasEntered = function(name) {
+                if( ! config[name].hasOwnProperty('hasEntered')) {
+                    return false;
+                }
+
+                return config[name].hasEntered;
+            };
+
             this.isEntered = function() {
                 return faze;
             };
@@ -460,4 +478,88 @@ angular.module('suit.factories')
         }
 
         return new Toggle();
+    }]).factory('AnswerCompiler', [function() {
+        function AnswerCompiler() {
+            var blockType = null,
+                directiveTypes = {
+                    codeBlock: false,
+                    plainTextBlock: false,
+                    radioBlock: false
+                },
+                data = {};
+
+
+            var determineDirective = function($scope, block) {
+                if(blockType === 'question') {
+                    switch(block) {
+                        case 'codeBlock':
+                            return $("<question-code-block data='directiveData.data'></question-code-block>");
+                        case 'plainTextBlock':
+                            return $("<question-text-block data='directiveData.data'></question-text-block>");
+                    }
+                }
+                else if(blockType === 'answer') {
+                    switch(block) {
+                        case 'radioBlock':
+                            return $("<answer-radio-block data='directiveData.data'></question-radio-block>")
+                    }
+                }
+            };
+
+            this.init = function() {
+                blockType = null;
+                directiveTypes.codeBlock = false;
+                directiveTypes.plainTextBlock = false;
+                directiveTypes.radioBlock = false;
+                data = {};
+
+                return this;
+            };
+
+            this.setBlockType = function(b) {
+                blockType = b;
+
+                return this;
+            };
+
+            this.setDirectiveType = function(directiveType) {
+                var type = directiveType.replace(/-\w/g, function(match) {
+                    return match.substr(1).toUpperCase();
+                });
+
+                if(directiveTypes.hasOwnProperty(type)) {
+                    directiveTypes[type] = true;
+                    return this;
+                }
+
+                return this;
+            };
+
+            this.setData = function(d) {
+                data = d;
+
+                return this;
+            };
+
+            this.returnElement = function($scope) {
+                //console.log(blockType, directiveTypes, data);
+
+                $scope.directiveData = {
+                    data: data
+                };
+
+                var block = ( function(types) {
+                    for(var prop in types) {
+                        if(types.hasOwnProperty(prop))
+                        if(types[prop] === true) {
+                            return prop;
+                        }
+                    }
+                } (directiveTypes) );
+
+                return determineDirective($scope, block);
+            };
+        }
+
+        return new AnswerCompiler();
     }]);

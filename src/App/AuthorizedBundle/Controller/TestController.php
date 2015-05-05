@@ -272,7 +272,7 @@ class TestController extends ContainerAware
     }
 
     /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
+     * @Security("has_role('ROLE_TEST_SOLVER')")
      *
      * Route: /test-managment/get-permitted-tests
      *     Client:

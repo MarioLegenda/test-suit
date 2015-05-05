@@ -113,3 +113,27 @@ app_authorized_getPermittedUsers:
     defaults: { _controller: AppAuthorizedBundle:Test:getPermittedTestUsers }
     methods: [POST]
 
+app_authorized_createAnswer:
+    path: /test-managment/create-answer
+    defaults: { _controller: AppAuthorizedBundle:Workspace:createAnswer }
+
+app_authorized_initialAnswerData:
+    path: /test-managment/initial-answer-data
+    defaults: { _controller: AppAuthorizedBundle:Workspace:initialAnswerData }
+
+app_authorized_saveAnswer:
+    path: /test-managment/save-answer
+    defaults: { _controller: AppAuthorizedBundle:Workspace:saveAnswer }
+
+app_authorized_getAnswer:
+    path: /test-managment/get-answer
+    defaults: { _controller: AppAuthorizedBundle:Workspace:getAnswer }
+
+app_authorized_finishTestSolving:
+    path: /test-managment/finish-test-solving
+    defaults: { _controller: AppAuthorizedBundle:Workspace:finishSolvingTest }
+
+app_authorized_getSolvingStatus:
+    path: /test-managment/get-solving-status
+    defaults: { _controller: AppAuthorizedBundle:Workspace:getSolvingStatus }
+

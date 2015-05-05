@@ -6,6 +6,7 @@ namespace App\AuthorizedBundle\Controller;
 use App\ToolsBundle\Repositories\Query\Exception\QueryException;
 use App\ToolsBundle\Repositories\WorkspaceRepository;
 use RCE\Filters\BeArray;
+use RCE\Filters\BeString;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
@@ -37,40 +38,51 @@ class WorkspaceController extends ContainerAware
     /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
      *
-     * Route: /test-managment/workspace-data
+     * Route: /test-managment/create-answer
      *
      * Client:
-     *     Method: Workspace.workspaceData()
-     *     Namespace: workspace.workspaceData
+     *     Method: Answer.createAnswer()
+     *     Namespace: answer.createAnswer
      */
-    public function workspaceDataAction() {
+    public function createAnswerAction() {
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent(), true);
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
-
         $builder->build(
             $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
         );
 
         if( ! ContentEval::builder($builder)->isValid()) {
             $content = new ResponseParameters();
-            $content->addParameter("error", 'Invalid request from the client');
+            $content->addParameter("errors", "Invalid request from the client");
 
             $response = new AdaptedResponse();
             $response->setContent($content);
-            return $response->sendResponse(400, 'BAD');
+            return $response->sendResponse(400, "BAD");
         }
 
         try {
             $workspaceRepo = new WorkspaceRepository($this->connection);
+            $userId = $this->container->get('security.token_storage')->getToken()->getUser()->getUserId();
 
-            $workspaceData = $workspaceRepo->getInitialWorkspaceData($content['test_control_id']);
+            if($workspaceRepo->getSolvingStatus($content['test_control_id'], $userId)) {
+
+            }
+            $workspaceRepo->createAnswer($content['test_control_id'], $userId);
+        }
+        catch(QueryException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
         }
         catch(\Exception $e) {
             $responseParameters = new ResponseParameters();
-            $responseParameters->addParameter('error', 'Invalid request from the client');
+            $responseParameters->addParameter('error', $e->getMessage());
 
             $response = new AdaptedResponse();
             $response->setContent($responseParameters);
@@ -78,11 +90,121 @@ class WorkspaceController extends ContainerAware
         }
 
         $responseParameters = new ResponseParameters();
-        $responseParameters->addParameter('test', array(
-            'test_name' => $workspaceData[0]['test_name'],
-            'min' => $workspaceData[0]['min'],
-            'max' => $workspaceData[0]['max']
-        ));
+        $responseParameters->addParameter("success", true);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_SOLVER')")
+     *
+     * Route: /test-managment/save-answer
+     *
+     * Client:
+     *     Method: Workspace.saveAnswer()
+     *     Namespace: workspace.saveAnswer
+     */
+    public function saveAnswerAction() {
+        $request = $this->container->get('request');
+
+        $content = json_decode($request->getContent(), true);
+
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('answer_id'), new BeInteger('answer_id')),
+            $builder->expr()->hasTo(new Exist('answer_serialized'), new BeArray('answer_serialized'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", "Invalid request from the client");
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        try {
+            $workspaceRepo = new WorkspaceRepository($this->connection);
+            $workspaceRepo->saveAnswer($content);
+
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('success', true);
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(200, "OK");
+        }
+        catch(QueryException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_SOLVER')")
+     *
+     * Route: /test-managment/finish-test-solving
+     *
+     * Client:
+     *     Method: Answer.finishTest()
+     *     Namespace: answer.finishTest
+     */
+    public function finishSolvingTestAction() {
+        $request = $this->container->get('request');
+
+        $content = json_decode($request->getContent(), true);
+
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('answer_control_id'), new BeInteger('answer_control_id'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", "Invalid request from the client");
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        try {
+            $workspaceRepo = new WorkspaceRepository($this->connection);
+            $workspaceRepo->finishSolvingTest($content['answer_control_id']);
+        }
+        catch(QueryException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        $responseParameters = new ResponseParameters();
         $responseParameters->addParameter('success', true);
 
         $response = new AdaptedResponse();
@@ -91,18 +213,77 @@ class WorkspaceController extends ContainerAware
     }
 
     /**
+     * @Security("has_role('ROLE_TEST_SOLVER')")
+     *
+     * Route: /test-managment/get-solving-status
+     *
+     * Client:
+     *     Method: Answer.getSolvingStatus()
+     *     Namespace: answer.getSolvingStatus
+     */
+    public function getSolvingStatusAction() {
+        $request = $this->container->get('request');
+
+        $content = json_decode($request->getContent(), true);
+
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", "Invalid request from the client");
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        try {
+            $userId = $this->container->get('security.token_storage')->getToken()->getUser()->getUserId();
+            $workspaceRepo = new WorkspaceRepository($this->connection);
+            $status = $workspaceRepo->getSolvingStatus($content['test_control_id'], $userId);
+        }
+        catch(QueryException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('status', $status);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
+    }
+
+
+    /**
      * @Security("has_role('ROLE_TEST_CREATOR')")
      *
      * Route: /test-managment/save-test
      *
      * Client:
-     *     Method: Wordspace.saveTest()
+     *     Method: Workspace.saveTest()
      *     Namespace: workspace.saveTest
      */
     public function saveTestAction() {
         $request = $this->container->get('request');
 
-        $content = (array)json_decode($request->getContent(), true);
+        $content = json_decode($request->getContent(), true);
 
         $builder = new Builder($content);
         $builder->build(
@@ -150,8 +331,192 @@ class WorkspaceController extends ContainerAware
         return $response->sendResponse(200, "OK");
     }
 
+
     /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
+     * @Security("has_role('ROLE_TEST_SOLVER')")
+     *
+     * Route: /test-managment/get-answer
+     *
+     * Client:
+     *     Method: Answer.getAnswer()
+     *     Namespace: answer.getAnswer
+     */
+
+    public function getAnswerAction() {
+        $request = $this->container->get('request');
+
+        $content = json_decode($request->getContent(), true);
+
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('answers_id'), new BeInteger('answers_id'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", "Invalid request from the client");
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        try {
+            $workspaceRepo = new WorkspaceRepository($this->connection);
+
+            $answer = $workspaceRepo->getAnswerById($content['answers_id']);
+
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('answer', $answer);
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(200, "BAD");
+        }
+        catch(QueryException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_SOLVER')")
+     *
+     * Route: /test-managment/workspace-data
+     *
+     * Client:
+     *     Method: Workspace.workspaceData()
+     *     Namespace: workspace.workspaceData
+     */
+    public function workspaceDataAction() {
+        $request = $this->container->get('request');
+
+        $content = json_decode($request->getContent(), true);
+
+        $builder = new Builder($content);
+
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        try {
+            $workspaceRepo = new WorkspaceRepository($this->connection);
+
+            $workspaceData = $workspaceRepo->getInitialWorkspaceData($content['test_control_id']);
+        }
+        catch(QueryException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+        $responseParameters = new ResponseParameters();
+        $responseParameters->addParameter('test', array(
+            'test_name' => $workspaceData[0]['test_name'],
+            'min' => $workspaceData[0]['min'],
+            'max' => $workspaceData[0]['max']
+        ));
+        $responseParameters->addParameter('success', true);
+
+        $response = new AdaptedResponse();
+        $response->setContent($responseParameters);
+        return $response->sendResponse(200, "OK");
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_SOLVER')")
+     *
+     * Route: /test-managment/get-test
+     *
+     * Client:
+     *     Method: Answer.initialAnswerData()
+     *     Namespace: answer.initalAnswerData
+     */
+    public function initialAnswerDataAction() {
+        $request = $this->container->get('request');
+
+        $content = json_decode($request->getContent(), true);
+        $builder = new Builder($content);
+        $builder->build(
+            $builder->expr()->hasTo(new Exist('test_control_id'), new BeInteger('test_control_id'))
+        );
+
+        if( ! ContentEval::builder($builder)->isValid()) {
+            $content = new ResponseParameters();
+            $content->addParameter("error", 'Invalid request from the client');
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, 'BAD');
+        }
+
+        try {
+            $workspaceRepo = new WorkspaceRepository($this->connection);
+
+            $answerData = $workspaceRepo->getInitialAnswerData($content['test_control_id']);
+
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('test', $answerData);
+            $responseParameters->addParameter('success', true);
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(200, "OK");
+        }
+        catch(QueryException $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $responseParameters = new ResponseParameters();
+            $responseParameters->addParameter('error', $e->getMessage());
+
+            $response = new AdaptedResponse();
+            $response->setContent($responseParameters);
+            return $response->sendResponse(400, "BAD");
+        }
+
+
+    }
+
+    /**
+     * @Security("has_role('ROLE_TEST_SOLVER')")
      *
      * Route: /test-managment/get-test
      *
@@ -357,14 +722,32 @@ class WorkspaceController extends ContainerAware
         $testRepo = new WorkspaceRepository($this->connection);
 
         try {
-            $testRepo->finishTest($content);
-        } catch(\Exception $e) {
+            $isSuccess = $testRepo->finishTest($content);
+
+            if( ! $isSuccess) {
+                $content = new ResponseParameters();
+                $content->addParameter("not_finished", "Error: There are no questions in test. Create questions in the Workspace then finish test");
+
+                $response = new AdaptedResponse();
+                $response->setContent($content);
+                return $response->sendResponse(400, "BAD");
+            }
+        }
+        catch(QueryException $e) {
             $content = new ResponseParameters();
             $content->addParameter("errors", array($e->getMessage()));
 
             $response = new AdaptedResponse();
             $response->setContent($content);
-            return $response->sendResponse();
+            return $response->sendResponse(400, "BAD");
+        }
+        catch(\Exception $e) {
+            $content = new ResponseParameters();
+            $content->addParameter("errors", array($e->getMessage()));
+
+            $response = new AdaptedResponse();
+            $response->setContent($content);
+            return $response->sendResponse(400, "BAD");
         }
 
         $responseParameters = new ResponseParameters();

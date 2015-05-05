@@ -94,13 +94,30 @@ class TestRepository extends Repository
     public function deleteTestSuitById($testControlId) {
         $qh = new QueryHolder($this->connection);
 
+        $answerControlSql = new String('
+            SELECT
+                a.answer_control_id
+            FROM answer_control AS a
+            WHERE a.test_control_id = :test_control_id
+        ');
+
+        $params = new Parameters();
+        $params->attach(':test_control_id', $testControlId, \PDO::PARAM_INT);
+
+        $acQuery = new Query($answerControlSql, array($params), 'fetch', \PDO::FETCH_COLUMN);
+
+        $acId = $qh->prepare(new Select($acQuery))->bind()->execute()->getResult();
+
+        if( ! empty($acId[0])) {
+
+            // not finished
+
+            $deleteAC = new String('DELETE FROM answers WHERE answer_control_id = :answer_control_id');
+
+        }
 
         $assignedTestDltSql = new String('
             DELETE FROM restricted_tests WHERE test_control_id = :test_control_id
-        ');
-
-        $testsDltSql = new String('
-            DELETE FROM tests WHERE test_control_id = :test_control_id
         ');
 
         $testsDltSql = new String('
@@ -250,6 +267,7 @@ class TestRepository extends Repository
     public function getPermittedTestsByUserId($userId) {
         $qh = new QueryHolder($this->connection);
 
+        // permitted tests
         $permittedTestsSql = new String('
           SELECT DISTINCT
             t.test_control_id,
@@ -261,24 +279,38 @@ class TestRepository extends Repository
             u.name,
             u.lastname
           FROM test_control AS t
-          INNER JOIN restricted_tests AS rt
-          INNER JOIN public_tests AS p
-          INNER JOIN users AS u
-          ON rt.user_id = :user_id
-          WHERE rt.user_id = u.user_id AND t.isFinished = 1
+          INNER JOIN restricted_tests AS rt ON rt.user_id = :user_id AND rt.test_control_id = t.test_control_id
+          INNER JOIN answer_control AS ac ON ac.test_control_id = rt.test_control_id
+          INNER JOIN users AS u ON rt.user_id = u.user_id
+        ');
+
+        $publicTestsSql = new String('
+            SELECT
+                tc.test_control_id,
+                tc.visibility,
+                tc.test_name,
+                tc.remarks,
+                DATE_FORMAT(tc.created, \'%M %d, %Y\') AS created,
+                u.username,
+                u.name,
+                u.lastname
+                FROM public_tests AS p
+                INNER JOIN test_control AS tc ON tc.test_control_id = p.test_control_id
+                INNER JOIN users AS u ON u.user_id = tc.user_id
         ');
 
         $params = new Parameters();
         $params->attach(':user_id', $userId, \PDO::PARAM_INT);
 
-        $query = new Query($permittedTestsSql, array($params));
+        $permittedQuery = new Query($permittedTestsSql, array($params));
+        $publicQuery = new Query($publicTestsSql, array($params));
 
-        $result = $qh->prepare(new Select($query))->bind()->execute()->getResult();
+        $result = $qh->prepare(new Select($permittedQuery, $publicQuery))->bind()->execute()->getResult();
 
-        if(empty($result[0])) {
+        if(empty($result[0]) AND empty($result[1])) {
             return array();
         }
 
-        return $result[0];
+        return array_merge($result[0], $result[1]);
     }
 } 
