@@ -484,7 +484,11 @@ angular.module('suit.factories')
                 directiveTypes = {
                     codeBlock: false,
                     plainTextBlock: false,
-                    radioBlock: false
+                    radioBlock: false,
+                    selectBlock: false,
+                    codeAnswerBlock: false,
+                    plainTextAnswerBlock: false,
+                    checkboxBlock: false
                 },
                 data = {};
 
@@ -501,7 +505,15 @@ angular.module('suit.factories')
                 else if(blockType === 'answer') {
                     switch(block) {
                         case 'radioBlock':
-                            return $("<answer-radio-block data='directiveData.data'></question-radio-block>")
+                            return $("<answer-radio-block data='directiveData.data'></question-radio-block>");
+                        case 'selectBlock':
+                            return $("<answer-select-block data='directiveData.data'></answer-select-block>");
+                        case 'codeAnswerBlock':
+                            return $("<code-answer-block data='directiveData.data'></code-answer-block>");
+                        case 'plainTextAnswerBlock':
+                            return $("<answer-text-block data='directiveData.data'></answer-text-block>");
+                        case 'checkboxBlock':
+                            return $("<answer-checkbox-block data='directiveData.data'></answer-checkbox-block>")
                     }
                 }
             };
@@ -511,6 +523,10 @@ angular.module('suit.factories')
                 directiveTypes.codeBlock = false;
                 directiveTypes.plainTextBlock = false;
                 directiveTypes.radioBlock = false;
+                directiveTypes.selectBlock = false;
+                directiveTypes.codeAnswerBlock = false;
+                directiveTypes.plainTextAnswerBlock = false;
+                directiveTypes.checkboxBlock = false;
                 data = {};
 
                 return this;
@@ -542,8 +558,6 @@ angular.module('suit.factories')
             };
 
             this.returnElement = function($scope) {
-                //console.log(blockType, directiveTypes, data);
-
                 $scope.directiveData = {
                     data: data
                 };

@@ -368,12 +368,152 @@ angular.module('suit.directives.blocks', [])
                 $scope.directiveData = {
                     data: $scope.data,
                     answer: function(index, answer) {
-                        $scope.data.answer = {
-                            index: index,
-                            answer: answer
-                        };
+                        $scope.data.answer = { index: index, answer: answer };
+                    },
+                    check: function(index) {
+                        if($scope.data.hasOwnProperty('answer')) {
+                            var answer = $scope.data.answer.index;
+
+                            return index === parseInt(answer);
+                        }
                     }
                 };
+            }
+        }
+    }]).directive('answerSelectBlock', ['$', '$timeout', function($, $timeout) {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                data: '=data'
+            },
+            templateUrl: 'answer.selectQuestionBlock.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    selected: null,
+                    data: ( function() {
+                        var options = [];
+                        $scope.data.data.forEach(function(value, index, array) {
+                            var temp = {
+                                id: index,
+                                value: value
+                            };
+
+                            options.push(temp);
+                        });
+
+                        return options;
+                    } () )
+                };
+
+                $scope.directiveData.selected = $scope.directiveData.data[0];
+            },
+            link: function($scope, elem, attr) {
+                elem.find('.Select').change(function() {
+                    var index = parseInt($(this).find('option:selected').val()),
+                        answer = $(this).find('option:selected').text();
+                    $scope.data.answer = { index: index, answer: answer };
+                    $scope.$apply();
+                });
+
+                if ($scope.data.hasOwnProperty('answer')) {
+                    var answer = $scope.data.answer.index;
+                    $timeout(function() {
+                        elem.find('.Select option[value=\'' + answer + '\']').attr('selected', 'selected');
+                    }, 1000);
+                }
+            }
+        }
+    }]).directive('codeAnswerBlock', [function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                data: '=data'
+            },
+            templateUrl: 'answer.codeQuestionBlock.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    data: $scope.data
+                };
+            },
+            link: function($scope, elem, attrs) {
+                var editor = ace.edit(elem.find('.AceEditor').get(0));
+
+                editor.getSession().setMode("ace/mode/javascript");
+                editor.renderer.setShowGutter(true);
+                editor.setFontSize(18);
+                editor.setHighlightActiveLine(true);
+                editor.setWrapBehavioursEnabled(true);
+                editor.setOption('firstLineNumber', 1);
+                editor.setValue((function() {
+                    if($scope.data.hasOwnProperty('answer')) {
+                        return $scope.data.answer.answer;
+                    }
+                } () ));
+
+                editor.on('change', function(e) {
+                    $scope.data.answer = { index: null, answer: editor.getValue() };
+                });
+            }
+        }
+    }]).directive('answerTextBlock', [function() {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                data: '=data'
+            },
+            templateUrl: 'answer.textQuestionBlock.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    data: $scope.data
+                };
+
+                $scope.data.answer = {index: null, answer: ( function() {
+                    if($scope.data.hasOwnProperty('answer')) {
+                        return $scope.data.answer.answer;
+                    }
+
+                    return '';
+                } () )};
+            }
+        }
+    }]).directive('answerCheckboxBlock', ['$timeout', function($timeout) {
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                data: '=data'
+            },
+            templateUrl: 'answer.checkboxQuestionBlock.html',
+            controller: function($scope) {
+                $scope.directiveData = {
+                    data: $scope.data,
+                    answer: function(index, answer) {
+                        $scope.data.answer.push({
+                            index: index,
+                            answer: answer
+                        });
+                    }
+                };
+            },
+            link: function($scope, elem, attrs) {
+                if ($scope.data.hasOwnProperty('answer')) {
+                    var answer = $scope.data.answer;
+                    $timeout(function() {
+                        var checkbox = elem.find('.CheckboxRow input[type=checkbox]');
+
+                        checkbox.each(function(i, v, a) {
+                            var context = $(v);
+                            answer.forEach(function(value, index, arr) {
+                                if(context.val() === value.answer) {
+                                    context.attr('checked', 'checked');
+                                }
+                            });
+                        });
+                    }, 1000);
+                }
             }
         }
     }]);

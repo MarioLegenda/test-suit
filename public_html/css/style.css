@@ -923,12 +923,16 @@ body {
     .AbsoluteInfoBox .InfoTable .MainRow {
       border-bottom: 1px solid white; }
 
+.TestSolver .ChoiceBlock {
+  margin-top: 20px; }
+
 .SolvingBlocks {
   width: 100%;
   float: left; }
   .SolvingBlocks .Block {
     width: 100%;
-    float: left; }
+    float: left;
+    padding: 25px 0 25px 0; }
 
 .CodeBlock {
   width: 100%;
@@ -949,13 +953,18 @@ body {
   .TextBlock .BlockData {
     color: white;
     font-size: 1.4em; }
+  .TextBlock .BasicTextarea {
+    width: 100%;
+    margin: 25px 0 0 0;
+    height: 300px;
+    font-size: 1em; }
 
 .RadioBlock .BlockData {
   width: 100%;
   float: left;
   color: white;
   font-size: 1.4em; }
-  .RadioBlock .BlockData .RadioRow {
+  .RadioBlock .BlockData .RadioRow, .RadioBlock .BlockData .SelectRow, .RadioBlock .BlockData .CheckboxRow {
     width: 100%;
     margin: 15px 0 15px 0; }
   .RadioBlock .BlockData .RadioLabel {
@@ -963,6 +972,10 @@ body {
   .RadioBlock .BlockData .Radio {
     width: 17px;
     height: 17px; }
+  .RadioBlock .BlockData .Select {
+    font-size: 1em;
+    font-family: "Open Sans Condensed", sans-serif;
+    padding: 5px; }
 
 .ActionArea .Button {
   border: 1px solid white;
@@ -984,5 +997,13 @@ body {
     border: 1px solid #EC7063; }
 .ActionArea .PreviousButton {
   margin-right: 5px; }
+
+.TestFinished {
+  width: 100%;
+  float: left;
+  text-align: center;
+  font-size: 1.5em;
+  color: #5de253;
+  margin: 25px 0 0 0; }
 
 /*# sourceMappingURL=style.css.map */

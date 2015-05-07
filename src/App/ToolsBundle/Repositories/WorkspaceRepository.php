@@ -43,11 +43,13 @@ class WorkspaceRepository extends Repository
         $qh = new QueryHolder($this->connection);
 
         $answersSql = new String('
-            SELECT a.answer_control_id FROM answer_control AS a WHERE test_control_id = :test_control_id AND a.isFinished = 0
+            SELECT a.answer_control_id FROM answer_control AS a
+            WHERE test_control_id = :test_control_id AND a.user_that_solves = :user_id AND a.isFinished = 0
         ');
 
         $params = new Parameters();
         $params->attach(':test_control_id', $testControlId, \PDO::PARAM_INT);
+        $params->attach(':user_id', $userId, \PDO::PARAM_INT);
 
         $answerIdQuery = new Query($answersSql, array($params), 'fetch', \PDO::FETCH_COLUMN);
 
@@ -57,6 +59,9 @@ class WorkspaceRepository extends Repository
             $sql = new String('
                 SELECT user_id FROM test_control WHERE test_control_id = :test_control_id
             ');
+
+            $params = new Parameters();
+            $params->attach(':test_control_id', $testControlId, \PDO::PARAM_INT);
 
             $creatorIdQuery = new Query($sql, array($params), 'fetch', \PDO::FETCH_ASSOC);
 
@@ -79,11 +84,11 @@ class WorkspaceRepository extends Repository
             }
             catch(QueryException $e) {
                 $this->deleteAnswerOnAtomicFail($testControlId);
-                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() with message: " . $e->getMessage());
+                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() [create answer_control] with message: " . $e->getMessage());
             }
             catch(\Exception $e) {
                 $this->deleteAnswerOnAtomicFail($testControlId);
-                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() with message: " . $e->getMessage());
+                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() [create answer_control] with message: " . $e->getMessage());
             }
 
             try {
@@ -119,11 +124,11 @@ class WorkspaceRepository extends Repository
             }
             catch(QueryException $e) {
                 $this->deleteAnswerOnAtomicFail($testControlId, $lastAnswerId);
-                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() with message: " . $e->getMessage());
+                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() [create answers] with message: " . $e->getMessage());
             }
             catch(\Exception $e) {
                 $this->deleteAnswerOnAtomicFail($testControlId, $lastAnswerId);
-                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() with message: " . $e->getMessage());
+                throw new QueryException(get_class($this) . " Forwarded exception in WorkspaceRepository::createAnswer() [create answers] with message: " . $e->getMessage());
             }
         }
 

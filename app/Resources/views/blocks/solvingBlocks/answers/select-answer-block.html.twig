@@ -1,0 +1,12 @@
+<script type="text/ng-template" id="answer.selectQuestionBlock.html">
+    <div class="Block RadioBlock">
+        <div class="BlockData">
+            <p>Select one of the following</p>
+            <div class="SelectRow">
+                <select class="Select">
+                    <option value="{[{ option.id }]}" ng-repeat="option in directiveData.data">{[{ option.value }]}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</script>

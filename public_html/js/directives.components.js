@@ -621,7 +621,7 @@ angular.module('suit.directives.components', [])
 
                         this.mainPromise.then(function(data) {
                             $scope.directiveData.status.solved = data.data.status;
-                            
+
                         }, function() {
                             $scope.directiveData.status.solved = true;
                         });

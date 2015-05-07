@@ -19,11 +19,20 @@
 
                 <a ng-click="help.toggle($event, 'creating_tests')" href="#" class="PartRow"><span class="NextRight--15">3.1</span>  Creating tests</a>
                 <a ng-click="help.toggle($event, 'test_permissions')" href="#" class="PartRow"><span class="NextRight--15">3.2</span>  Test permissions</a>
-                <a ng-click="help.toggle($event, 'question_suit')" href="#" class="PartRow"><span class="NextRight--15">3.3</span>  Creating a question suit</a>
-                <a href="#" class="PartRow"><span class="NextRight--15">3.4</span>  Blocks</a>
-                <a href="#" class="PartRow"><span class="NextRight--15">3.5</span>  How data is saved</a>
+                <a ng-click="help.toggle($event, 'managing_tests')" href="#" class="PartRow"><span class="NextRight--15">3.3</span>  Managing tests</a>
+                <a ng-click="help.toggle($event, 'question_suit')" href="#" class="PartRow"><span class="NextRight--15">3.4</span>  Creating a question suit</a>
+                <a href="#" class="PartRow"><span class="NextRight--15">3.5</span>  Blocks</a>
+                <a href="#" class="PartRow"><span class="NextRight--15">3.6</span>  How data is saved</a>
                 <a href="#" class="PartRow"><span class="NextRight--15">3.7</span>  Modifing question suit</a>
-                <a href="#" class="PartRow"><span class="NextRight--15">3.6</span>  Solving tests <span class="Important">(Not yet functional)</span></a>
+                <a href="#" class="PartRow"><span class="NextRight--15">3.8</span>  Solving tests <span class="Important">(Not yet functional)</span></a>
+            </div>
+
+            <div class="ContentPart">
+                <h2 class="PartTitle">4. Practical "How to"</h2>
+
+                <div class="ContentPart">
+                    <a ng-click="help.toggle($event, 'complete_test')" href="#" class="PartRow"><span class="NextRight--15">4.1</span>  How to create a complete test...</a>
+                </div>
             </div>
         </section>
 
@@ -68,7 +77,7 @@
 
                 <p class="ContentText">
                     When you installed Test suit, first user is already created with <span class="Improtant">user manager</span>
-                    permission. With that permission, you can create users/edit users and create/solve tests. For more on user
+                    permission. With that permission, you can create/edit users and create/solve tests. For more on user
                     permissions, go to section
                     <a ng-click="help.toggle($event, 'user_permissions')" href="#" class="Important  InsideLink">2.2 User permissions</a>
                 </p>
@@ -90,7 +99,6 @@
                     <span class="Important">username, </span>
                     <span class="Important">password</span>
                     and <span class="Important">user permissions</span>.
-                    User permission are explained in section <span>User permissions</span>
 
                 </div>
             </div>
@@ -139,7 +147,7 @@
 
                 <p class="ContentText">
                     Choosing a permission a user can have is up to you. If there is a job applicant that you wish to test, best permission
-                    for him is test solver. If you have a college in you company that wants to create tests, but you don't want him to manage
+                    for him is test solver. If you have a junior developer in you company that wants to create tests, but you don't want him to manage
                     users, best permission for him is test creator. If you want someone to help you with user managment, best permission is
                     user manager permission but it is better to have only a couple of user managers in test suit.
                 </p>
@@ -155,7 +163,7 @@
                 <p class="ContentText">
                     A user is not just a user, he/she is a developer. A developer has a wide range of skills, experise and
                     knowledge of different tools. It is important that a company knows its job applicants. Therefore, when
-                    you create a new user/job aplicant/developer, it is important to fill all the fields like
+                    you create a new user, it is important to fill all the fields like
                     <span class="Important">programming languages</span>, <span class="Important">future plans</span> etc...
                 </p>
 
@@ -181,7 +189,8 @@
                 </div>
 
                 <div class="ContentText">
-                    After creating a test, you will be shown a listing of tests, with your test on the top. When you click on the test, you
+                    After you created a test, you will be shown a listing of tests, with your newly created test
+                    on the top. When you click on a test, you
                     will have a set of information as well as a set of options.
                 </div>
 
@@ -211,16 +220,42 @@
                 </p>
 
                 <p class="ContentText">
-                    If you choose <span class="Important">restricted</span>, you will be prompted with a list of users for you to choose.
+                    If you choose <span class="Important">restricted</span>, you will be prompted with a filter of users for you to choose.
                     If choose restricted but don't choose any users for this test, permission is <span class="Important">public</span>
                     by default, so keep that in mind when creating tests.
                 </p>
             </div>
         </section>
 
+        <section ng-if="help.managing_tests" class="HelpContent  HelpInformation">
+            <div class="ContentPart">
+                <h2 class="PartTitle  TitleHighlight"><span class="NextRight--10">3.3</span> Managing tests</h2>
+            </div>
+
+            <div class="ContentPart">
+                <div class="ContentText">
+                    After you created a test, the test can be viewed in
+
+                    <div class="MenuHighlight">
+                        <label class="MenuHighlight--label">Test managment</label>
+                        <label class="MenuHighlight--label  MenuHighlight--menuDirection">></label>
+                        <label class="MenuHighlight--label">Manage tests</label>
+                    </div>
+                </div>
+
+                <p class="ContentText">
+                    This will show you a list of all tests that you created. After you choose your test, click on it.
+                </p>
+
+                <p class="ContentText">
+
+                </p>
+            </div>
+        </section>
+
         <section ng-if="help.question_suit" class="HelpContent  HelpInformation">
             <div class="ContentPart">
-                <h2 class="PartTitle  TitleHighlight"><span class="NextRight--10">3.3</span> Creating a question suit</h2>
+                <h2 class="PartTitle  TitleHighlight"><span class="NextRight--10">3.4</span> Creating a question suit</h2>
             </div>
 
             <div class="ContentPart">
@@ -235,7 +270,7 @@
                 </div>
 
                 <p class="ContentText">
-                    After you find your test, click on it and at the bottom of the test box, go to <span class="Important">Workspace</span>.
+                    After you choose a test to manage, click on it and at the bottom of the test box, go to <span class="Important">Workspace</span>.
                 </p>
 
                 <p class="ContentText">
@@ -249,7 +284,7 @@
 
         <section ng-if="help.question_blocks" class="HelpContent  HelpInformation">
             <div class="ContentPart">
-                <h2 class="PartTitle  TitleHighlight"><span class="NextRight--10">3.4</span>Blocks</h2>
+                <h2 class="PartTitle  TitleHighlight"><span class="NextRight--10">3.5</span>Blocks</h2>
             </div>
 
             <div class="ContentPart">
@@ -260,6 +295,51 @@
                 <p class="ContentText">
                     Question blocks are editable which means that you can write text into a <span class="Improtant">Plain text block</span>
                     and write code into a <span class="Important">Code block</span>.
+                </p>
+            </div>
+        </section>
+
+
+        <section ng-if="help.complete_test" class="HelpContent  HelpInformation">
+            <div class="ContentPart">
+                <h2 class="PartTitle  TitleHighlight"><span class="NextRight--10">4.1</span>How to create a complete restricted test...</h2>
+            </div>
+
+            <div class="ContentPart">
+                <div class="ContentText">
+                    <ul class="ContentList">
+                        <li><span class="Important"></span> Go to Test Managment - Create test</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="ContentPart">
+                <p class="ContentText">
+                    Write in the name of the test and possible remarks. Then, click on <span class="Important  InsideLink">Restricted</span>.
+                    Then, search for users that this test is going to be for, and assign them to the test. Create the test
+                </p>
+
+                <p class="ContentText">
+                    You will be shifted to a list of tests, with the latest created on top. Click on it and then click
+                    <span class="Important  InsideLink">Workspace</span>.
+                </p>
+
+                <p class="ContentText">
+                    Workspace is divided into <span class="Important">question</span> and <span class="Important">answer</span> blocks. When someone
+                    solves the test, both blocks will be displayed differently. Question blocks will be informational only while answer blocks
+                    will require from the user to make an input, an answer. In the workspace, question blocks are modifiable while some answer blocks
+                    are not. For example, if you put text plain text question block, you can write a question in it but if you put a plain text
+                    answer block, it will only display a box on a place where the test solver will provide his answer.
+                </p>
+
+                <p class="ContentText">
+                    After you finished the test, go to <span class="Important InsideLink">Test Managment - Manage tests again.</span>.
+                    Find the test that you created, and click <span class="Important  InsideLink">Finish</span>
+                </p>
+
+                <p class="ContentText">
+                    And that is it. Users that you assigned the test to will see that test in the <span class="Important  InsideLink">Assigned tests</span>
+                    section.
                 </p>
             </div>
         </section>

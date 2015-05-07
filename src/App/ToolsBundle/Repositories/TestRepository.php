@@ -194,14 +194,13 @@ class TestRepository extends Repository
               u.lastname
             FROM test_control AS t
             INNER JOIN users AS u
-            ON t.user_id = :user_id
             WHERE t.user_id = u.user_id
         ');
 
-        $parameters = new Parameters();
-        $parameters->attach(':user_id', $userId, \PDO::PARAM_INT);
+        /*$parameters = new Parameters();
+        $parameters->attach(':user_id', $userId, \PDO::PARAM_INT);*/
 
-        $testQuery = new Query($userSql, array($parameters));
+        $testQuery = new Query($userSql, array(new Parameters()));
         $result = $qh
             ->prepare(new Select($testQuery))
             ->bind()
@@ -280,8 +279,8 @@ class TestRepository extends Repository
             u.lastname
           FROM test_control AS t
           INNER JOIN restricted_tests AS rt ON rt.user_id = :user_id AND rt.test_control_id = t.test_control_id
-          INNER JOIN answer_control AS ac ON ac.test_control_id = rt.test_control_id
           INNER JOIN users AS u ON rt.user_id = u.user_id
+          WHERE t.isFinished = 1
         ');
 
         $publicTestsSql = new String('
@@ -295,7 +294,7 @@ class TestRepository extends Repository
                 u.name,
                 u.lastname
                 FROM public_tests AS p
-                INNER JOIN test_control AS tc ON tc.test_control_id = p.test_control_id
+                INNER JOIN test_control AS tc ON tc.test_control_id = p.test_control_id AND tc.isFinished = 1
                 INNER JOIN users AS u ON u.user_id = tc.user_id
         ');
 

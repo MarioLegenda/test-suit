@@ -135,7 +135,7 @@ class UserController extends ContainerAware
     }
 
     /**
-     * @Security("has_role('ROLE_USER_MANAGER')")
+     * @Security("has_role('ROLE_TEST_CREATOR')")
      *
      * Route: /user-managment/user-filter
      *

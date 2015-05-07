@@ -36,7 +36,7 @@ class WorkspaceController extends ContainerAware
     }
 
     /**
-     * @Security("has_role('ROLE_TEST_CREATOR')")
+     * @Security("has_role('ROLE_TEST_SOLVER')")
      *
      * Route: /test-managment/create-answer
      *

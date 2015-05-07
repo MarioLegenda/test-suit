@@ -1,8 +1,9 @@
 <script type="text/ng-template" id="answer.radioQuestionBlock.html">
     <div class="Block RadioBlock">
         <div class="BlockData">
+            <p>Select one of the following</p>
             <div class="RadioRow" ng-repeat="radioData in directiveData.data.data track by $index">
-                <input ng-click="directiveData.answer($index, radioData)" type="radio" name="RadioData" class="Radio" value="{[{ radioData }]}">
+                <input ng-click="directiveData.answer($index, radioData)" type="radio" name="RadioData" class="Radio" value="{[{ radioData }]}" ng-checked="directiveData.check($index)">
                 <label class="RadioLabel">{[{ radioData }]}</label>
             </div>
         </div>

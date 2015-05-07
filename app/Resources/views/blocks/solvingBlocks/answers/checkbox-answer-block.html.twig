@@ -1,0 +1,11 @@
+<script type="text/ng-template" id="answer.checkboxQuestionBlock.html">
+    <div class="Block RadioBlock">
+        <div class="BlockData">
+            <p>Select one of the following</p>
+            <div class="CheckboxRow" ng-repeat="chckData in directiveData.data.data track by $index">
+                <input ng-click="directiveData.answer($index, chckData)" type="checkbox" class="Radio" value="{[{ chckData }]}">
+                <label class="RadioLabel">{[{ chckData }]}</label>
+            </div>
+        </div>
+    </div>
+</script>

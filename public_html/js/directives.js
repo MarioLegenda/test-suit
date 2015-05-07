@@ -40,6 +40,8 @@ angular.module('suit.directives.actions', [])
                     test_permissions: false,
                     question_suit: false,
                     question_blocks: false,
+                    managing_tests: false,
+                    complete_test: false,
 
                     toggle: function($event, type) {
                         if( ! this.hasOwnProperty(type)) {
@@ -55,7 +57,9 @@ angular.module('suit.directives.actions', [])
                             'creating_tests',
                             'test_permissions',
                             'question_suit',
-                            'question_blocks'
+                            'question_blocks',
+                            'managing_tests',
+                            'complete_test'
                         ];
                         menus.splice(menus.indexOf(type), 1);
 
@@ -895,11 +899,13 @@ angular.module('suit.directives.actions', [])
         },
         controller: function ($scope) {
             $scope.workspace = {
-                testName: ''
+                testName: '',
+                testFinished: false
             };
-        },
-        link: function ($scope, elem, attrs) {
 
+            $scope.$on('action-test-solving-finished', function() {
+                $scope.workspace.testFinished = true;
+            })
         }
     }
 }]).directive('workspaceSolvingBuilder', ['$timeout', 'Answer', 'DataShepard', 'RangeIterator', function($timeout, Answer, DataShepard, RangeIterator) {
@@ -982,7 +988,6 @@ angular.module('suit.directives.actions', [])
                     this.mainPromise = Answer.getAnswer(current);
 
                     this.mainPromise.then(function(data, status, headers, config) {
-
                         elem.find('.ActionArea').before("<div class='SolvingBlocks'></div>");
 
                         $scope.directiveData.answer_id = data.data.answer.answers_id;
@@ -1047,6 +1052,10 @@ angular.module('suit.directives.actions', [])
                     $event.preventDefault();
 
                     Answer.finishTest($scope.answerControlId);
+
+                    $scope.$emit('action-test-solving-finished', {});
+
+
                     return false;
                 }
             };

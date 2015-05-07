@@ -1,3 +1,9 @@
+.TestSolver {
+  .ChoiceBlock {
+    margin-top:20px;
+  }
+}
+
 .SolvingBlocks {
   width:100%;
   float:left;
@@ -5,6 +11,8 @@
   .Block {
     width:100%;
     float:left;
+
+    padding:25px 0 25px 0;
   }
 }
 
@@ -34,6 +42,13 @@
     color:white;
     font-size:1.4em;
   }
+
+  .BasicTextarea {
+    width:100%;
+    margin: 25px 0 0 0;
+    height:300px;
+    font-size:1em;
+  }
 }
 
 .RadioBlock {
@@ -44,7 +59,7 @@
     color:white;
     font-size:1.4em;
 
-    .RadioRow {
+    .RadioRow, .SelectRow, .CheckboxRow {
       width:100%;
       margin:15px 0 15px 0;
 
@@ -57,6 +72,13 @@
     .Radio {
       width:17px;
       height:17px;
+    }
+
+    .Select {
+      font-size:1em;
+      font-family: "Open Sans Condensed", sans-serif;
+
+      padding:5px;
     }
   }
 }
@@ -87,4 +109,15 @@
   .PreviousButton {
     margin-right:5px;
   }
+}
+
+.TestFinished {
+  width:100%;
+  float:left;
+
+  text-align: center;
+  font-size:1.5em;
+  color:$greenLight;
+
+  margin: 25px 0 0 0;
 }
